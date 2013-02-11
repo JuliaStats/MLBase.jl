@@ -8,7 +8,7 @@ module MLBase
 		logsumexp, logsumexp!, softmax, softmax!, 
 		
 		# sampling_tools
-		sample_by_weights
+		sample_by_weights, sample_without_replacement
 
 
 	include("common.jl")	

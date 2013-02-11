@@ -25,3 +25,32 @@ function sample_by_weights(w::RealVec, totalw::FloatingPoint)
 end
 
 sample_by_weights(w::RealVec) = sample_by_weights(w, sum(w))
+
+
+function partial_shuffle!(r::Vector, k::Int)
+	# randomly swapping k elements to front
+	
+	n = length(r)
+	for i = 1 : k
+		j = rand(i:n)
+		if j != i
+			t = r[i]
+			r[i] = r[j]
+			r[j] = t
+		end
+	end
+end
+
+
+function sample_without_replacement(x::AbstractVector, k::Int)
+	n = length(x)
+	if !(k >= 0 && k <= n)
+		throw(ArgumentError("k must be in [0, length(x)]."))
+	end
+	r = vec(x)
+	
+	partial_shuffle!(r, k)
+	return r[1:k]
+end
+
+
