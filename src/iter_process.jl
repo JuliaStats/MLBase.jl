@@ -123,4 +123,12 @@ function on_finish(::StdIterationMonitor{:iter}, pb, state, t, objv, change)
 end
 
 
-
+function get_std_iter_monitor(level::Symbol)
+	if level == :none
+		nothing
+	elseif level == :final || level == :iter
+		StdIterationMonitor{level}()
+	else
+		error("Invalid monitor level: $level")
+	end
+end

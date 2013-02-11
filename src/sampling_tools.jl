@@ -10,7 +10,7 @@
 #
 ###########################################################
 
-function sample_by_weights(w::RealVec, totalw::FloatingPoint)
+function sample_by_weights(w::FPVec, totalw::FloatingPoint)
 	n = length(w)
 	t = rand() * totalw
 	
@@ -24,7 +24,7 @@ function sample_by_weights(w::RealVec, totalw::FloatingPoint)
 	return x
 end
 
-sample_by_weights(w::RealVec) = sample_by_weights(w, sum(w))
+sample_by_weights(w::FPVec) = sample_by_weights(w, sum(w))
 
 
 function partial_shuffle!(r::Vector, k::Int)

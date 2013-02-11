@@ -1,8 +1,9 @@
-# common stuff useful across the package
+# common types
 
-typealias RealVec Union(AbstractVector{Float32}, AbstractVector{Float64})
-typealias RealMat Union(AbstractMatrix{Float32}, AbstractMatrix{Float64})
-typealias RealVecOrMat Union(RealVec, RealMat)
+typealias FPArr Union(AbstractArray{Float32}, AbstractArray{Float64})
+typealias FPVec Union(AbstractVector{Float32}, AbstractVector{Float64})
+typealias FPMat Union(AbstractMatrix{Float32}, AbstractMatrix{Float64})
+typealias FPVecOrMat Union(FPVec, FPMat)
 
 # useful tools for testing & comparison
 

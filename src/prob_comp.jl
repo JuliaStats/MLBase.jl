@@ -6,17 +6,17 @@ using Devectorize
 #
 #	log( sum_i exp(x_i) )
 #
-function logsumexp{T<:Real}(x::AbstractVector{T})
+function logsumexp(x::FPVec)
 	mx = max(x)
 	n = length(x)
-	s = zero(T)
+	s = 0.
 	for i = 1 : n
 		s += exp(x[i] - mx) 
 	end
 	log(s) + mx
 end
 
-function logsumexp!{T<:Real}(r::AbstractArray{T}, x::AbstractMatrix{T}, dim::Int)
+function logsumexp!(r::FPArr, x::FPMat, dim::Int)
 	if dim == 1
 		if length(r) != size(x, 2)
 			throw(ArgumentError("The length or must match the number of columns in x."))
@@ -25,7 +25,7 @@ function logsumexp!{T<:Real}(r::AbstractArray{T}, x::AbstractMatrix{T}, dim::Int
 		
 		@devec r[:] = max(x, (), 1)
 		for j = 1 : n
-			s = zero(T)
+			s = 0.
 			mx = r[j]
 			for i = 1 : m	
 				s += exp(x[i,j] - mx)
@@ -40,7 +40,7 @@ function logsumexp!{T<:Real}(r::AbstractArray{T}, x::AbstractMatrix{T}, dim::Int
 		m, n = size(x)
 		
 		@devec r[:] = max(x, (), 2)
-		s = zeros(T, m)
+		s = zeros(m)
 		for j = 1 : n
 			for i = 1 : m
 				s[i] += exp(x[i,j] - r[i])
@@ -54,7 +54,7 @@ function logsumexp!{T<:Real}(r::AbstractArray{T}, x::AbstractMatrix{T}, dim::Int
 end
 
 
-function logsumexp{T<:Real}(x::AbstractMatrix{T}, dim::Int)
+function logsumexp(x::FPMat, dim::Int)
 	if dim == 1
 		r = zeros(1, size(x, 2))
 		logsumexp!(r, x, dim)
@@ -74,12 +74,13 @@ end
 #	r[i] = exp(x[i]) / sum(exp(x))
 #
 
-function softmax!{T<:FloatingPoint}(r::AbstractVector{T}, x::AbstractVector{T})
+function softmax!(r::FPVec, x::FPVec)
 	if length(r) != length(x)
 		throw(ArgumentError("The lengths of r and x must match."))
 	end
 	n = length(x)
 	mx = max(x)
+	T = eltype(r)
 	
 	# must use double as accumulator, even x is single 
 	# otherwise, errors can build up very fast
@@ -93,13 +94,13 @@ function softmax!{T<:FloatingPoint}(r::AbstractVector{T}, x::AbstractVector{T})
 	@devec r[:] .*= inv_s
 end
 
-function softmax{T<:FloatingPoint}(x::AbstractVector{T})
+function softmax(x::FPVec)
 	r = similar(x)
 	softmax!(r, x)
 	return r
 end
 
-function softmax!{T<:FloatingPoint}(r::AbstractMatrix{T}, x::AbstractMatrix{T}, dim::Int)
+function softmax!(r::FPMat, x::FPMat, dim::Int)
 	if !(dim == 1 || dim == 2)
 		throw(ArgumentError("dim must be either 1 or 2."))
 	end
@@ -107,6 +108,7 @@ function softmax!{T<:FloatingPoint}(r::AbstractMatrix{T}, x::AbstractMatrix{T}, 
 		throw(ArgumentError("The sizes of r and x must match."))
 	end
 	m, n = size(x)
+	T = eltype(r)
 	
 	if dim == 1 # by columns
 		@devec mx = max(x, (), 1)
@@ -136,8 +138,8 @@ function softmax!{T<:FloatingPoint}(r::AbstractMatrix{T}, x::AbstractMatrix{T}, 
 end
 
 
-function softmax{T<:FloatingPoint}(x::AbstractMatrix{T}, dim::Int)
-	r = Array(T, size(x))
+function softmax(x::FPMat, dim::Int)
+	r = similar(x)
 	softmax!(r, x, dim)
 	return r
 end

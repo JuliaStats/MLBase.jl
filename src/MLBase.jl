@@ -2,7 +2,7 @@ module MLBase
 
 	export 
 		# common
-		is_approx,
+		is_approx, FPVec, FPMat, FPVecOrMat, 
 
 		# prob_comp
 		logsumexp, logsumexp!, softmax, softmax!, 
