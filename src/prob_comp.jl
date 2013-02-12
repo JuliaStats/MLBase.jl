@@ -2,6 +2,62 @@
 
 using Devectorize
 
+# compute entropy of discrete distribution
+
+function entropy(p::FPVec)
+	v = 0.
+	for i = 1 : length(p)
+		pi = p[i]
+		if pi > 0
+			v -= pi * log(pi)
+		end
+	end
+	v
+end
+
+function entropy!(r::FPArr, p::FPMat, dim::Int)
+	m, n = size(p)
+	if dim == 1
+		for j = 1 : n
+			v = 0.
+			for i = 1 : m
+				pi = p[i, j]
+				if pi > 0
+					v -= pi * log(pi)
+				end
+			end
+			r[j] = v
+		end
+		
+	elseif dim == 2
+		fill!(r, 0.)
+		for j = 1 : n
+			for i = 1 : m
+				pi = p[i,j]
+				if pi > 0
+					r[i] -= pi * log(pi)
+				end
+			end
+		end
+	else
+		throw(ArgumentError("dim must be either 1 or 2."))
+	end
+end
+
+function entropy(p::FPMat, dim::Int)
+	if dim == 1
+		r = Array(Float64, 1, size(p, 2))
+		entropy!(r, p, dim)
+	elseif dim == 2
+		r = Array(Float64, size(p, 1), 1)
+		entropy!(r, p, dim)
+	else
+		throw(ArgumentError("dim must be either 1 or 2."))
+	end
+	return r
+end
+
+
 # a numerically stable method to compute
 #
 #	log( sum_i exp(x_i) )

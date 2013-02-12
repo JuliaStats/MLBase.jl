@@ -5,7 +5,7 @@ module MLBase
 		is_approx, FPVec, FPMat, FPVecOrMat, 
 
 		# prob_comp
-		logsumexp, logsumexp!, softmax, softmax!, 
+		entropy, entropy!, logsumexp, logsumexp!, softmax, softmax!, 
 		
 		# sampling_tools
 		sample_by_weights, sample_without_replacement
