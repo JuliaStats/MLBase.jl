@@ -10,7 +10,7 @@
 #
 ###########################################################
 
-function sample_by_weights(w::F64Vec, totalw::FloatingPoint)
+function sample_by_weights(w::AbstractVector{Float64}, totalw::Float64)
 	n = length(w)
 	t = rand() * totalw
 	
@@ -24,7 +24,7 @@ function sample_by_weights(w::F64Vec, totalw::FloatingPoint)
 	return x
 end
 
-sample_by_weights(w::F64Vec) = sample_by_weights(w, sum(w))
+sample_by_weights(w::AbstractVector{Float64}) = sample_by_weights(w, sum(w))
 
 
 function partial_shuffle!{T<:Number}(r::Vector{T}, k::Int)

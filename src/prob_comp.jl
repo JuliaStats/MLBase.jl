@@ -4,7 +4,7 @@ using Devectorize
 
 # compute entropy of discrete distribution
 
-function entropy(p::F64Vec)
+function entropy(p::AbstractVector{Float64})
 	v = 0.
 	for i = 1 : length(p)
 		pi = p[i]
@@ -15,7 +15,7 @@ function entropy(p::F64Vec)
 	v
 end
 
-function entropy!(r::F64Arr, p::F64Mat, dim::Int)
+function entropy!(r::AbstractArray{Float64}, p::AbstractMatrix{Float64}, dim::Int)
 	m, n = size(p)
 	if dim == 1
 		for j = 1 : n
@@ -44,7 +44,7 @@ function entropy!(r::F64Arr, p::F64Mat, dim::Int)
 	end
 end
 
-function entropy(p::F64Mat, dim::Int)
+function entropy(p::AbstractMatrix{Float64}, dim::Int)
 	if dim == 1
 		r = Array(Float64, 1, size(p, 2))
 		entropy!(r, p, dim)
@@ -62,7 +62,7 @@ end
 #
 #	log( sum_i exp(x_i) )
 #
-function logsumexp(x::F64Vec)
+function logsumexp(x::AbstractVector{Float64})
 	mx = max(x)
 	n = length(x)
 	s = 0.
@@ -72,7 +72,7 @@ function logsumexp(x::F64Vec)
 	log(s) + mx
 end
 
-function logsumexp!(r::F64Arr, x::F64Mat, dim::Int)
+function logsumexp!(r::AbstractArray{Float64}, x::AbstractMatrix{Float64}, dim::Int)
 	if dim == 1
 		if length(r) != size(x, 2)
 			throw(ArgumentError("The length or must match the number of columns in x."))
@@ -110,7 +110,7 @@ function logsumexp!(r::F64Arr, x::F64Mat, dim::Int)
 end
 
 
-function logsumexp(x::F64Mat, dim::Int)
+function logsumexp(x::AbstractMatrix{Float64}, dim::Int)
 	if dim == 1
 		r = zeros(1, size(x, 2))
 		logsumexp!(r, x, dim)
@@ -130,7 +130,7 @@ end
 #	r[i] = exp(x[i]) / sum(exp(x))
 #
 
-function softmax!(r::F64Vec, x::F64Vec)
+function softmax!(r::AbstractVector{Float64}, x::AbstractVector{Float64})
 	if length(r) != length(x)
 		throw(ArgumentError("The lengths of r and x must match."))
 	end
@@ -149,13 +149,13 @@ function softmax!(r::F64Vec, x::F64Vec)
 	@devec r[:] .*= inv_s
 end
 
-function softmax(x::F64Vec)
+function softmax(x::AbstractVector{Float64})
 	r = similar(x)
 	softmax!(r, x)
 	return r
 end
 
-function softmax!(r::F64Mat, x::F64Mat, dim::Int)
+function softmax!(r::AbstractMatrix{Float64}, x::AbstractMatrix{Float64}, dim::Int)
 	if !(dim == 1 || dim == 2)
 		throw(ArgumentError("dim must be either 1 or 2."))
 	end
@@ -192,7 +192,7 @@ function softmax!(r::F64Mat, x::F64Mat, dim::Int)
 end
 
 
-function softmax(x::F64Mat, dim::Int)
+function softmax(x::AbstractMatrix{Float64}, dim::Int)
 	r = similar(x)
 	softmax!(r, x, dim)
 	return r
