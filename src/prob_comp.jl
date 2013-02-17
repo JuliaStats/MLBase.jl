@@ -4,7 +4,7 @@ using Devectorize
 
 # compute entropy of discrete distribution
 
-function entropy(p::FPVec)
+function entropy(p::F64Vec)
 	v = 0.
 	for i = 1 : length(p)
 		pi = p[i]
@@ -15,7 +15,7 @@ function entropy(p::FPVec)
 	v
 end
 
-function entropy!(r::FPArr, p::FPMat, dim::Int)
+function entropy!(r::F64Arr, p::F64Mat, dim::Int)
 	m, n = size(p)
 	if dim == 1
 		for j = 1 : n
@@ -44,7 +44,7 @@ function entropy!(r::FPArr, p::FPMat, dim::Int)
 	end
 end
 
-function entropy(p::FPMat, dim::Int)
+function entropy(p::F64Mat, dim::Int)
 	if dim == 1
 		r = Array(Float64, 1, size(p, 2))
 		entropy!(r, p, dim)
@@ -62,7 +62,7 @@ end
 #
 #	log( sum_i exp(x_i) )
 #
-function logsumexp(x::FPVec)
+function logsumexp(x::F64Vec)
 	mx = max(x)
 	n = length(x)
 	s = 0.
@@ -72,7 +72,7 @@ function logsumexp(x::FPVec)
 	log(s) + mx
 end
 
-function logsumexp!(r::FPArr, x::FPMat, dim::Int)
+function logsumexp!(r::F64Arr, x::F64Mat, dim::Int)
 	if dim == 1
 		if length(r) != size(x, 2)
 			throw(ArgumentError("The length or must match the number of columns in x."))
@@ -110,7 +110,7 @@ function logsumexp!(r::FPArr, x::FPMat, dim::Int)
 end
 
 
-function logsumexp(x::FPMat, dim::Int)
+function logsumexp(x::F64Mat, dim::Int)
 	if dim == 1
 		r = zeros(1, size(x, 2))
 		logsumexp!(r, x, dim)
@@ -130,13 +130,12 @@ end
 #	r[i] = exp(x[i]) / sum(exp(x))
 #
 
-function softmax!(r::FPVec, x::FPVec)
+function softmax!(r::F64Vec, x::F64Vec)
 	if length(r) != length(x)
 		throw(ArgumentError("The lengths of r and x must match."))
 	end
 	n = length(x)
 	mx = max(x)
-	T = eltype(r)
 	
 	# must use double as accumulator, even x is single 
 	# otherwise, errors can build up very fast
@@ -145,18 +144,18 @@ function softmax!(r::FPVec, x::FPVec)
 		r[i] = exp(x[i] - mx)
 		s += r[i]
 	end
-	inv_s = convert(T, 1 / s)
+	inv_s = 1/s
 	
 	@devec r[:] .*= inv_s
 end
 
-function softmax(x::FPVec)
+function softmax(x::F64Vec)
 	r = similar(x)
 	softmax!(r, x)
 	return r
 end
 
-function softmax!(r::FPMat, x::FPMat, dim::Int)
+function softmax!(r::F64Mat, x::F64Mat, dim::Int)
 	if !(dim == 1 || dim == 2)
 		throw(ArgumentError("dim must be either 1 or 2."))
 	end
@@ -164,7 +163,6 @@ function softmax!(r::FPMat, x::FPMat, dim::Int)
 		throw(ArgumentError("The sizes of r and x must match."))
 	end
 	m, n = size(x)
-	T = eltype(r)
 	
 	if dim == 1 # by columns
 		@devec mx = max(x, (), 1)
@@ -173,7 +171,7 @@ function softmax!(r::FPMat, x::FPMat, dim::Int)
 			for i = 1 : m
 				s += (r[i,j] = exp(x[i,j] - mx[j]))
 			end
-			inv_s = convert(T, 1/s)
+			inv_s = rcp(s)
 			@devec r[:,j] .*= inv_s
 		end
 	else
@@ -194,7 +192,7 @@ function softmax!(r::FPMat, x::FPMat, dim::Int)
 end
 
 
-function softmax(x::FPMat, dim::Int)
+function softmax(x::F64Mat, dim::Int)
 	r = similar(x)
 	softmax!(r, x, dim)
 	return r

@@ -10,7 +10,7 @@
 #
 ###########################################################
 
-function sample_by_weights(w::FPVec, totalw::FloatingPoint)
+function sample_by_weights(w::F64Vec, totalw::FloatingPoint)
 	n = length(w)
 	t = rand() * totalw
 	
@@ -24,10 +24,10 @@ function sample_by_weights(w::FPVec, totalw::FloatingPoint)
 	return x
 end
 
-sample_by_weights(w::FPVec) = sample_by_weights(w, sum(w))
+sample_by_weights(w::F64Vec) = sample_by_weights(w, sum(w))
 
 
-function partial_shuffle!(r::Vector, k::Int)
+function partial_shuffle!{T<:Number}(r::Vector{T}, k::Int)
 	# randomly swapping k elements to front
 	
 	n = length(r)
@@ -42,7 +42,7 @@ function partial_shuffle!(r::Vector, k::Int)
 end
 
 
-function sample_without_replacement(x::AbstractVector, k::Int)
+function sample_without_replacement{T<:Number}(x::AbstractVector{T}, k::Int)
 	n = length(x)
 	if !(k >= 0 && k <= n)
 		throw(ArgumentError("k must be in [0, length(x)]."))

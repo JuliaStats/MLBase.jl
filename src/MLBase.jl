@@ -2,7 +2,7 @@ module MLBase
 
 	export 
 		# common
-		is_approx, FPVec, FPMat, FPVecOrMat, 
+		F64Arr, F64Vec, F64Mat, IntArr, IntVec, IntMat, 
 
 		# prob_comp
 		entropy, entropy!, logsumexp, logsumexp!, softmax, softmax!, 
