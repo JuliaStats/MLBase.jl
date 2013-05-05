@@ -10,7 +10,7 @@
 #
 ###########################################################
 
-function sample_by_weights(w::AbstractVector{Float64}, totalw::Float64)
+function sample_by_weights(w::Vector{Float64}, totalw::Float64)
     n = length(w)
     t = rand() * totalw
 
@@ -24,33 +24,4 @@ function sample_by_weights(w::AbstractVector{Float64}, totalw::Float64)
     return x
 end
 
-sample_by_weights(w::AbstractVector{Float64}) = sample_by_weights(w, sum(w))
-
-
-function partial_shuffle!{T<:Number}(r::Vector{T}, k::Int)
-    # randomly swapping k elements to front
-
-    n = length(r)
-    for i = 1 : k
-        j = rand(i:n)
-        if j != i
-            t = r[i]
-            r[i] = r[j]
-            r[j] = t
-        end
-    end
-end
-
-
-function sample_without_replacement{T<:Number}(x::AbstractVector{T}, k::Int)
-    n = length(x)
-    if !(k >= 0 && k <= n)
-        throw(ArgumentError("k must be in [0, length(x)]."))
-    end
-    r = vec(x)
-
-    partial_shuffle!(r, k)
-    return r[1:k]
-end
-
-
+sample_by_weights(w::Vector{Float64}) = sample_by_weights(w, sum(w))

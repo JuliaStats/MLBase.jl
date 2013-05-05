@@ -1,12 +1,11 @@
 module MLBase
 
     export
-        # prob_comp
-        entropy, entropy!, logsumexp, logsumexp!, softmax, softmax!,
+        # basic_calc
 
         # sampling_tools
         sample_by_weights, sample_without_replacement
 
-    include("prob_comp.jl")
+    include("basic_calc.jl")
     include("sampling_tools.jl")
 end
