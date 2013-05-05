@@ -1,9 +1,9 @@
 # Basic computation routines
 
 macro check_argdims(cond)
-    esc(:( if !($cond)
+    :( if !($(esc(cond)))
         throw(ArgumentError("Invalid argument dimensions.")) 
-    end))  
+    end)  
 end
 
 #################################################
