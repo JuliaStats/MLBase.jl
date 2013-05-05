@@ -2,6 +2,12 @@ module MLBase
 
     export
         # basic_calc
+        add!, add_cols!, add_cols, add_rows!, add_rows, 
+        sub!, sub_cols!, sub_cols, sub_rows!, sub_rows, 
+        mul!, mul_cols!, mul_cols, mul_rows!, mul_rows,
+        
+        colwise_dot!, colwise_dot,
+        colwise_sqnorm!, colwise_sqnorm,
 
         # sampling_tools
         sample_by_weights, sample_without_replacement
