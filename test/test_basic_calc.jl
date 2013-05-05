@@ -68,7 +68,10 @@ ac = copy(a)
 a = rand(3, 5)
 b = rand(3, 5)
 w = rand(3)
+x = rand(3)
+
+@test_approx_eq weighted_sqnorm(x, w) sum((x .* x) .* w)
 
 @test_approx_eq colwise_dot(a, b) vec(sum(a .* b, 1))
 @test_approx_eq colwise_sqnorm(a) vec(sum(a .* a, 1))
-@test_approx_eq colwise_sqnorm(a, w) vec(w' * (a .* a))
+@test_approx_eq colwise_weighted_sqnorm(a, w) vec(w' * (a .* a))
