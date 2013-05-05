@@ -2,6 +2,7 @@ module MLBase
 
     export
         # basic_calc
+        @check_argdims,
         add!, add_cols!, add_cols, add_rows!, add_rows, 
         sub!, sub_cols!, sub_cols, sub_rows!, sub_rows, 
         mul!, mul_cols!, mul_cols, mul_rows!, mul_rows,
