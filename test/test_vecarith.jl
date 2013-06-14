@@ -62,16 +62,3 @@ ac = copy(a)
 ac = copy(a)
 @test mul_rows!(ac, r) === ac
 @test ac == mul_rows(a, r) == bsxfun(.*, a, reshape(r, 1, 5))
-
-# column wise dot and sqnorm
-
-a = rand(3, 5)
-b = rand(3, 5)
-w = rand(3)
-x = rand(3)
-
-@test_approx_eq weighted_sqnorm(x, w) sum((x .* x) .* w)
-
-@test_approx_eq colwise_dot(a, b) vec(sum(a .* b, 1))
-@test_approx_eq colwise_sqnorm(a) vec(sum(a .* a, 1))
-@test_approx_eq colwise_weighted_sqnorm(a, w) vec(w' * (a .* a))

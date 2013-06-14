@@ -15,6 +15,16 @@ module MLBase
         # sampling_tools
         sample_by_weights, sample_without_replacement
 
-    include("basic_calc.jl")
-    include("sampling_tools.jl")
+
+    # common tools
+
+    macro check_argdims(cond)
+        :( if !($(esc(cond)))
+            throw(ArgumentError("Invalid argument dimensions.")) 
+        end)  
+    end
+
+    # components
+
+    include("vecarith.jl")
 end
