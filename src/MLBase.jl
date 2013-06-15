@@ -1,17 +1,18 @@
 module MLBase
 
+    import Base.reduce
+
     export
-        # basic_calc
+        # vec_arith
         @check_argdims,
         add!, add_cols!, add_cols, add_rows!, add_rows, 
         sub!, sub_cols!, sub_cols, sub_rows!, sub_rows, 
         mul!, mul_cols!, mul_cols, mul_rows!, mul_rows,
-        
-        weighted_sqnorm,
-        colwise_dot!, colwise_dot,
-        colwise_sqnorm!, colwise_sqnorm, 
-        colwise_weighted_sqnorm!, colwise_weighted_sqnorm,
 
+        # vstats
+        vsum!, vsum, vmax!, vmax, vmin!, vmin,
+        vasum!, vasum, vamax!, vamax, vamin!, vamin, vsqsum!, vsqsum,
+        
         # sampling_tools
         sample_by_weights, sample_without_replacement
 
@@ -27,4 +28,6 @@ module MLBase
     # components
 
     include("vecarith.jl")
+    include("vstats.jl")
+
 end
