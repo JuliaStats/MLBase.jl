@@ -29,6 +29,14 @@ end
 
 x = rand(2000, 2000)
 
+sum1_jfun(x::Matrix) = sum(x, 1)
+sum1_vfun(x::Matrix) = vsum(x, 1)
+@bench_vstats("colwise-sum", sum1_jfun, sum1_vfun, 10, x)
+
+sum2_jfun(x::Matrix) = sum(x, 2)
+sum2_vfun(x::Matrix) = vsum(x, 2)
+@bench_vstats("rowwise-sum", sum2_jfun, sum2_vfun, 10, x)
+
 max1_jfun(x::Matrix) = max(x, (), 1)
 max1_vfun(x::Matrix) = vmax(x, 1)
 @bench_vstats("colwise-max", max1_jfun, max1_vfun, 10, x)
@@ -45,13 +53,14 @@ min2_jfun(x::Matrix) = min(x, (), 2)
 min2_vfun(x::Matrix) = vmin(x, 2)
 @bench_vstats("rowwise-min", min2_jfun, min2_vfun, 10, x)
 
-sum1_jfun(x::Matrix) = sum(x, 1)
-sum1_vfun(x::Matrix) = vsum(x, 1)
-@bench_vstats("colwise-sum", sum1_jfun, sum1_vfun, 10, x)
 
-sum2_jfun(x::Matrix) = sum(x, 2)
-sum2_vfun(x::Matrix) = vsum(x, 2)
-@bench_vstats("rowwise-sum", sum2_jfun, sum2_vfun, 10, x)
+asum1_jfun(x::Matrix) = sum(abs(x), 1)
+asum1_vfun(x::Matrix) = vasum(x, 1)
+@bench_vstats("colwise-asum", asum1_jfun, asum1_vfun, 10, x)
+
+asum2_jfun(x::Matrix) = sum(abs(x), 2)
+asum2_vfun(x::Matrix) = vasum(x, 2)
+@bench_vstats("rowwise-asum", asum2_jfun, asum2_vfun, 10, x)
 
 amax1_jfun(x::Matrix) = max(abs(x), (), 1)
 amax1_vfun(x::Matrix) = vamax(x, 1)
@@ -68,14 +77,6 @@ amin1_vfun(x::Matrix) = vamin(x, 1)
 amin2_jfun(x::Matrix) = min(abs(x), (), 2)
 amin2_vfun(x::Matrix) = vamin(x, 2)
 @bench_vstats("rowwise-amin", amin2_jfun, amin2_vfun, 10, x)
-
-asum1_jfun(x::Matrix) = sum(abs(x), 1)
-asum1_vfun(x::Matrix) = vasum(x, 1)
-@bench_vstats("colwise-asum", asum1_jfun, asum1_vfun, 10, x)
-
-asum2_jfun(x::Matrix) = sum(abs(x), 2)
-asum2_vfun(x::Matrix) = vasum(x, 2)
-@bench_vstats("rowwise-asum", asum2_jfun, asum2_vfun, 10, x)
 
 sqsum1_jfun(x::Matrix) = sum(abs2(x), 1)
 sqsum1_vfun(x::Matrix) = vsqsum(x, 1)

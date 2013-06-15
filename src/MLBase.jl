@@ -1,7 +1,5 @@
 module MLBase
 
-    import Base.reduce
-
     export
         # vec_arith
         @check_argdims,
