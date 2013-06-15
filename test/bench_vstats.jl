@@ -37,6 +37,14 @@ sum2_jfun(x::Matrix) = sum(x, 2)
 sum2_vfun(x::Matrix) = vsum(x, 2)
 @bench_vstats("rowwise-sum", sum2_jfun, sum2_vfun, 10, x)
 
+mean1_jfun(x::Matrix) = mean(x, 1)
+mean1_vfun(x::Matrix) = vmean(x, 1)
+@bench_vstats("colwise-mean", mean1_jfun, mean1_vfun, 10, x)
+
+mean2_jfun(x::Matrix) = mean(x, 2)
+mean2_vfun(x::Matrix) = vmean(x, 2)
+@bench_vstats("rowwise-mean", mean2_jfun, mean2_vfun, 10, x)
+
 max1_jfun(x::Matrix) = max(x, (), 1)
 max1_vfun(x::Matrix) = vmax(x, 1)
 @bench_vstats("colwise-max", max1_jfun, max1_vfun, 10, x)

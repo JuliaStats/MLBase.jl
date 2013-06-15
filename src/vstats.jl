@@ -81,6 +81,22 @@ combine_value{T<:Number}(op::SumReduc, s::T, x::T) = s + x
 vsum!(r::Array, x::Matrix, dim::Int) = vreduce!(r, SumReduc(), x, dim)
 vsum(x::Matrix, dim::Int) = vreduce(SumReduc(), x, dim)
 
+function vmean!{T<:Number}(r::Array{T}, x::Matrix, dim::Int)
+    m = size(x, dim);
+    if m > 0
+        vsum!(r, x, dim)
+        mul!(r, one(T) / m)
+    else
+        fill!(r, nan(T))
+    end
+    r
+end
+
+function vmean{T<:Number}(x::Matrix{T}, dim::Int)
+    rlen::Int = _reduc_length(size(x, 1), size(x, 2), dim)
+    vmean!(Array(T, rlen), x, dim)
+end
+
 
 type MaxReduc <: AbstractReduction end
 
@@ -146,6 +162,7 @@ combine_value{T<:Number}(op::SqsumReduc, s::T, x::T) = s + abs2(x)
 
 vsqsum!(r::Array, x::Matrix, dim::Int) = vreduce!(r, SqsumReduc(), x, dim)
 vsqsum(x::Matrix, dim::Int) = vreduce(SqsumReduc(), x, dim)
+
 
 
 

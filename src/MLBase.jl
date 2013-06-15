@@ -8,7 +8,7 @@ module MLBase
         mul!, mul_cols!, mul_cols, mul_rows!, mul_rows,
 
         # vstats
-        vsum!, vsum, vmax!, vmax, vmin!, vmin,
+        vsum!, vsum, vmean!, vmean, vmax!, vmax, vmin!, vmin,
         vasum!, vasum, vamax!, vamax, vamin!, vamin, vsqsum!, vsqsum,
         
         # sampling_tools

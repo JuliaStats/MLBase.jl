@@ -22,6 +22,11 @@ vsum!(r, x, 2)
 @test_approx_eq vsum(reshape([1., 2., 3.], 1, 3), 1) [1., 2., 3.]
 @test_approx_eq vsum(reshape([1., 2., 3.], 3, 1), 2) [1., 2., 3.] 
 
+# vmean
+
+@test_approx_eq vmean(x, 1) vec(mean(x, 1))
+@test_approx_eq vmean(x, 2) vec(mean(x, 2))
+
 # vmax & vmin
 @test_approx_eq vmax(x, 1) vec(max(x, (), 1))
 @test_approx_eq vmax(x, 2) vec(max(x, (), 2))
