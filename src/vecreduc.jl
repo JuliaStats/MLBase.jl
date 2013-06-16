@@ -217,6 +217,15 @@ combine_value{T<:Number}(op::SqsumReduc, s::T, x::T) = s + abs2(x)
 vsqsum!(r::Array, x::Matrix, dim::Int) = vreduce!(r, SqsumReduc(), x, dim)
 vsqsum(x::Matrix, dim::Int) = vreduce(SqsumReduc(), x, dim)
 
+function weighted_sqsum(x::Vector, w::Vector)
+    @check_argdims length(x) == length(w)
+    s = 0.
+    for i in 1 : length(x)
+        s += abs2(x[i]) * w[i]
+    end
+    s
+end
+
 
 immutable PowsumReduc{T<:Real} <: AbstractReduction 
     p::T
