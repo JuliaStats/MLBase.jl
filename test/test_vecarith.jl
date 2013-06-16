@@ -62,3 +62,14 @@ ac = copy(a)
 ac = copy(a)
 @test mul_rows!(ac, r) === ac
 @test ac == mul_rows(a, r) == bsxfun(.*, a, reshape(r, 1, 5))
+
+# test add_diag
+
+a = rand(3, 3)
+v = rand(3)
+
+@test add_diag(a, 2.) == a + eye(3) * 2.
+@test add_diag(a, v) == a + diagm(v)
+@test add_diag(a, v, 2.) == a + diagm(v) * 2.
+
+

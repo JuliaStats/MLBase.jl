@@ -183,4 +183,39 @@ function mul_rows{T <: Number}(a::Matrix{T}, b::Vector{T})
     r
 end
 
+# add_diag
+
+function add_diag!(a::Matrix, v::Number)
+    d::Int = min(size(a, 1), size(a, 2))
+    for i in 1 : d
+        a[i,i] += v
+    end
+    a
+end
+
+function add_diag!(a::Matrix, v::Vector)
+    d::Int = min(size(a, 1), size(a, 2))
+    @check_argdims d == length(v)
+    for i in 1 : d
+        a[i,i] += v[i]
+    end
+    a
+end
+
+function add_diag!(a::Matrix, v::Vector, c::Number)
+    d::Int = min(size(a, 1), size(a, 2))
+    @check_argdims d == length(v)
+    for i in 1 : d
+        a[i,i] += v[i] * c
+    end    
+    a
+end
+
+add_diag(a::Matrix, v::Number) = add_diag!(copy(a), v)
+add_diag(a::Matrix, v::Vector) = add_diag!(copy(a), v)
+add_diag(a::Matrix, v::Vector, c::Number) = add_diag!(copy(a), v, c)
+
+
+
+
 
