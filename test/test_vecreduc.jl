@@ -1,4 +1,4 @@
-# Test vector statistics
+# Test vector reduction
 
 using MLBase
 using Base.Test

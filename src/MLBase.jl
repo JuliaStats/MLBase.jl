@@ -7,7 +7,7 @@ module MLBase
         sub!, sub_cols!, sub_cols, sub_rows!, sub_rows, 
         mul!, mul_cols!, mul_cols, mul_rows!, mul_rows,
 
-        # vstats
+        # vecreduc
         vsum!, vsum, vmean!, vmean, vmax!, vmax, vmin!, vmin,
         vasum!, vasum, vamax!, vamax, vamin!, vamin, vsqsum!, vsqsum,
         
@@ -26,6 +26,6 @@ module MLBase
     # components
 
     include("vecarith.jl")
-    include("vstats.jl")
+    include("vecreduc.jl")
 
 end

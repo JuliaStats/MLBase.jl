@@ -164,5 +164,3 @@ vsqsum!(r::Array, x::Matrix, dim::Int) = vreduce!(r, SqsumReduc(), x, dim)
 vsqsum(x::Matrix, dim::Int) = vreduce(SqsumReduc(), x, dim)
 
 
-
-
