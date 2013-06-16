@@ -4,6 +4,7 @@ using MLBase
 using Base.Test
 
 x = randn(7, 8)
+y = randn(7, 8)
 
 # vsum
 @test_approx_eq vsum(x, 1) vec(sum(x, 1))
@@ -50,7 +51,7 @@ r = zeros(size(x, 1))
 vmin!(r, x, 2)
 @test r == vmin(x, 2)
 
-# vasum, vamax, vamin, vsqsum
+# vasum, vamax, vamin
 
 @test_approx_eq vasum(x, 1) vec(sum(abs(x), 1))
 @test_approx_eq vasum(x, 2) vec(sum(abs(x), 2))
@@ -61,6 +62,22 @@ vmin!(r, x, 2)
 @test_approx_eq vamin(x, 1) vec(min(abs(x), (), 1))
 @test_approx_eq vamin(x, 2) vec(min(abs(x), (), 2))
 
+# vsqsum, vpowsum
+
 @test_approx_eq vsqsum(x, 1) vec(sum(abs2(x), 1))
 @test_approx_eq vsqsum(x, 2) vec(sum(abs2(x), 2))
+
+@test_approx_eq vpowsum(x, 3.0, 1) vec(sum(abs(x).^3, 1))
+@test_approx_eq vpowsum(x, 3.0, 2) vec(sum(abs(x).^3, 2))
+
+# vdot
+
+@test_approx_eq vdot(x, y, 1) vec(sum(x .* y, 1))
+@test_approx_eq vdot(x, y, 2) vec(sum(x .* y, 2))
+
+# vsqdiffsum
+
+@test_approx_eq vsqdiffsum(x, y, 1) vec(sum(abs2(x - y), 1))
+@test_approx_eq vsqdiffsum(x, y, 2) vec(sum(abs2(x - y), 2))
+
 

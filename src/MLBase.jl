@@ -9,7 +9,12 @@ module MLBase
 
         # vecreduc
         vsum!, vsum, vmean!, vmean, vmax!, vmax, vmin!, vmin,
-        vasum!, vasum, vamax!, vamax, vamin!, vamin, vsqsum!, vsqsum,
+        vasum!, vasum, vamax!, vamax, vamin!, vamin, 
+        vsqsum!, vsqsum, vpowsum!, vpowsum,
+        vdot!, vdot, vsqdiffsum!, vsqdiffsum,
+
+        # norms
+        vnorm!, vnorm, vdiffnorm!, vdiffnorm,
         
         # sampling_tools
         sample_by_weights, sample_without_replacement
@@ -27,5 +32,6 @@ module MLBase
 
     include("vecarith.jl")
     include("vecreduc.jl")
+    include("norms.jl")
 
 end

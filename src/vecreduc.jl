@@ -15,6 +15,8 @@ end
 
 abstract AbstractReduction
 
+# one argument
+
 function vreduce!(r::Array, op::AbstractReduction, x::Matrix, dim::Integer)
     m = size(x, 1)
     n = size(x, 2)
@@ -64,10 +66,62 @@ function vreduce(op::AbstractReduction, x::Matrix, dim::Integer)
     vreduce!(r, op, x, dim)
 end
 
+# two argument
+
+function vreduce!(r::Array, op::AbstractReduction, x::Matrix, y::Matrix, dim::Integer)
+    m = size(x, 1)
+    n = size(x, 2)
+    @check_argdims size(y, 1) == m && size(y, 2) == n 
+    @check_argdims length(r) == _reduc_length(m, n, dim)
+
+    if dim == 1
+        if m == 0
+            fill!(r, empty_value(op, eltype(x), eltype(y)))
+        elseif m == 1
+            for j = 1 : n
+                r[j] = init_value(op, x[j], y[j])
+            end
+        else            
+            for j in 1 : n
+                rj = init_value(op, x[1,j], y[1,j])
+                for i in 2 : m
+                    rj = combine_value(op, rj, x[i,j], y[i,j])
+                end
+                r[j] = rj
+            end
+        end
+
+    else # _reduc_length ensures: dim == 2
+        if n == 0
+            fill!(r, empty_value(op, eltype(x), eltype(y)))
+        elseif n == 1
+            for i in 1 : m
+                r[i] = init_value(op, x[i], y[i])
+            end
+        else
+            for i in 1 : m
+                r[i] = init_value(op, x[i,1], y[i,1])
+            end
+            for j in 2 : n
+                for i in 1 : m
+                    r[i] = combine_value(op, r[i], x[i,j], y[i,j])
+                end
+            end
+        end
+    end
+    r
+end
+
+function vreduce(op::AbstractReduction, x::Matrix, y::Matrix, dim::Integer)
+    rlen::Int = _reduc_length(size(x, 1), size(x, 2), dim)
+    r = Array(result_type(op, eltype(x), eltype(y)), rlen)
+    vreduce!(r, op, x, y, dim)
+end
+
 
 #################################################
 #
-#  Specific reductors
+#  One-argument reductors
 #
 #################################################
 
@@ -162,5 +216,46 @@ combine_value{T<:Number}(op::SqsumReduc, s::T, x::T) = s + abs2(x)
 
 vsqsum!(r::Array, x::Matrix, dim::Int) = vreduce!(r, SqsumReduc(), x, dim)
 vsqsum(x::Matrix, dim::Int) = vreduce(SqsumReduc(), x, dim)
+
+
+immutable PowsumReduc{T<:Real} <: AbstractReduction 
+    p::T
+end
+
+result_type{T<:Number}(op::PowsumReduc, ty::Type{T}) = T
+empty_value{T<:Number}(op::PowsumReduc, ty::Type{T}) = zero(T)
+init_value{T<:Number}(op::PowsumReduc, x::T) = abs(x) ^ op.p
+combine_value{T<:Number}(op::PowsumReduc, s::T, x::T) = s + abs(x) ^ op.p
+
+vpowsum!(r::Array, x::Matrix, p::Real, dim::Int) = vreduce!(r, PowsumReduc(p), x, dim)
+vpowsum(x::Matrix, p::Real, dim::Int) = vreduce(PowsumReduc(p), x, dim)
+
+
+#################################################
+#
+#  Two-argument reductors
+#
+#################################################
+
+type DotReduc <: AbstractReduction end
+
+result_type{T<:Number}(op::DotReduc, ty1::Type{T}, ty2::Type{T}) = T
+empty_value{T<:Number}(op::DotReduc, ty1::Type{T}, ty2::Type{T}) = zero(T)
+init_value{T<:Number}(op::DotReduc, x::T, y::T) = x * y
+combine_value{T<:Number}(op::DotReduc, s::T, x::T, y::T) = s + x * y
+
+vdot!(r::Array, x::Matrix, y::Matrix, dim::Int) = vreduce!(r, DotReduc(), x, y, dim)
+vdot(x::Matrix, y::Matrix, dim::Int) = vreduce(DotReduc(), x, y, dim)
+
+
+type SqdiffsumReduc <: AbstractReduction end
+
+result_type{T<:Number}(op::SqdiffsumReduc, ty1::Type{T}, ty2::Type{T}) = T
+empty_value{T<:Number}(op::SqdiffsumReduc, ty1::Type{T}, ty2::Type{T}) = zero(T)
+init_value{T<:Number}(op::SqdiffsumReduc, x::T, y::T) = abs2(x - y)
+combine_value{T<:Number}(op::SqdiffsumReduc, s::T, x::T, y::T) = s + abs2(x - y)
+
+vsqdiffsum!(r::Array, x::Matrix, y::Matrix, dim::Int) = vreduce!(r, SqdiffsumReduc(), x, y, dim)
+vsqdiffsum(x::Matrix, y::Matrix, dim::Int) = vreduce(SqdiffsumReduc(), x, y, dim)
 
 
