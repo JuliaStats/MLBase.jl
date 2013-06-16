@@ -26,7 +26,13 @@ module MLBase
         vdot!, vdot, vsqdiffsum!, vsqdiffsum, 
 
         # norms
-        vnorm!, vnorm, vdiffnorm!, vdiffnorm,        
+        vnorm!, vnorm, vdiffnorm!, vdiffnorm,      
+
+        # intstats
+        add_icounts!, icounts, add_icounts2!, icounts2,
+        add_wcounts!, wcounts, add_wcounts2!, wcounts2,
+        sort_indices, sorted_indices_to_groups, group_indices,
+        repeat_eachelem,
 
         # pdmat
         AbstractPDMat, PDMat, PDiagMat, ScalMat, 
@@ -47,6 +53,7 @@ module MLBase
     include("vecarith.jl")
     include("vecreduc.jl")
     include("norms.jl")
+    include("intstats.jl")
     include("pdmat.jl")
 
 end
