@@ -87,3 +87,29 @@ function vdiffnorm(x::Matrix, y::Matrix, p::Real, dim::Integer)
 end
 
 
+# normalize
+
+normalize!(x::Vector, p::Real) = mul!(x, inv(norm(x, p)))
+normalize(x::Vector, p::Real) = x * inv(norm(x, p))
+
+function normalize!(x::Matrix, p::Real, dim::Integer)
+	if dim == 1
+		mul_rows!(x, rcp!(vnorm(x, p, 1)))
+	elseif dim == 2
+		mul_cols!(x, rcp!(vnorm(x, p, 2)))
+	else
+		throw(ArgumentError("The value of dim must be either 1 or 2."))
+	end
+end
+
+function normalize(x::Matrix, p::Real, dim::Integer)
+	if dim == 1
+		mul_rows(x, rcp!(vnorm(x, p, 1)))
+	elseif dim == 2
+		mul_cols(x, rcp!(vnorm(x, p, 2)))
+	else
+		throw(ArgumentError("The value of dim must be either 1 or 2."))
+	end	
+end
+
+

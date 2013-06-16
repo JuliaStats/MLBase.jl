@@ -17,7 +17,7 @@ module MLBase
         add!, add_cols!, add_cols, add_rows!, add_rows, 
         sub!, sub_cols!, sub_cols, sub_rows!, sub_rows, 
         mul!, mul_cols!, mul_cols, mul_rows!, mul_rows,
-        add_diag!, add_diag,
+        add_diag!, add_diag, rcp, rcp!, sqrt!, exp!, log!,
 
         # vecreduc
         vsum!, vsum, vmean!, vmean, vmax!, vmax, vmin!, vmin,
@@ -26,7 +26,8 @@ module MLBase
         vdot!, vdot, vsqdiffsum!, vsqdiffsum, 
 
         # norms
-        vnorm!, vnorm, vdiffnorm!, vdiffnorm,      
+        vnorm!, vnorm, vdiffnorm!, vdiffnorm, 
+        normalize!, normalize,
 
         # intstats
         add_icounts!, icounts, add_icounts2!, icounts2,

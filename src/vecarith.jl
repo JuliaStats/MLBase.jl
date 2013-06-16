@@ -215,6 +215,41 @@ add_diag(a::Matrix, v::Number) = add_diag!(copy(a), v)
 add_diag(a::Matrix, v::Vector) = add_diag!(copy(a), v)
 add_diag(a::Matrix, v::Vector, c::Number) = add_diag!(copy(a), v, c)
 
+# inplace functions
+
+rcp{T<:Real}(x::T) = one(T) / x
+
+function rcp!{T<:Real}(x::Array{T})
+    a = one(T)
+    for i in 1 : length(x)
+        x[i] = a / x[i]
+    end
+    x
+end
+
+rcp{T<:Real}(x::Array{T}) = one(T) ./ x
+
+function sqrt!{T<:Real}(x::Array{T})
+    for i in 1 : length(x)
+        x[i] = sqrt(x[i])
+    end
+    x
+end
+
+function exp!{T<:Real}(x::Array{T})
+    for i in 1 : length(x)
+        x[i] = exp(x[i])
+    end
+    x
+end
+
+function log!{T<:Real}(x::Array{T})
+    for i in 1 : length(x)
+        x[i] = log(x[i])
+    end
+    x
+end
+
 
 
 
