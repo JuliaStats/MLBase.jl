@@ -92,7 +92,7 @@ Here, when the *gain* is greater than 1, it means that the MLBase function is fa
 
 The reduction is implemented based on a generic framework (see ``src/vecreduc.jl``) and thus can be easily extended. Also, this package does not provide functions to perform reduction over a single vector, because the reduction functions in Julia are efficient enough for single vectors.
 
-## Vector-norms
+## Vector-norms and normalization
 
 Built on top the efficient reduction framework, this package also provides functions to compute vector norms and perform normalization.
 
@@ -102,6 +102,49 @@ vdiffnorm(x, y, p, dim)   # compute L-p norms for differences between columns/ro
 ```
 
 **Note:** When ``p`` is ``1``, ``2``, or ``Inf``, specialized routines are used for efficient computation. Also, ``vdiffnorm(x, y, p, dim)`` is functionally equivalent to ``vnorm(x - y, p, dim)``, but it uses de-vectorized implementation and does not explicitly construct the matrix ``x - y``, and thus is more efficient.
+
+```julia
+normalize!(x, p)        # normalize a vector inplace (by L-p norm)
+normalize(x, p)         # returns a normalized vector (by L-p norm)
+
+normalize!(x, p, dim)   # normalize each column/row in place
+normalize(x, p, dim)    # returns a new matrix comprised of normalized columns/rows
+```
+
+
+## Integer-related Tools
+
+#### Integer counting
+
+Machine learning algorithms often requires handling integer indices or labels. This package provides some functions to facilitate such tasks.
+
+```julia
+icounts(k, x)    # return a counting vector c of length k, 
+                 # such that c[i] equals nnz(x == i), i.e. the number of times i appears in x
+
+icounts(3, [1, 2, 2, 3, 3, 3, 3])  # ==> [1, 3, 4]
+
+icounts2(m, n, x, y)   # returns a counting matrix of size (m, n),
+                       # such that c[i,j] equals nnz((x .== i) && (y .== j))
+
+icounts2(2, 2, [1, 1, 2, 2, 1], [1, 1, 1, 2, 2]) #=> [2 1; 1 1]
+```
+
+One can also add weights to each sample, as
+
+```julia
+wcounts(k, x, w)    # return a weighted counting vector for x
+
+wcounts(2, [1, 1, 2], [3.0, 2.0, 1.0])  # ===> [5.0, 1.0]
+
+wcounts(m, n, x, y, w)   # returns a 2D counting matrix
+```
+
+
+
+
+
+
 
 
 
