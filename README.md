@@ -73,12 +73,11 @@ vsqdiffsum!(r, x, y, dim), vsqdiffsum(x, y, dim)  # sum of squared differences
 
 **Note:** These functions are implemented efficiently. In particular, (1) all computation are carefully de-vectorized and thus no intermediate arrays are created, and (2) the computation is conducted in a cache-friendly order. This leads to considerably faster code than vectorized Julia expressions. For example, ``vasum(x, 2)`` is about ``9x`` faster than ``sum(abs(x), 2)``.
 
-The script ``test/bench_vreduc`` performs benchmarks that compare the performance of these functions with typical Julia vectorized expressions. Below are the results we obtained on a MacBook Pro (with *Julia v0.2.0*, each run over ``2000 x 2000`` matrices for ``10`` times):
+The script ``test/bench_vreduc`` performs benchmarks that compare the performance of these functions with typical Julia vectorized expressions. Below are the results we obtained on a MacBook Pro (with *Julia v0.2.0*, each run over ``2000 x 2000`` matrices for ``9`` times):
 
-| MLBase function | Julia expression    | gain |
-|-----------------|---------------------|------|
-| vsum(x, 1)      | sum(x, 1)           | 1.05 |
-| vsum(x, 2)      | sum(x, 2)           | 5.84 |
+| MLBase function | Julia expression    | gain || MLBase function | Julia expression    | gain |
+|-----------------|---------------------|------||-----------------|---------------------|------|
+| vsum(x, 1)      | sum(x, 1)           | 1.05 || vsum(x, 2)      | sum(x, 2)           | 5.84 |
 | vmean(x, 1)     | mean(x, 1)          | 1.04 |
 | vmean(x, 2)     | mean(x, 2)          | 5.96 |
 | vmax(x, 1)      | max(x, (), 1)       | 1.80 |
@@ -97,6 +96,8 @@ The script ``test/bench_vreduc`` performs benchmarks that compare the performanc
 | vdot(x, y, 2)   | sum(x .* y, 2)      | 8.91 |
 | vsqdiffsum(x, y, 1) | sum(abs2(x - y), 1) | 3.39 |
 | vsqdiffsum(x, y, 2) | sum(abs2(x - y), 2) | 5.11 |
+
+Here, when the *gain* is greater than 1, it means that the MLBase function is faster than the Julia vectorized expression.
 
 The reduction is implemented based on a generic framework (see ``src/vecreduc.jl``) and thus can be easily extended. Also, this package does not provide functions to perform reduction over a single vector, because the reduction functions in Julia are efficient enough for single vectors.
 
