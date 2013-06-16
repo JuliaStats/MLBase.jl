@@ -14,10 +14,7 @@ module MLBase
         vdot!, vdot, vsqdiffsum!, vsqdiffsum,
 
         # norms
-        vnorm!, vnorm, vdiffnorm!, vdiffnorm,
-        
-        # sampling_tools
-        sample_by_weights, sample_without_replacement
+        vnorm!, vnorm, vdiffnorm!, vdiffnorm        
 
 
     # common tools
