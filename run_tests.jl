@@ -1,5 +1,5 @@
 
-tests = ["vecarith", "vecreduc", "norms"]
+tests = ["vecarith", "vecreduc", "norms", "pdmat"]
 
 for t in tests
 	fp = joinpath("test", "test_$t.jl")
