@@ -75,27 +75,18 @@ vsqdiffsum!(r, x, y, dim), vsqdiffsum(x, y, dim)  # sum of squared differences
 
 The script ``test/bench_vreduc`` performs benchmarks that compare the performance of these functions with typical Julia vectorized expressions. Below are the results we obtained on a MacBook Pro (with *Julia v0.2.0*, each run over ``2000 x 2000`` matrices for ``9`` times):
 
-| MLBase function | Julia expression    | gain || MLBase function | Julia expression    | gain |
-|-----------------|---------------------|------||-----------------|---------------------|------|
-| vsum(x, 1)      | sum(x, 1)           | 1.05 || vsum(x, 2)      | sum(x, 2)           | 5.84 |
-| vmean(x, 1)     | mean(x, 1)          | 1.04 |
-| vmean(x, 2)     | mean(x, 2)          | 5.96 |
-| vmax(x, 1)      | max(x, (), 1)       | 1.80 |
-| vmax(x, 2)      | max(x, (), 2)       | 3.07 |
-| vmin(x, 1)      | min(x, (), 1)       | 1.73 |
-| vmin(x, 2)      | min(x, (), 2)       | 3.37 |
-| vasum(x, 1)     | sum(abs(x), 1)      | 5.25 |
-| vasum(x, 2)     | sum(abs(x), 2)      | 9.15 |
-| vamax(x, 1)     | max(abs(x), (), 1)  | 3.16 |
-| vamax(x, 2)     | max(abs(x), (), 2)  | 4.46 |
-| vamin(x, 1)     | min(abs(x), (), 1)  | 3.18 |
-| vamin(x, 2)     | min(abs(x), (), 2)  | 4.40 |
-| vsqsum(x, 1)    | sum(abs2(x), 1)     | 6.46 |
-| vsqsum(x, 2)    | sum(abs2(x), 2)     | 9.28 |
-| vdot(x, y, 1)   | sum(x .* y, 1)      | 5.15 |
-| vdot(x, y, 2)   | sum(x .* y, 2)      | 8.91 |
-| vsqdiffsum(x, y, 1) | sum(abs2(x - y), 1) | 3.39 |
-| vsqdiffsum(x, y, 2) | sum(abs2(x - y), 2) | 5.11 |
+| MLBase function | Julia expression    | gain | MLBase function | Julia expression    | gain |
+|-----------------|---------------------|------|-----------------|---------------------|------|
+| vsum(x, 1)      | sum(x, 1)           | 1.05 | vsum(x, 2)      | sum(x, 2)           | 5.84 |
+| vmean(x, 1)     | mean(x, 1)          | 1.04 | vmean(x, 2)     | mean(x, 2)          | 5.96 |
+| vmax(x, 1)      | max(x, (), 1)       | 1.80 | vmax(x, 2)      | max(x, (), 2)       | 3.07 |
+| vmin(x, 1)      | min(x, (), 1)       | 1.73 | vmin(x, 2)      | min(x, (), 2)       | 3.37 |
+| vasum(x, 1)     | sum(abs(x), 1)      | 5.25 | vasum(x, 2)     | sum(abs(x), 2)      | 9.15 |
+| vamax(x, 1)     | max(abs(x), (), 1)  | 3.16 | vamax(x, 2)     | max(abs(x), (), 2)  | 4.46 |
+| vamin(x, 1)     | min(abs(x), (), 1)  | 3.18 | vamin(x, 2)     | min(abs(x), (), 2)  | 4.40 |
+| vsqsum(x, 1)    | sum(abs2(x), 1)     | 6.46 | vsqsum(x, 2)    | sum(abs2(x), 2)     | 9.28 |
+| vdot(x, y, 1)   | sum(x .* y, 1)      | 5.15 | vdot(x, y, 2)   | sum(x .* y, 2)      | 8.91 |
+| vsqdiffsum(x, y, 1) | sum(abs2(x - y), 1) | 3.39 | vsqdiffsum(x, y, 2) | sum(abs2(x - y), 2) | 5.11 |
 
 Here, when the *gain* is greater than 1, it means that the MLBase function is faster than the Julia vectorized expression.
 
