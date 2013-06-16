@@ -33,6 +33,10 @@ x = rand(3, 5)
 xt = x'
 x1 = rand(3)
 
+@test_approx_eq full(a * 2.0) full(a) * 2.0
+@test_approx_eq full(a / 2.0) full(a) / 2.0
+@test full(a * 2.0) == full(2.0 * a)
+
 @test_approx_eq a * x full(a) * x
 @test_approx_eq a \ x full(a) \ x
 
@@ -92,6 +96,10 @@ r = inv(a)
 x = rand(3, 5)
 xt = x'
 x1 = rand(3)
+
+@test_approx_eq full(a * 2.0) full(a) * 2.0
+@test_approx_eq full(a / 2.0) full(a) / 2.0
+@test full(a * 2.0) == full(2.0 * a)
 
 @test_approx_eq a * x full(a) * x
 @test_approx_eq a \ x full(a) \ x
@@ -153,6 +161,10 @@ x = rand(3, 5)
 xt = x'
 x1 = rand(3)
 
+@test_approx_eq full(a * 2.0) full(a) * 2.0
+@test_approx_eq full(a / 2.0) full(a) / 2.0
+@test full(a * 2.0) == full(2.0 * a)
+
 @test_approx_eq a * x full(a) * x
 @test_approx_eq a \ x full(a) \ x
 
@@ -190,5 +202,108 @@ r = xt * (full(a) \ x)
 @test_approx_eq X_invA_Xt(a, xt) r
 
 
+### Addition ###
+
+va = [1.5, 2.5, 2.0]
+C = [4. -2. -1.; -2. 5. -1.; -1. -1. 6.]
+
+pm = PDMat(copy(C))
+pd = PDiagMat(copy(va))
+ps = ScalMat(3, 2.0)
+
+A = rand(3, 3)
+
+# bewteen pdmat and mat
+
+@test_approx_eq pm + A full(pm) + A
+@test_approx_eq pd + A full(pd) + A
+@test_approx_eq ps + A full(ps) + A
+
+@test (pm + A) == (A + pm)
+@test (pd + A) == (A + pd)
+@test (ps + A) == (A + ps)
+
+Ac = copy(A); add!(Ac, pm) 
+@test_approx_eq Ac A + pm
+
+Ac = copy(A); add!(Ac, pd) 
+@test_approx_eq Ac A + pd
+
+Ac = copy(A); add!(Ac, ps) 
+@test_approx_eq Ac A + ps
+
+@test_approx_eq add_scal(A, pm, 2.) A + full(pm) * 2.
+@test_approx_eq add_scal(A, pd, 2.) A + full(pd) * 2.
+@test_approx_eq add_scal(A, ps, 2.) A + full(ps) * 2.
+
+# between pd-matrices
+
+@test isa(pm + pm, PDMat)
+@test_approx_eq full(pm + pm) full(pm) + full(pm)
+
+@test isa(pm + pd, PDMat)
+@test_approx_eq full(pm + pd) full(pm) + full(pd)
+
+@test isa(pm + ps, PDMat)
+@test_approx_eq full(pm + ps) full(pm) + full(ps)
+
+@test isa(pd + pm, PDMat)
+@test_approx_eq full(pd + pm) full(pd) + full(pm)
+
+@test isa(pd + pd, PDiagMat)
+@test_approx_eq full(pd + pd) full(pd) + full(pd)
+
+@test isa(pd + ps, PDiagMat)
+@test_approx_eq full(pd + ps) full(pd) + full(ps)
+
+@test isa(ps + pm, PDMat)
+@test_approx_eq full(ps + pm) full(ps) + full(pm)
+
+@test isa(ps + pd, PDiagMat)
+@test_approx_eq full(ps + pd) full(ps) + full(pd)
+
+@test isa(ps + ps, ScalMat)
+@test_approx_eq full(ps + ps) full(ps) + full(ps)
+
+@test isequal(pm.mat, C)
+@test isequal(pd.diag, va)
+
+# add scaled
+
+r = add_scal(pm, pm, 2.0)
+@test isa(r, PDMat)
+@test_approx_eq full(r) full(pm) + full(pm) * 2.0
+
+r = add_scal(pm, pd, 2.0)
+@test isa(r, PDMat)
+@test_approx_eq full(r) full(pm) + full(pd) * 2.0
+
+r = add_scal(pm, ps, 2.0)
+@test isa(r, PDMat)
+@test_approx_eq full(r) full(pm) + full(ps) * 2.0
+
+r = add_scal(pd, pm, 2.0)
+@test isa(r, PDMat)
+@test_approx_eq full(r) full(pd) + full(pm) * 2.0
+
+r = add_scal(pd, pd, 2.0)
+@test isa(r, PDiagMat)
+@test_approx_eq full(r) full(pd) + full(pd) * 2.0
+
+r = add_scal(pd, ps, 2.0)
+@test isa(r, PDiagMat)
+@test_approx_eq full(r) full(pd) + full(ps) * 2.0
+
+r = add_scal(ps, pm, 2.0)
+@test isa(r, PDMat)
+@test_approx_eq full(r) full(ps) + full(pm) * 2.0
+
+r = add_scal(ps, pd, 2.0)
+@test isa(r, PDiagMat)
+@test_approx_eq full(r) full(ps) + full(pd) * 2.0
+
+r = add_scal(ps, ps, 2.0)
+@test isa(r, ScalMat)
+@test_approx_eq full(r) full(ps) + full(ps) * 2.0
 
 

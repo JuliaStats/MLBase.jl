@@ -1,7 +1,7 @@
 module MLBase
 
     # import of base functions to be extended
-    import Base.show, Base.logdet, Base.full, Base.inv, Base.+, Base.*, Base./
+    import Base.show, Base.logdet, Base.full, Base.inv, Base.+, Base.*, Base.\, Base./
 
     # import of useful BLAS & LAPACK routines
     import Base.LinAlg.BLAS.axpy!, Base.LinAlg.BLAS.nrm2
@@ -30,7 +30,7 @@ module MLBase
 
         # pdmat
         AbstractPDMat, PDMat, PDiagMat, ScalMat, 
-        dim, full, whiten, whiten!, unwhiten, unwhiten!,
+        dim, full, whiten, whiten!, unwhiten, unwhiten!, add_scal!, add_scal,
         quad, quad!, invquad, invquad!, X_A_Xt, Xt_A_X, X_invA_Xt, Xt_invA_X
 
 
