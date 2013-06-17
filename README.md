@@ -140,7 +140,7 @@ wcounts(2, [1, 1, 2], [3.0, 2.0, 1.0])  # ===> [5.0, 1.0]
 wcounts2(m, n, x, y, w)   # returns a 2D counting matrix
 ```
 
-### Index arrangement
+#### Index arrangement
 
 In machine learning, specially supervised learning, it is often needed to find the indices of samples corresponding to each class. The functions as described below would be helpful.
 
@@ -168,26 +168,83 @@ z, c = sort_indices(k, labels)
 g = sorted_indices_to_groups(z, c)
 ```
 
+#### Repeating numbers
+
+The following function generates elements based on counts (kind of like the *inverse* of counting):
+
+```julia
+repeat_eachelem(x, c)      # generate a vector comprised of each element in x, 
+                           # each repeated for specified number of times
+
+repeat_eachelem(1:3, 4)        # ==> [1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3]
+repeat_eachelem(1:3, [1,2,3])  # ==> [1, 2, 2, 3, 3, 3]
+
+repeat_eachelem([1.2, 2.3], [3, 2])  # ==> [1.2, 1.2, 1.2, 2.3, 2.3]
+```
+
+This function is sometimes useful in generating a sequence of labels.
 
 
+## Computation on positive definite matrix
 
+Positive definite matrices are widely used in machine learning and probabilistic modeling, especially in applications related to graph analysis and Gaussian models. It is not uncommon that positive definite matrices used in practice have special structures (e.g. diagonal), which can be exploited to accelerate computation. 
 
+This package defines an abstract type ``AbstractPDMat`` to capture positive definite matrices of various structures, as well as three concrete sub-types: ``PDMat``, ``PDiagMat``, ``ScalMat``, which can be constructed as follows
 
+```julia
+PDMat(C)         # a wrapper of the positive definite matrix C, as a sub-type of AbstractPDMat
+PDiagMat(v)      # corresponds to diagm(v)
+Scalmat(d, v)    # corresponds to v * eye(d)
+```
 
+**Note:** Compact representation is used internally. For example, an instance of ``PDiagMat`` only contains a vector of diagonal elements instead of the full diagonal matrix, and ``ScalMat`` only contains a scalar value. While, for ``PDMat``, a Cholesky factorization is computed and contained in the instance for efficient computation.
 
+Let ``a`` be an instance of one of the classes above, one can perform following operation on ``a``:
 
+```julia
+dim(a)       # the dimension of the matrix. If it is a d x d matrix, this returns d
+full(a)      # the full matrix
+inv(a)       # the inverse (which is still an instance of the same type)
+logdet(a)    # log-determinant
 
+a * x          # matrix-vector/matrix multiplication when x is a vector/matrix
+a \ x          # equivalent to inv(a) * x, but implemented in a more efficient way
+a * c, c * a   # multiply a by a scalar (the result is of the same type)
 
+unwhiten(a, x)   # unwhiten transform, if x satisfies a standard Gaussian distribution,
+                 # then unwhiten(a, x) has a distribution of covariance a
+                 # Here, x can be either a vector or a matrix
 
+whiten(a, x)     # inverse operation w.r.t. unwhiten
 
+unwhiten!(a, x)  # inplace unwhiten
+whiten!(a, x)    # inplace whiten
 
+quad(a, x)       # compute x' * a * x in an efficient way, x can be a vector or a matrix
+                 # if x is a matrix, it perform column-wise computation
+                 # that is, it returns r, with r[i] == x[:,i]' * a * x[:,i]
 
+invquad(a, x)    # compute x' * inv(a) * x in an efficient way, x can be a vector or a matrix
+                 # if x is a matrix, it performs column-wise computation
 
+quad!(r, a, x)      # inplace column-wise quadratic form computation for matrix x
+invquad!(r, a, x)   # inplace column-wise quadratic form computation (w.r.t. inv(a)) for matrix x
 
+X_A_Xt(a, x)        # computes x * a * x' for matrix x
+Xt_A_X(a, x)        # computes x' * a * x for matrix x
+X_invA_Xt(a, x)     # computes x * inv(a) * x' for matrix x
+Xt_invA_X(a, x)     # computes x' * inv(a) * x for matrix x
 
+a1 + a2          # add two positive definite matrices (promoted to a proper type)
+a + m            # add a positive definite matrix and an ordinary matrix (returns an ordinary matrix)
 
+add!(m, a)           # add the positive definite matrix a to an ordinary matrix m (inplace)
+add_scal!(m, a, c)   # add a scaled version a * c to an ordinary matrix m (inplace)
+add_scal(a1, a2, c)  # returns a1 + a2 * c (promoted to a proper type)
+```
 
+Specialized version of each of these functions are implemented for each specific postive matrix types using the most efficient routine (depending on the corresponding structures.)
 
-
+**Note:** This framework provides uniform interfaces to use positive definite matrices of various structures for writing generic algorithms, while ensuring that the most efficient implementation is used in actual computation.
 
 
