@@ -137,8 +137,39 @@ wcounts(k, x, w)    # return a weighted counting vector for x
 
 wcounts(2, [1, 1, 2], [3.0, 2.0, 1.0])  # ===> [5.0, 1.0]
 
-wcounts(m, n, x, y, w)   # returns a 2D counting matrix
+wcounts2(m, n, x, y, w)   # returns a 2D counting matrix
 ```
+
+### Index arrangement
+
+In machine learning, specially supervised learning, it is often needed to find the indices of samples corresponding to each class. The functions as described below would be helpful.
+
+```julia
+k = 3               # the number of classes
+labels = [1, 1, 2, 2, 2, 3, 3, 1, 1]    
+
+z, c = sort_indices(k, labels)    # explained below
+
+println(z)     # ==> [1, 2, 8, 9, 3, 4, 5, 6, 7]
+println(cnts)  # ==> [4, 3, 2]
+```
+
+Here, ``z`` is the vector of sorted indices, and ``cnts`` are the counts of each label. Then, ``z[1:4] == [1, 2, 8, 9]`` are the indices corresponding to label ``1``; ``z[5:7] == [3, 4, 5]`` are the indices for label ``2``; and ``z[8:9] == [6, 7]`` are the indices for label ``3``. One can make this grouping explicit using ``group_indices`` as below:
+
+```julia
+g = group_indices(k, labels)   # returns a vector comprised of three vectors
+
+g[1]   # ==> [1, 2, 8, 9]
+g[2]   # ==> [3, 4, 5]
+g[3]   # ==> [6, 7]
+
+ # the above is equivalent to
+z, c = sort_indices(k, labels)
+g = sorted_indices_to_groups(z, c)
+```
+
+
+
 
 
 
