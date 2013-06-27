@@ -1,5 +1,8 @@
 module MLBase
+
     export
+        @check_argdims,
+
         # intstats
         add_icounts!, icounts, add_icounts2!, icounts2,
         add_wcounts!, wcounts, add_wcounts2!, wcounts2,
