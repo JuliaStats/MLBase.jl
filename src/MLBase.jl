@@ -24,5 +24,6 @@ module MLBase
     # components
 
     include("intstats.jl")
+    include("options.jl")
 
 end
