@@ -9,9 +9,12 @@ module MLBase
         sort_indices, sorted_indices_to_groups, group_indices,
         repeat_eachelem,
 
-        # options
+        # iteroptim
+        IterOptimProblem, IterOptimSolution, IterOptimOptions, IterOptimInfo, iter_optim!, 
+        objective, update!, initialize, solve,
         VERBOSE_NONE, VERBOSE_PROC, VERBOSE_ITER, VERBOSE_STEP, VERBOSE_DETAIL,
         verbosity_level
+        
 
     # common tools
 
@@ -24,6 +27,6 @@ module MLBase
     # components
 
     include("intstats.jl")
-    include("options.jl")
+    include("iteroptim.jl")
 
 end
