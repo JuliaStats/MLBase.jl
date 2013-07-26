@@ -49,12 +49,12 @@ immutable IterOptimInfo
 	end
 end
 
-function iter_optim!(problem::IterOptimProblem, solution, maxiter::Integer, tol::Real, monitor::IterOptimMonitor)
+function iter_optim!(problem::IterOptimProblem, state, maxiter::Integer, tol::Real, monitor::IterOptimMonitor)
 	# preamble
 
 	converged::Bool = false
 	it::Int = 0
-	objv = objective(problem, solution)
+	objv = objective(problem, state)
 
 	on_initialized(monitor, objv)
 
@@ -64,11 +64,11 @@ function iter_optim!(problem::IterOptimProblem, solution, maxiter::Integer, tol:
 		it += 1
 
 		# perform update (inplace)
-		update!(problem, solution)
+		update!(problem, state)
 
 		# decide convergence
 		objv_pre = objv
-		objv = objective(problem, solution)
+		objv = objective(problem, state)
 		converged = abs(objv - objv_pre) < tol
 
 		on_iteration(monitor, it, objv, objv - objv_pre)
@@ -116,9 +116,9 @@ end
 
 # convenient functions
 
-function iter_optim!(problem::IterOptimProblem, solution, maxiter::Integer, tol::Real, disp::Symbol)
+function iter_optim!(problem::IterOptimProblem, state, maxiter::Integer, tol::Real, disp::Symbol)
 	mon = StdIterOptimMonitor(verbosity_level(disp))
-	iter_optim!(problem, solution, maxiter, tol, mon)
+	iter_optim!(problem, state, maxiter, tol, mon)
 end
 
 
