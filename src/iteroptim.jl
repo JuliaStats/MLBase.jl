@@ -49,6 +49,31 @@ immutable IterOptimInfo
 	end
 end
 
+
+function iter_optim!(problem::IterOptimProblem, state, maxiter::Integer, tol::Real)
+	# preamble
+
+	converged::Bool = false
+	it::Int = 0
+	objv = objective(problem, state)
+
+	# main loop
+
+	while !converged && it < maxiter
+		it += 1
+
+		# perform update (inplace)
+		update!(problem, state)
+
+		# decide convergence
+		objv_pre = objv
+		objv = objective(problem, state)
+		converged = abs(objv - objv_pre) < tol
+	end
+
+	return IterOptimInfo(objv, converged, it)
+end
+
 function iter_optim!(problem::IterOptimProblem, state, maxiter::Integer, tol::Real, monitor::IterOptimMonitor)
 	# preamble
 
