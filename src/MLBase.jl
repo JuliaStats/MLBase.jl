@@ -10,7 +10,8 @@ module MLBase
         repeat_eachelem,
 
         # iteroptim
-        IterOptimProblem, IterOptimSolution, IterOptimOptions, IterOptimInfo, iter_optim!, 
+        IterOptimProblem, IterOptimMonitor, IterOptimInfo, iter_optim!, 
+        on_initialized, on_iteration, on_finished,
         objective, update!, initialize, solve,
         VERBOSE_NONE, VERBOSE_PROC, VERBOSE_ITER, VERBOSE_STEP, VERBOSE_DETAIL,
         verbosity_level
