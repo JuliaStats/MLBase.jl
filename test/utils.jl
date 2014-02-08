@@ -15,6 +15,8 @@ a = rand(4, 3)
 @test repeachcol(a, 2) == a[:, [1,1,2,2,3,3]]
 @test repeachcol(a, 1:3) == a[:, [1,2,2,3,3,3]]
 
+# repeachrow
+
 a = rand(3, 4)
 @test repeachrow(a, 2) == a[[1,1,2,2,3,3], :]
 @test repeachrow(a, 1:3) == a[[1,2,2,3,3,3], :]

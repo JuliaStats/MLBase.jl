@@ -3,18 +3,19 @@
 using MLBase
 using Base.Test
 
-# repeach
+# labelmap & labelencode
 
-@test repeach(2:4, 2) == [2, 2, 3, 3, 4, 4]
-@test repeach(2:4, 1:3) == [2, 3, 3, 4, 4, 4]
+xs = ["a", "a", "b", "b", "a", "b", "c", "a"]
+labels = [1, 1, 2, 2, 1, 2, 3, 1]
+lmap = labelmap(xs)
 
-# repeachcol
+@test keys(lmap) == ["a", "b", "c"]
+@test labelencode(lmap, xs) == labels
 
-a = rand(4, 3)
-@test repeachcol(a, 2) == a[:, [1,1,2,2,3,3]]
-@test repeachcol(a, 1:3) == a[:, [1,2,2,3,3,3]]
+# groupindices
 
-a = rand(3, 4)
-@test repeachrow(a, 2) == a[[1,1,2,2,3,3], :]
-@test repeachrow(a, 1:3) == a[[1,2,2,3,3,3], :]
+gs = {[1,2,5,8],[3,4,6],[7]}
+
+@test groupindices(3, labels) == gs
+@test groupindices(lmap, xs) == gs
 
