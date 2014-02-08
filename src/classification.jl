@@ -48,7 +48,7 @@ labelencode{T}(lmap::LabelMap{T}, xs::AbstractArray{T}) =
 
 # group labels
 
-function groupindices{I<:Integer}(k::Int, xs::AbstractArray{I}; warning::Bool=true)
+function groupindices(k::Int, xs::IntegerVector; warning::Bool=true)
     gs = Array(Vector{Int}, k)
     for i = 1:k
         gs[i] = Int[]

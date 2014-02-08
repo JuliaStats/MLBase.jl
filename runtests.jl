@@ -1,5 +1,5 @@
 
-tests = ["utils", "labelmani"]
+tests = ["utils", "classification"]
 
 for t in tests
 	fp = joinpath("test", "$t.jl")

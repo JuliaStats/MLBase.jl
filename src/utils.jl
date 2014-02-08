@@ -15,7 +15,7 @@ function repeach{T}(x::AbstractVector{T}, n::Integer)
     return r
 end
 
-function repeach{T,I<:Integer}(x::AbstractVector{T}, ns::AbstractVector{I})
+function repeach{T}(x::AbstractVector{T}, ns::IntegerVector)
     k = length(x)
     length(ns) == k || throw(DimensionMismatch("length(ns) should be equal to k."))
     r = Array(T, sum(ns))
@@ -46,7 +46,7 @@ function repeachcol{T}(x::DenseArray{T,2}, n::Integer)
     return r
 end
 
-function repeachcol{T,I<:Integer}(x::DenseArray{T,2}, ns::AbstractVector{I})
+function repeachcol{T}(x::DenseArray{T,2}, ns::IntegerVector)
     m = size(x, 1)
     k = size(x, 2)
     r = zeros(T, m, sum(ns))
@@ -80,7 +80,7 @@ function repeachrow{T}(x::DenseArray{T,2}, n::Integer)
     return r
 end
 
-function repeachrow{T,I<:Integer}(x::DenseArray{T,2}, ns::AbstractVector{I})
+function repeachrow{T}(x::DenseArray{T,2}, ns::IntegerVector)
     k = size(x, 1)
     m = size(x, 2)
     r = Array(T, sum(ns), m)

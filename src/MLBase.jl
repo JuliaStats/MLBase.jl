@@ -4,6 +4,7 @@ module MLBase
     using StatsBase
 
     import Base: length, show, keys
+    import StatsBase: RealVector, IntegerVector, RealMatrix, IntegerMatrix
 
     export
 
@@ -14,11 +15,11 @@ module MLBase
     # utils
     repeach, repeachcol, repeachrow,
         
-    # labelmani
+    # classification
     LabelMap, labelmap, labelencode, groupindices
 
     # source files
 
     include("utils.jl")
-    include("labelmani.jl")
+    include("classification.jl")
 end
