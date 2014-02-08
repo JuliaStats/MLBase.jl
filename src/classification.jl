@@ -22,6 +22,38 @@ end
 
 classify(x::RealMatrix; to_max::Bool=true) = classify!(Array(Int, size(x,2)), x; to_max=to_max)
 
+function thresholded_classify(x::RealVector, t::Real; to_max::Bool=true)
+    if to_max
+        i = indmax(x)
+        return ifelse(x[i] >= t, i, 0)
+    else
+        i = indmin(x)
+        return ifelse(x[i] <= t, i, 0)
+    end
+end
+
+function thresholded_classify!(r::IntegerVector, x::RealMatrix, t::Real; to_max::Bool=true)
+    m = size(x, 1)
+    n = size(x, 2)
+    length(r) == n || throw(DimensionMismatch("Mismatched length of r."))
+    if to_max
+        for j = 1:n
+            (v, i) = findmax(view(x, :, j))
+            @inbounds r[j] = ifelse(v >= t, i, 0)
+        end
+    else
+        for j = 1:n
+            (v, i) = findmin(view(x, :, j))
+            @inbounds r[j] = ifelse(v <= t, i, 0)
+        end
+    end
+    return r
+end
+
+thresholded_classify(x::RealMatrix, t::Real; to_max::Bool=true) = 
+    thresholded_classify!(Array(Int, size(x,2)), x, t; to_max=to_max)
+
+
 ## label map
 
 immutable LabelMap{K}

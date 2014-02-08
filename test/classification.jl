@@ -5,13 +5,32 @@ using Base.Test
 
 # classify
 
-ss = rand(8, 10)
-ss1 = ss[:,1]
-@test classify(ss1) == indmax(ss1)
-@test classify(ss1; to_max=false) == indmin(ss1)
+ss = rand(8, 50)
+for i = 1:size(ss,2)
+	@test classify(ss[:,i]) == indmax(ss[:,i])
+	@test classify(ss[:,i]; to_max=false) == indmin(ss[:,i])
+end
 
-@test classify(ss) == Int[indmax(ss[:,i]) for i = 1:size(ss,2)]
-@test classify(ss; to_max=false) == Int[indmin(ss[:,i]) for i = 1:size(ss,2)]
+rmax = Int[indmax(ss[:,i]) for i = 1:size(ss,2)]
+rmin = Int[indmin(ss[:,i]) for i = 1:size(ss,2)]
+@test classify(ss) == rmax
+@test classify(ss; to_max=false) == rmin
+
+# thresholded classify
+
+maxs = vec(maximum(ss, 1))
+mins = vec(minimum(ss, 1))
+
+trmax = rmax; trmax[maxs .< 0.8] = 0
+trmin = rmin; trmin[mins .> 0.2] = 0
+
+for i = 1:size(ss,2)
+	@test thresholded_classify(ss[:,i], 0.8) == trmax[i]
+	@test thresholded_classify(ss[:,i], 0.2; to_max=false) == trmin[i]
+end
+
+@test thresholded_classify(ss, 0.8) == trmax
+@test thresholded_classify(ss, 0.2; to_max=false) == trmin
 
 # labelmap & labelencode
 

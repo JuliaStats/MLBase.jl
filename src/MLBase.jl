@@ -17,7 +17,7 @@ module MLBase
     counteq, countne, 
         
     # classification
-    classify, 
+    classify, thresholded_classify,
     LabelMap, labelmap, labelencode, groupindices,
 
     # perfeval
