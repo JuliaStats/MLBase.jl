@@ -16,6 +16,7 @@ module MLBase
     repeach, repeachcol, repeachrow,
         
     # classification
+    classify, 
     LabelMap, labelmap, labelencode, groupindices
 
     # source files
