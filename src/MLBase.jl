@@ -8,8 +8,8 @@ module MLBase
     export
 
     # reexport some functions from StatsBase
-    counts, accounts!, countmap, indicatormat, 
-    sample, weights, WeightVec, wmean,
+    counts, accounts!, countmap, proportions, 
+    indicatormat, sample, weights, WeightVec, wmean,
 
     # utils
     repeach, repeachcol, repeachrow,
