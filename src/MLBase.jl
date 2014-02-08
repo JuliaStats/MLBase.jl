@@ -14,13 +14,18 @@ module MLBase
 
     # utils
     repeach, repeachcol, repeachrow,
+    counteq, countne, 
         
     # classification
     classify, 
-    LabelMap, labelmap, labelencode, groupindices
+    LabelMap, labelmap, labelencode, groupindices,
+
+    # perfeval
+    correctrate, errorrate
 
     # source files
 
     include("utils.jl")
     include("classification.jl")
+    include("perfeval.jl")
 end

@@ -97,3 +97,29 @@ function repeachrow{T}(x::DenseArray{T,2}, ns::IntegerVector)
     return r
 end
 
+## count the number of equal/non-equal pairs
+
+function counteq(a::IntegerVector, b::IntegerVector)
+    n = length(a)
+    length(b) == n || throw(DimensionMismatch("Inconsistent lengths."))
+    c = 0
+    for i = 1:n
+        if a[i] == b[i]
+            c += 1
+        end
+    end
+    return c
+end
+
+function countne(a::IntegerVector, b::IntegerVector)
+    n = length(a)
+    length(b) == n || throw(DimensionMismatch("Inconsistent lengths."))
+    c = 0
+    for i = 1:n
+        if a[i] != b[i]
+            c += 1
+        end
+    end
+    return c
+end
+

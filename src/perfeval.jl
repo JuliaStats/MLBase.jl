@@ -1,8 +1,7 @@
 # Performance evaluation
 
-function correctrate{I<:Integer}(gt::AbstractVector{I}, r::AbstractVector{I})
-	n = length(gt)
-	
-end
+## correctrate & errorrate
 
+correctrate(gt::IntegerVector, r::IntegerVector) = counteq(gt, r) / length(gt)
+errorrate(gt::IntegerVector, r::IntegerVector) = countne(gt, r) / length(gt)
 
