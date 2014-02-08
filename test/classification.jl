@@ -3,6 +3,16 @@
 using MLBase
 using Base.Test
 
+# classify
+
+ss = rand(8, 10)
+ss1 = ss[:,1]
+@test classify(ss1) == indmax(ss1)
+@test classify(ss1; to_max=false) == indmin(ss1)
+
+@test classify(ss) == Int[indmax(ss1[:,i]) for i = 1:size(ss,2)]
+@test classify(ss; to_max=false) == Int[indmin(ss1[:,i]) for i = 1:size(ss,2)]
+
 # labelmap & labelencode
 
 xs = ["a", "a", "b", "b", "a", "b", "c", "a"]

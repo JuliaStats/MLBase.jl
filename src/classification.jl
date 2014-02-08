@@ -1,5 +1,27 @@
 # manipulation of class labels
 
+## simple classification
+
+classify(x::RealVector; to_max::Bool=true) = to_max ? indmax(x) : indmin(x)
+
+function classify!(r::IntegerVector, x::RealMatrix; to_max::Bool=true)
+    m = size(x, 1)
+    n = size(x, 2)
+    length(r) == n || throw(DimensionMismatch("Mismatched length of r."))
+    if to_max
+        for j = 1:n
+            @inbounds r[j] = indmax(view(x, :, j))
+        end
+    else
+        for j = 1:n
+            @inbounds r[j] = indmin(view(x, :, j))
+        end
+    end
+    return r
+end
+
+classify(x::RealMatrix; to_max::Bool=true) = classify!(Array(Int, size(x,2)), x; to_max=to_max)
+
 ## label map
 
 immutable LabelMap{K}
@@ -39,14 +61,11 @@ function labelmap{T}(xs::AbstractArray{T})
 end
 
 # use a map to encode discrete values into labels
-
 labelencode{T}(lmap::LabelMap{T}, x) = lmap.v2i[convert(T, x)]
-
 labelencode{T}(lmap::LabelMap{T}, xs::AbstractArray{T}) = 
     reshape(Int[labelencode(lmap, x) for x in xs], size(xs))
 
-
-# group labels
+## group labels
 
 function groupindices(k::Int, xs::IntegerVector; warning::Bool=true)
     gs = Array(Vector{Int}, k)
