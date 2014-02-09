@@ -3,7 +3,7 @@ module MLBase
     using ArrayViews
     using StatsBase
 
-    import Base: length, show, keys, precision
+    import Base: length, show, keys, precision, getindex
     import StatsBase: RealVector, IntegerVector, RealMatrix, IntegerMatrix
 
     export

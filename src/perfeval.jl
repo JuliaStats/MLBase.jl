@@ -41,8 +41,12 @@ precision(x::ROCNums) = x.tp / (x.tp + x.fp)
 
 f1score(x::ROCNums) = (tp2 = x.tp + x.tp; tp2 / (tp2 + x.fp + x.fn) )
 
-# compute roc numbers based on prediction
-function rocnums(gt::IntegerVector, pr::IntegerVector)
+## rocnums
+
+_ispos(x::Bool) = x
+_ispos(x::Real) = x > zero(x)
+
+function _rocnums(gt::IntegerVector, pr)
     len = length(gt)
     length(pr) == len || throw(DimensionMismatch("Inconsistent lengths."))
 
@@ -56,7 +60,7 @@ function rocnums(gt::IntegerVector, pr::IntegerVector)
     for i = 1:len
         @inbounds gi = gt[i]
         @inbounds ri = pr[i]
-        if gi > 0   # gt = true
+        if _ispos(gi)   # gt = true
             p += 1
             if ri == gi
                 tp += 1
@@ -65,54 +69,60 @@ function rocnums(gt::IntegerVector, pr::IntegerVector)
             end
         else        # gt = false
             n += 1
-            if ri <= 0
-                tn += 1
-            else
+            if _ispos(ri)
                 fp += 1
+            else
+                tn += 1
             end
         end
     end
 
     return ROCNums{Int}(p, n, tp, tn, fp, fn)
 end
+
+# compute roc numbers based on prediction
+rocnums(gt::IntegerVector, pr::IntegerVector) = _rocnums(gt, pr)
 
 # compute roc numbers based on scores & threshold
-function rocnums(gt::IntegerVector, pr::IntegerVector, scores::RealVector, 
-        thres::Real, op::ToMaxOrMin)
-
-    len = length(gt)
-    length(pr) == length(scores) == len || 
-        throw(DimensionMismatch("Inconsistent dimensions."))
-
-    p = 0
-    n = 0
-    tp = 0
-    tn = 0
-    fp = 0
-    fn = 0
-
-    for i = 1:len
-        @inbounds gi = gt[i]        
-        @inbounds ri = ifelse(better(scores[i], thres, op), pr[i], 0)
-        if gi > 0   # gt = true
-            p += 1
-            if ri == gi
-                tp += 1
-            elseif ri == 0
-                fn += 1
-            end
-        else        # gt = false
-            n += 1
-            if ri <= 0
-                tn += 1
-            else
-                fp += 1
-            end
-        end
-    end
-
-    return ROCNums{Int}(p, n, tp, tn, fp, fn)
+immutable BinaryThresPredVec{ScoreVec<:RealVector,T,Op<:ToMaxOrMin}
+    scores::ScoreVec
+    thres::T
+    op::Op
 end
+
+BinaryThresPredVec{SVec<:RealVector,T<:Real,Op<:ToMaxOrMin}(scores::SVec, thres::T, op::Op) = 
+    BinaryThresPredVec{SVec,T,Op}(scores, thres, op)
+
+length(v::BinaryThresPredVec) = length(v.scores)
+getindex(v::BinaryThresPredVec, i::Integer) = better(v.scores[i], v.thres, v.op)
+
+rocnums(gt::IntegerVector, scores::RealVector, t::Real, op::ToMaxOrMin) = 
+    _rocnums(gt, BinaryThresPredVec(scores, t, op))
+
+rocnums(gt::IntegerVector, scores::RealVector, thres::Real) =
+    rocnums(gt, scores, thres, to_max())
+
+
+# compute roc numbers based on predictions & scores & threshold
+immutable ThresPredVec{PredVec<:IntegerVector,ScoreVec<:RealVector,T,Op<:ToMaxOrMin}
+    preds::PredVec
+    scores::ScoreVec
+    thres::T
+    op::Op
+end
+
+function ThresPredVec{PVec<:IntegerVector,SVec<:RealVector,T<:Real,Op<:ToMaxOrMin}(
+    preds::PVec, scores::SVec, thres::T, op::Op)
+    n = length(preds)
+    length(scores) == n || throw(DimensionMismatch("Inconsistent lengths."))
+    ThresPredVec{PVec,SVec,T,Op}(preds, scores, thres, op)
+end
+
+length(v::ThresPredVec) = length(v.preds)
+getindex(v::ThresPredVec, i::Integer) = ifelse(better(v.scores[i], v.thres, v.op), v.preds[i], 0)::Int
+
+rocnums(gt::IntegerVector, pr::IntegerVector, scores::RealVector, t::Real, op::ToMaxOrMin) = 
+    _rocnums(gt, ThresPredVec(pr, scores, t, op))
 
 rocnums(gt::IntegerVector, pr::IntegerVector, scores::RealVector, thres::Real) =
     rocnums(gt, pr, scores, thres, to_max())
