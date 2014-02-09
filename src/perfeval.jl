@@ -42,12 +42,12 @@ precision(x::ROCNums) = x.tp / (x.tp + x.fp)
 f1score(x::ROCNums) = (tp2 = x.tp + x.tp; tp2 / (tp2 + x.fp + x.fn) )
 
 
-## rocnums: produce a single instance of ROCNums from predictions
+## roc: produce a single instance of ROCNums from predictions
 
 _ispos(x::Bool) = x
 _ispos(x::Real) = x > zero(x)
 
-function _rocnums(gt::IntegerVector, pr)
+function _roc(gt::IntegerVector, pr)
     len = length(gt)
     length(pr) == len || throw(DimensionMismatch("Inconsistent lengths."))
 
@@ -82,7 +82,7 @@ function _rocnums(gt::IntegerVector, pr)
 end
 
 # compute roc numbers based on prediction
-rocnums(gt::IntegerVector, pr::IntegerVector) = _rocnums(gt, pr)
+roc(gt::IntegerVector, pr::IntegerVector) = _roc(gt, pr)
 
 ##
 #   BinaryThresPredVec immutates a vector:
@@ -104,11 +104,11 @@ length(v::BinaryThresPredVec) = length(v.scores)
 getindex(v::BinaryThresPredVec, i::Integer) = !lt(v.ord, v.scores[i], v.thres)
 
 # compute roc numbers based on scores & threshold
-rocnums(gt::IntegerVector, scores::RealVector, t::Real, ord::Ordering) = 
-    _rocnums(gt, BinaryThresPredVec(scores, t, ord))
+roc(gt::IntegerVector, scores::RealVector, t::Real, ord::Ordering) = 
+    _roc(gt, BinaryThresPredVec(scores, t, ord))
 
-rocnums(gt::IntegerVector, scores::RealVector, thres::Real) =
-    rocnums(gt, scores, thres, Forward)
+roc(gt::IntegerVector, scores::RealVector, thres::Real) =
+    roc(gt, scores, thres, Forward)
 
 ##
 #   ThresPredVec immutates a vector:
@@ -137,12 +137,98 @@ length(v::ThresPredVec) = length(v.preds)
 getindex(v::ThresPredVec, i::Integer) = ifelse(lt(v.ord, v.scores[i], v.thres), 0, v.preds[i])
 
 # compute roc numbers based on predictions & scores & threshold
-rocnums(gt::IntegerVector, pr::IntegerVector, scores::RealVector, t::Real, ord::Ordering) = 
-    _rocnums(gt, ThresPredVec(pr, scores, t, ord))
+roc(gt::IntegerVector, pr::IntegerVector, scores::RealVector, t::Real, ord::Ordering) = 
+    _roc(gt, ThresPredVec(pr, scores, t, ord))
 
-rocnums(gt::IntegerVector, pr::IntegerVector, scores::RealVector, thres::Real) =
-    rocnums(gt, pr, scores, thres, Forward)
+roc(gt::IntegerVector, pr::IntegerVector, scores::RealVector, thres::Real) =
+    roc(gt, pr, scores, thres, Forward)
 
 
 ## roc: produces a series of ROCNums instances with multiple thresholds
+
+# find_thresbin
+#
+#  x < threshold[1] --> 1
+#  threshold[i] <= x < threshold[i+1] --> i+1
+#  x >= threshold[n] --> n+1
+#
+function find_thresbin(x::Real, thresholds::RealVector, ord::Ordering)
+    n = length(thresholds)
+    r = 1
+    if !lt(ord, x, thresholds[1])
+        l = 1
+        r = n + 1
+        while l + 1 < r
+            m = (l + r) >> 1
+            if lt(ord, x, thresholds[m])
+                r = m
+            else
+                l = m
+            end
+        end
+    end
+    return r::Int
+end
+
+find_thresbin(x::Real, thresholds::RealVector) = find_thresbin(x, thresholds, Forward)
+
+lin_thresholds(scores::RealArray, n::Integer, ord::ForwardOrdering) = 
+    ((s0, s1) = extrema(scores); intv = (s1 - s0) / (n-1); s0:intv:s1)
+
+lin_thresholds(scores::RealArray, n::Integer, ord::ReverseOrdering{ForwardOrdering}) = 
+    ((s0, s1) = extrema(scores); intv = (s0 - s1) / (n-1); s1:intv:s0)
+
+function roc(gt::IntegerVector, scores::RealVector, thresholds::RealVector, ord::Ordering)
+    issorted(thresholds, ord) || error("thresholds must be sorted w.r.t. the given ordering.")
+
+    ns = length(scores)
+    nt = length(thresholds)
+
+    # scan scores and classify them into bins
+    hp = zeros(Int, nt + 1)
+    hn = zeros(Int, nt + 1)
+    p = 0
+    n = 0
+    for i = 1:ns
+        @inbounds s = scores[i]
+        @inbounds g = gt[i]
+        k = find_thresbin(s, thresholds, ord)
+        if _ispos(g)
+            hp[k] += 1
+            p += 1
+        else
+            hn[k] += 1
+            n += 1
+        end
+    end
+
+    # produce results
+    r = Array(ROCNums{Int}, nt)
+    fn = 0
+    tn = 0
+    @inbounds for i = 1:nt
+        fn += hp[i]
+        tn += hn[i]
+        tp = p - fn
+        fp = n - tn
+        r[i] = ROCNums{Int}(p, n, tp, tn, fp, fn)
+    end
+    return r
+end
+
+roc(gt::IntegerVector, scores::RealVector, thresholds::RealVector) = roc(gt, scores, thresholds, Forward)
+
+roc(gt::IntegerVector, scores::RealVector, n::Integer, ord::Ordering) = 
+    roc(gt, scores, lin_thresholds(scores, n, ord), ord)
+
+roc(gt::IntegerVector, scores::RealVector, n::Integer) = roc(gt, scores, n, Forward)
+
+roc(gt::IntegerVector, scores::RealVector, ord::Ordering) = roc(gt, scores, 100, ord)
+roc(gt::IntegerVector, scores::RealVector) = roc(gt, scores, Forward)
+
+
+
+
+
+
 

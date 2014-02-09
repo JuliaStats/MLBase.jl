@@ -5,7 +5,7 @@ module MLBase
 
     import Base: length, show, keys, precision, getindex
     import Base.Order: lt, Ordering, ForwardOrdering, ReverseOrdering, Forward, Reverse
-    import StatsBase: RealVector, IntegerVector, RealMatrix, IntegerMatrix
+    import StatsBase: RealVector, IntegerVector, RealMatrix, IntegerMatrix, RealArray
 
     export
 
@@ -43,7 +43,7 @@ module MLBase
 
     correctrate,    # compute correct rate of predictions
     errorrate,      # compute error rate of predictions
-    rocnums,        # compute roc numbers from predictions (return ROCNums instance)
+    roc,            # compute roc numbers from predictions
     true_positive,      # number of true positives 
     true_negative,      # number of true negatives 
     false_positive,     # number of false positives
