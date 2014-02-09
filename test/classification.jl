@@ -14,16 +14,16 @@ for i = 1:size(ss,2)
     vmin = ss_i[kmin]
 
     @test classify(ss_i) == kmax
-    @test classify(ss_i, to_max()) == kmax
-    @test classify(ss_i, to_min()) == kmin
+    @test classify(ss_i, Forward) == kmax
+    @test classify(ss_i, Reverse) == kmin
 
     @test classify(ss_i, 0.8) == (vmax >= 0.8 ? kmax : 0)
-    @test classify(ss_i, 0.8, to_max()) == (vmax >= 0.8 ? kmax : 0)
-    @test classify(ss_i, 0.2, to_min()) == (vmin <= 0.2 ? kmin : 0)
+    @test classify(ss_i, 0.8, Forward) == (vmax >= 0.8 ? kmax : 0)
+    @test classify(ss_i, 0.2, Reverse) == (vmin <= 0.2 ? kmin : 0)
 
     @test classify_withscore(ss_i) == (kmax, ss_i[kmax])
-    @test classify_withscore(ss_i, to_max()) == (kmax, ss_i[kmax])
-    @test classify_withscore(ss_i, to_min()) == (kmin, ss_i[kmin])
+    @test classify_withscore(ss_i, Forward) == (kmax, ss_i[kmax])
+    @test classify_withscore(ss_i, Reverse) == (kmin, ss_i[kmin])
 end
 
 rmax = Int[indmax(ss[:,i]) for i = 1:size(ss,2)]
@@ -35,16 +35,16 @@ trmax = copy(rmax); trmax[vmax .< 0.8] = 0
 trmin = copy(rmin); trmin[vmin .> 0.2] = 0
 
 @test classify(ss) == rmax
-@test classify(ss, to_max()) == rmax
-@test classify(ss, to_min()) == rmin
+@test classify(ss, Forward) == rmax
+@test classify(ss, Reverse) == rmin
 
 @test classify_withscores(ss) == (rmax, vmax)
-@test classify_withscores(ss, to_max()) == (rmax, vmax)
-@test classify_withscores(ss, to_min()) == (rmin, vmin)
+@test classify_withscores(ss, Forward) == (rmax, vmax)
+@test classify_withscores(ss, Reverse) == (rmin, vmin)
 
 @test classify(ss, 0.8) == trmax
-@test classify(ss, 0.8, to_max()) == trmax
-@test classify(ss, 0.2, to_min()) == trmin
+@test classify(ss, 0.8, Forward) == trmax
+@test classify(ss, 0.2, Reverse) == trmin
 
 # labelmap & labelencode
 

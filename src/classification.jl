@@ -2,89 +2,103 @@
 
 ## simple classification
 
-type ToMax end
-type ToMin end
-typealias ToMaxOrMin Union(ToMax,ToMin)
-
-to_max() = ToMax()
-to_min() = ToMin()
-
-better(x::Real, y::Real, op::ToMax) = (x > y)
-better(x::Real, y::Real, op::ToMin) = (x < y) 
-
 # classify
 
-classify(x::RealVector, ::ToMax) = indmax(x)
-classify(x::RealVector, ::ToMin) = indmin(x)
-classify(x::RealVector) = classify(x, to_max())
+function classify(x::RealVector, ord::Ordering)
+    n = length(x)
+    v = x[1]
+    k::Int = 1
+    for i = 2:n
+        @inbounds xi = x[i]
+        if lt(ord, v, xi)
+            v = xi
+            k = i
+        end
+    end
+    return k
+end
 
-function classify!(r::IntegerVector, x::RealMatrix, op::ToMaxOrMin)
+classify(x::RealVector) = classify(x, Forward)
+
+function classify!(r::IntegerVector, x::RealMatrix, ord::Ordering)
     m = size(x, 1)
     n = size(x, 2)
     length(r) == n || throw(DimensionMismatch("Mismatched length of r."))
     for j = 1:n
-        @inbounds r[j] = classify(view(x,:,j), op)
+        @inbounds r[j] = classify(view(x,:,j), ord)
     end
     return r
 end
 
-classify!(r::IntegerVector, x::RealMatrix) = classify!(r, x, to_max())
+classify!(r::IntegerVector, x::RealMatrix) = classify!(r, x, Forward)
 
-classify(x::RealMatrix, op::ToMaxOrMin) = classify!(Array(Int, size(x,2)), x, op)
-classify(x::RealMatrix) = classify(x, to_max())
+classify(x::RealMatrix, ord::Ordering) = classify!(Array(Int, size(x,2)), x, ord)
+classify(x::RealMatrix) = classify(x, Forward)
 
 # classify with score(s)
 
-classify_withscore(x::RealVector, op::ToMaxOrMin) = 
-    (i = classify(x, op); (i, x[i]))
+function classify_withscore(x::RealVector, ord::Ordering)
+    n = length(x)
+    v = x[1]
+    k::Int = 1
+    for i = 2:n
+        @inbounds xi = x[i]
+        if lt(ord, v, xi)
+            v = xi
+            k = i
+        end
+    end
+    return (k, v)
+end
 
-classify_withscore(x::RealVector) = classify_withscore(x, to_max())
+classify_withscore(x::RealVector) = classify_withscore(x, Forward)
 
-function classify_withscores!(r::IntegerVector, s::RealVector, x::RealMatrix, op::ToMaxOrMin)
+function classify_withscores!(r::IntegerVector, s::RealVector, x::RealMatrix, ord::Ordering)
     m = size(x, 1)
     n = size(x, 2)
     length(r) == n || throw(DimensionMismatch("Mismatched length of r."))
     for j = 1:n
-        xj = view(x, :, j)
-        k = classify(xj, op)
+        k, v = classify_withscore(view(x,:,j), ord)
         @inbounds r[j] = k
-        @inbounds s[j] = xj[k]
+        @inbounds s[j] = v
     end
     return (r, s)
 end
 
 classify_withscores!(r::IntegerVector, s::RealVector, x::RealMatrix) = 
-    classify_withscores!(r, s, x, to_max())
+    classify_withscores!(r, s, x, Forward)
 
-function classify_withscores{T<:Real}(x::RealMatrix{T}, op::ToMaxOrMin)
+function classify_withscores{T<:Real}(x::RealMatrix{T}, ord::Ordering)
     n = size(x, 2)
     r = Array(Int, n)
     s = Array(T, n)
-    return classify_withscores!(r, s, x, op)
+    return classify_withscores!(r, s, x, ord)
 end
 
-classify_withscores{T<:Real}(x::RealMatrix{T}) = classify_withscores(x, to_max())
+classify_withscores{T<:Real}(x::RealMatrix{T}) = classify_withscores(x, Forward)
 
 
 # classify with threshold
 
-classify(x::RealVector, t::Real, op::ToMax) = (i = classify(x, op); ifelse(x[i] >= t, i, 0))
-classify(x::RealVector, t::Real, op::ToMin) = (i = classify(x, op); ifelse(x[i] <= t, i, 0))
-classify(x::RealVector, t::Real) = classify(x, t, to_max())
+classify(x::RealVector, t::Real, ord::Ordering) = 
+    ((k, v) = classify_withscore(x, ord); ifelse(lt(ord, v, t), 0, k))
 
-function classify!(r::IntegerVector, x::RealMatrix, t::Real, op::ToMaxOrMin)
+classify(x::RealVector, t::Real) = classify(x, t, Forward)
+
+function classify!(r::IntegerVector, x::RealMatrix, t::Real, ord::Ordering)
     m = size(x, 1)
     n = size(x, 2)
     length(r) == n || throw(DimensionMismatch("Mismatched length of r."))
     for j = 1:n
-        @inbounds r[j] = classify(view(x,:,j), t, op)
+        @inbounds r[j] = classify(view(x,:,j), t, ord)
     end
     return r
 end
 
-classify!(r::IntegerVector, x::RealMatrix, t::Real) = classify!(r, x, t, to_max())
-classify(x::RealMatrix, t::Real, op::ToMaxOrMin) = classify!(Array(Int, size(x,2)), x, t, op)
-classify(x::RealMatrix, t::Real) = classify(x, t, to_max())  
+classify!(r::IntegerVector, x::RealMatrix, t::Real) = classify!(r, x, t, Forward)
+
+classify(x::RealMatrix, t::Real, ord::Ordering) = classify!(Array(Int, size(x,2)), x, t, ord)
+classify(x::RealMatrix, t::Real) = classify(x, t, Forward)  
 
 
 ## label map

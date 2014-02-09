@@ -4,9 +4,13 @@ module MLBase
     using StatsBase
 
     import Base: length, show, keys, precision, getindex
+    import Base.Order: lt, Ordering, ForwardOrdering, ReverseOrdering, Forward, Reverse
     import StatsBase: RealVector, IntegerVector, RealMatrix, IntegerMatrix
 
     export
+
+    # reexport from Base.Order
+    Forward, Reverse,
 
     # reexport some functions from StatsBase
     counts, addcounts!, countmap, proportions, 
@@ -25,9 +29,6 @@ module MLBase
     ToMaxOrMin,     # Union(ToMax, ToMin)
     LabelMap,       # a type to represent a label map
 
-    to_max,         # construct an instance of ToMax
-    to_min,         # construct an instance of ToMin
-    better,         # compare w.r.t. ToMax or ToMin
     classify,       # predict class label(s) based on score values
     classify!,      # inplace version of classify
     classify_withscore,     # classify with additional output of best score

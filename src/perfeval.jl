@@ -41,7 +41,8 @@ precision(x::ROCNums) = x.tp / (x.tp + x.fp)
 
 f1score(x::ROCNums) = (tp2 = x.tp + x.tp; tp2 / (tp2 + x.fp + x.fn) )
 
-## rocnums
+
+## rocnums: produce a single instance of ROCNums from predictions
 
 _ispos(x::Bool) = x
 _ispos(x::Real) = x > zero(x)
@@ -83,47 +84,59 @@ end
 # compute roc numbers based on prediction
 rocnums(gt::IntegerVector, pr::IntegerVector) = _rocnums(gt, pr)
 
-# compute roc numbers based on scores & threshold
-immutable BinaryThresPredVec{ScoreVec<:RealVector,T,Op<:ToMaxOrMin}
+##
+#   BinaryThresPredVec immutates a vector:
+#
+#   v[i] := scores[i] < thres ? 0 : 1
+#
+immutable BinaryThresPredVec{ScoreVec<:RealVector,T,Ord<:Ordering}
     scores::ScoreVec
     thres::T
-    op::Op
+    ord::Ord
 end
 
-BinaryThresPredVec{SVec<:RealVector,T<:Real,Op<:ToMaxOrMin}(scores::SVec, thres::T, op::Op) = 
-    BinaryThresPredVec{SVec,T,Op}(scores, thres, op)
+BinaryThresPredVec{SVec<:RealVector,T<:Real,Ord<:Ordering}(scores::SVec, thres::T, ord::Ord) = 
+    BinaryThresPredVec{SVec,T,Ord}(scores, thres, ord)
 
 length(v::BinaryThresPredVec) = length(v.scores)
-getindex(v::BinaryThresPredVec, i::Integer) = better(v.scores[i], v.thres, v.op)
+getindex(v::BinaryThresPredVec, i::Integer) = !lt(v.ord, v.scores[i], v.thres)
 
-rocnums(gt::IntegerVector, scores::RealVector, t::Real, op::ToMaxOrMin) = 
-    _rocnums(gt, BinaryThresPredVec(scores, t, op))
+# compute roc numbers based on scores & threshold
+rocnums(gt::IntegerVector, scores::RealVector, t::Real, ord::Ordering) = 
+    _rocnums(gt, BinaryThresPredVec(scores, t, ord))
 
 rocnums(gt::IntegerVector, scores::RealVector, thres::Real) =
-    rocnums(gt, scores, thres, to_max())
+    rocnums(gt, scores, thres, Forward)
 
-
-# compute roc numbers based on predictions & scores & threshold
-immutable ThresPredVec{PredVec<:IntegerVector,ScoreVec<:RealVector,T,Op<:ToMaxOrMin}
+##
+#   ThresPredVec immutates a vector:
+#
+#   v[i] := scores[i] < thres ? 0 : preds[i]
+#
+immutable ThresPredVec{PredVec<:IntegerVector,ScoreVec<:RealVector,T,Ord<:Ordering}
     preds::PredVec
     scores::ScoreVec
     thres::T
-    op::Op
+    ord::Ordering
 end
 
-function ThresPredVec{PVec<:IntegerVector,SVec<:RealVector,T<:Real,Op<:ToMaxOrMin}(
-    preds::PVec, scores::SVec, thres::T, op::Op)
+function ThresPredVec{PVec<:IntegerVector,SVec<:RealVector,T<:Real,Ord<:Ordering}(
+    preds::PVec, scores::SVec, thres::T, ord::Ord)
     n = length(preds)
     length(scores) == n || throw(DimensionMismatch("Inconsistent lengths."))
-    ThresPredVec{PVec,SVec,T,Op}(preds, scores, thres, op)
+    ThresPredVec{PVec,SVec,T,Ord}(preds, scores, thres, ord)
 end
 
 length(v::ThresPredVec) = length(v.preds)
-getindex(v::ThresPredVec, i::Integer) = ifelse(better(v.scores[i], v.thres, v.op), v.preds[i], 0)::Int
+getindex(v::ThresPredVec, i::Integer) = ifelse(lt(v.ord, v.scores[i], v.thres), 0, v.preds[i])
 
-rocnums(gt::IntegerVector, pr::IntegerVector, scores::RealVector, t::Real, op::ToMaxOrMin) = 
-    _rocnums(gt, ThresPredVec(pr, scores, t, op))
+# compute roc numbers based on predictions & scores & threshold
+rocnums(gt::IntegerVector, pr::IntegerVector, scores::RealVector, t::Real, ord::Ordering) = 
+    _rocnums(gt, ThresPredVec(pr, scores, t, ord))
 
 rocnums(gt::IntegerVector, pr::IntegerVector, scores::RealVector, thres::Real) =
-    rocnums(gt, pr, scores, thres, to_max())
+    rocnums(gt, pr, scores, thres, Forward)
+
+
+## roc: produces a series of ROCNums instances with multiple thresholds
 
