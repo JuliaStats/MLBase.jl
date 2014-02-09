@@ -36,3 +36,19 @@ r = ROCNums{Int}(
 @test recall(r) == 0.80
 @test precision(r) == (8/13)
 @test_approx_eq f1score(r) harmmean([recall(r), precision(r)])
+
+gt = [0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2]
+pr = [0, 0, 1, 0, 0, 1, 1, 0, 1, 2, 2, 2, 2, 0, 1]
+
+r0 = ROCNums{Int}(10, 5, 6, 4, 1, 2)
+@test rocnums(gt, pr) == r0
+
+gt = [0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2]
+pr = [1, 1, 1, 2, 2, 1, 1, 1, 1, 2, 2, 2, 2, 2, 1]
+ss = [0.2, 0.2, 0.2, 0.3, 0.3, 0.6, 0.6, 0.6, 0.6, 0.6, 0.8, 0.8, 0.8, 0.8, 0.8]
+
+@test rocnums(gt, pr, ss, 0.00) == ROCNums{Int}(10, 5, 8, 0, 5, 0)
+@test rocnums(gt, pr, ss, 0.25) == ROCNums{Int}(10, 5, 8, 3, 2, 0)
+@test rocnums(gt, pr, ss, 0.50) == ROCNums{Int}(10, 5, 8, 5, 0, 0)
+@test rocnums(gt, pr, ss, 0.75) == ROCNums{Int}(10, 5, 4, 5, 0, 5)
+@test rocnums(gt, pr, ss, 1.00) == ROCNums{Int}(10, 5, 0, 5, 0, 10)

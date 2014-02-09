@@ -16,6 +16,16 @@ immutable ROCNums{T<:Real}
     fn::T   # (incorrect) negative prediction when ground-truth is positive
 end
 
+function show(io::IO, x::ROCNums)
+    println(io, "$(typeof(x))")
+    println(io, "  p = $(x.p)")
+    println(io, "  n = $(x.n)")
+    println(io, "  tp = $(x.tp)")
+    println(io, "  tn = $(x.tn)")
+    println(io, "  fp = $(x.fp)")
+    println(io, "  fn = $(x.fn)")
+end
+
 true_positive(x::ROCNums) = x.tp
 true_negative(x::ROCNums) = x.tn
 false_positive(x::ROCNums) = x.fp
@@ -33,8 +43,8 @@ f1score(x::ROCNums) = (tp2 = x.tp + x.tp; tp2 / (tp2 + x.fp + x.fn) )
 
 # compute roc numbers based on prediction
 function rocnums(gt::IntegerVector, pr::IntegerVector)
-    n = length(gt)
-    length(r) == n || throw(DimensionMismatch("Inconsistent lengths."))
+    len = length(gt)
+    length(pr) == len || throw(DimensionMismatch("Inconsistent lengths."))
 
     p = 0
     n = 0
@@ -43,7 +53,7 @@ function rocnums(gt::IntegerVector, pr::IntegerVector)
     fp = 0
     fn = 0
 
-    for i = 1:n
+    for i = 1:len
         @inbounds gi = gt[i]
         @inbounds ri = pr[i]
         if gi > 0   # gt = true
@@ -66,13 +76,12 @@ function rocnums(gt::IntegerVector, pr::IntegerVector)
     return ROCNums{Int}(p, n, tp, tn, fp, fn)
 end
 
-
 # compute roc numbers based on scores & threshold
 function rocnums(gt::IntegerVector, pr::IntegerVector, scores::RealVector, 
         thres::Real, op::ToMaxOrMin)
 
-    n = length(gt)
-    length(pr) == length(scores) == n || 
+    len = length(gt)
+    length(pr) == length(scores) == len || 
         throw(DimensionMismatch("Inconsistent dimensions."))
 
     p = 0
@@ -82,7 +91,7 @@ function rocnums(gt::IntegerVector, pr::IntegerVector, scores::RealVector,
     fp = 0
     fn = 0
 
-    for i = 1:n
+    for i = 1:len
         @inbounds gi = gt[i]        
         @inbounds ri = ifelse(better(scores[i], thres, op), pr[i], 0)
         if gi > 0   # gt = true
@@ -105,9 +114,6 @@ function rocnums(gt::IntegerVector, pr::IntegerVector, scores::RealVector,
     return ROCNums{Int}(p, n, tp, tn, fp, fn)
 end
 
-
-
-
-
-
+rocnums(gt::IntegerVector, pr::IntegerVector, scores::RealVector, thres::Real) =
+    rocnums(gt, pr, scores, thres, to_max())
 
