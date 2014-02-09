@@ -3,9 +3,11 @@ module MLBase
     using ArrayViews
     using StatsBase
 
-    import Base: length, show, keys, precision, getindex
+    import Base: length, show, keys, precision, length, getindex
+    import Base: start, next, done
     import Base.Order: lt, Ordering, ForwardOrdering, ReverseOrdering, Forward, Reverse
     import StatsBase: RealVector, IntegerVector, RealMatrix, IntegerMatrix, RealArray
+    import StatsBase: sample
 
     export
 
@@ -38,6 +40,12 @@ module MLBase
     labelencode,    # encode a sequence of discrete values using a label map
     groupindices,   # grouped indices based on labels
 
+    # crossval
+    CrossValGenerator,  # abstract base class for all cross-validation plans
+    Kfold,              # K-fold cross validation plan
+    LOOCV,              # leave-one-out cross validation plan
+    RandomSub,          # repetitive random subsampling cross validation
+
     # perfeval
     ROCNums,        # A class to capture ROC numbers
 
@@ -63,5 +71,7 @@ module MLBase
 
     include("utils.jl")
     include("classification.jl")
+    include("crossval.jl")
     include("perfeval.jl")
 end
+
