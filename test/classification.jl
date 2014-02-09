@@ -7,30 +7,44 @@ using Base.Test
 
 ss = rand(8, 50)
 for i = 1:size(ss,2)
-	@test classify(ss[:,i]) == indmax(ss[:,i])
-	@test classify(ss[:,i]; to_max=false) == indmin(ss[:,i])
+	ss_i = ss[:,i]
+	kmax = indmax(ss_i)
+	kmin = indmin(ss_i)
+	vmax = ss_i[kmax]
+	vmin = ss_i[kmin]
+
+	@test classify(ss_i) == kmax
+	@test classify(ss_i, to_max()) == kmax
+	@test classify(ss_i, to_min()) == kmin
+
+	@test classify(ss_i, 0.8) == (vmax >= 0.8 ? kmax : 0)
+	@test classify(ss_i, 0.8, to_max()) == (vmax >= 0.8 ? kmax : 0)
+	@test classify(ss_i, 0.2, to_min()) == (vmin <= 0.2 ? kmin : 0)
+
+	@test classify_withscore(ss_i) == (kmax, ss_i[kmax])
+	@test classify_withscore(ss_i, to_max()) == (kmax, ss_i[kmax])
+	@test classify_withscore(ss_i, to_min()) == (kmin, ss_i[kmin])
 end
 
 rmax = Int[indmax(ss[:,i]) for i = 1:size(ss,2)]
 rmin = Int[indmin(ss[:,i]) for i = 1:size(ss,2)]
+vmax = ss[sub2ind(size(ss), rmax, 1:size(ss,2))]
+vmin = ss[sub2ind(size(ss), rmin, 1:size(ss,2))]
+
+trmax = copy(rmax); trmax[vmax .< 0.8] = 0
+trmin = copy(rmin); trmin[vmin .> 0.2] = 0
+
 @test classify(ss) == rmax
-@test classify(ss; to_max=false) == rmin
+@test classify(ss, to_max()) == rmax
+@test classify(ss, to_min()) == rmin
 
-# thresholded classify
+@test classify_withscores(ss) == (rmax, vmax)
+@test classify_withscores(ss, to_max()) == (rmax, vmax)
+@test classify_withscores(ss, to_min()) == (rmin, vmin)
 
-maxs = vec(maximum(ss, 1))
-mins = vec(minimum(ss, 1))
-
-trmax = rmax; trmax[maxs .< 0.8] = 0
-trmin = rmin; trmin[mins .> 0.2] = 0
-
-for i = 1:size(ss,2)
-	@test thresholded_classify(ss[:,i], 0.8) == trmax[i]
-	@test thresholded_classify(ss[:,i], 0.2; to_max=false) == trmin[i]
-end
-
-@test thresholded_classify(ss, 0.8) == trmax
-@test thresholded_classify(ss, 0.2; to_max=false) == trmin
+@test classify(ss, 0.8) == trmax
+@test classify(ss, 0.8, to_max()) == trmax
+@test classify(ss, 0.2, to_min()) == trmin
 
 # labelmap & labelencode
 

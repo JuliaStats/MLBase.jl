@@ -17,7 +17,8 @@ module MLBase
     counteq, countne, 
         
     # classification
-    classify, thresholded_classify,
+    classify, classify!, to_max, to_min, ToMax, ToMin, ToMaxOrMin,
+    classify_withscore, classify_withscores, classify_withscores!,
     LabelMap, labelmap, labelencode, groupindices,
 
     # perfeval

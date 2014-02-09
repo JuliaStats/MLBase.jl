@@ -2,56 +2,86 @@
 
 ## simple classification
 
-classify(x::RealVector; to_max::Bool=true) = to_max ? indmax(x) : indmin(x)
+type ToMax end
+type ToMin end
+typealias ToMaxOrMin Union(ToMax,ToMin)
 
-function classify!(r::IntegerVector, x::RealMatrix; to_max::Bool=true)
+to_max() = ToMax()
+to_min() = ToMin()
+
+# classify
+
+classify(x::RealVector, ::ToMax) = indmax(x)
+classify(x::RealVector, ::ToMin) = indmin(x)
+classify(x::RealVector) = classify(x, to_max())
+
+function classify!(r::IntegerVector, x::RealMatrix, op::ToMaxOrMin)
     m = size(x, 1)
     n = size(x, 2)
     length(r) == n || throw(DimensionMismatch("Mismatched length of r."))
-    if to_max
-        for j = 1:n
-            @inbounds r[j] = indmax(view(x, :, j))
-        end
-    else
-        for j = 1:n
-            @inbounds r[j] = indmin(view(x, :, j))
-        end
+    for j = 1:n
+        @inbounds r[j] = classify(view(x,:,j), op)
     end
     return r
 end
 
-classify(x::RealMatrix; to_max::Bool=true) = classify!(Array(Int, size(x,2)), x; to_max=to_max)
+classify!(r::IntegerVector, x::RealMatrix) = classify!(r, x, to_max())
 
-function thresholded_classify(x::RealVector, t::Real; to_max::Bool=true)
-    if to_max
-        i = indmax(x)
-        return ifelse(x[i] >= t, i, 0)
-    else
-        i = indmin(x)
-        return ifelse(x[i] <= t, i, 0)
-    end
-end
+classify(x::RealMatrix, op::ToMaxOrMin) = classify!(Array(Int, size(x,2)), x, op)
+classify(x::RealMatrix) = classify(x, to_max())
 
-function thresholded_classify!(r::IntegerVector, x::RealMatrix, t::Real; to_max::Bool=true)
+# classify with score(s)
+
+classify_withscore(x::RealVector, op::ToMaxOrMin) = 
+    (i = classify(x, op); (i, x[i]))
+
+classify_withscore(x::RealVector) = classify_withscore(x, to_max())
+
+function classify_withscores!(r::IntegerVector, s::RealVector, x::RealMatrix, op::ToMaxOrMin)
     m = size(x, 1)
     n = size(x, 2)
     length(r) == n || throw(DimensionMismatch("Mismatched length of r."))
-    if to_max
-        for j = 1:n
-            (v, i) = findmax(view(x, :, j))
-            @inbounds r[j] = ifelse(v >= t, i, 0)
-        end
-    else
-        for j = 1:n
-            (v, i) = findmin(view(x, :, j))
-            @inbounds r[j] = ifelse(v <= t, i, 0)
-        end
+    for j = 1:n
+        xj = view(x, :, j)
+        k = classify(xj, op)
+        @inbounds r[j] = k
+        @inbounds s[j] = xj[k]
+    end
+    return (r, s)
+end
+
+classify_withscores!(r::IntegerVector, s::RealVector, x::RealMatrix) = 
+    classify_withscores!(r, s, x, to_max())
+
+function classify_withscores{T<:Real}(x::RealMatrix{T}, op::ToMaxOrMin)
+    n = size(x, 2)
+    r = Array(Int, n)
+    s = Array(T, n)
+    return classify_withscores!(r, s, x, op)
+end
+
+classify_withscores{T<:Real}(x::RealMatrix{T}) = classify_withscores(x, to_max())
+
+
+# classify with threshold
+
+classify(x::RealVector, t::Real, ::ToMax) = (i = indmax(x); ifelse(x[i] >= t, i, 0))
+classify(x::RealVector, t::Real, ::ToMin) = (i = indmin(x); ifelse(x[i] <= t, i, 0))
+classify(x::RealVector, t::Real) = classify(x, t, to_max())
+
+function classify!(r::IntegerVector, x::RealMatrix, t::Real, op::ToMaxOrMin)
+    m = size(x, 1)
+    n = size(x, 2)
+    length(r) == n || throw(DimensionMismatch("Mismatched length of r."))
+    for j = 1:n
+        @inbounds r[j] = classify(view(x,:,j), t, op)
     end
     return r
 end
 
-thresholded_classify(x::RealMatrix, t::Real; to_max::Bool=true) = 
-    thresholded_classify!(Array(Int, size(x,2)), x, t; to_max=to_max)
+classify!(r::IntegerVector, x::RealMatrix, t::Real) = classify!(r, x, t, to_max())
+classify(x::RealMatrix, t::Real, op::ToMaxOrMin) = classify!(Array(Int, size(x,2)), x, t, op)
+classify(x::RealMatrix, t::Real) = classify(x, t, to_max())  
 
 
 ## label map
