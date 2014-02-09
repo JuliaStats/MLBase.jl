@@ -89,7 +89,9 @@ rocnums(gt::IntegerVector, pr::IntegerVector) = _rocnums(gt, pr)
 #
 #   v[i] := scores[i] < thres ? 0 : 1
 #
-immutable BinaryThresPredVec{ScoreVec<:RealVector,T,Ord<:Ordering}
+immutable BinaryThresPredVec{ScoreVec <: RealVector,
+                             T <: Real,
+                             Ord <: Ordering}
     scores::ScoreVec
     thres::T
     ord::Ord
@@ -113,7 +115,11 @@ rocnums(gt::IntegerVector, scores::RealVector, thres::Real) =
 #
 #   v[i] := scores[i] < thres ? 0 : preds[i]
 #
-immutable ThresPredVec{PredVec<:IntegerVector,ScoreVec<:RealVector,T,Ord<:Ordering}
+immutable ThresPredVec{PredVec <: IntegerVector,
+                       ScoreVec <: RealVector,
+                       T <: Real,
+                       Ord <: Ordering}
+
     preds::PredVec
     scores::ScoreVec
     thres::T
