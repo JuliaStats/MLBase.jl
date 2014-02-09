@@ -49,32 +49,6 @@ ft = [MLBase.find_thresbin(i, ts) for i = 1:9]
 @test MLBase.lin_thresholds([1, 5], 5, Reverse) == 5.0:-1.0:1.0
 
 
-## roc (for single threshold)
-
-gt = [0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2]
-pr = [0, 0, 1, 0, 0, 1, 1, 0, 1, 2, 2, 2, 2, 0, 1]
-
-r0 = ROCNums{Int}(10, 5, 6, 4, 1, 2)
-@test roc(gt, pr) == r0
-
-gt = [0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1]
-ss = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0, 1.1]
-
-@test roc(gt, ss, 0.25) == ROCNums{Int}(6, 5, 6, 2, 3, 0)
-@test roc(gt, ss, 0.55) == ROCNums{Int}(6, 5, 6, 5, 0, 0)
-@test roc(gt, ss, 0.75) == ROCNums{Int}(6, 5, 4, 5, 0, 2)
-
-gt = [0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2]
-pr = [1, 1, 1, 2, 2, 1, 1, 1, 1, 2, 2, 2, 2, 2, 1]
-ss = [0.2, 0.2, 0.2, 0.3, 0.3, 0.6, 0.6, 0.6, 0.6, 0.6, 0.8, 0.8, 0.8, 0.8, 0.8]
-
-@test roc(gt, pr, ss, 0.00) == ROCNums{Int}(10, 5, 8, 0, 5, 0)
-@test roc(gt, pr, ss, 0.25) == ROCNums{Int}(10, 5, 8, 3, 2, 0)
-@test roc(gt, pr, ss, 0.50) == ROCNums{Int}(10, 5, 8, 5, 0, 0)
-@test roc(gt, pr, ss, 0.75) == ROCNums{Int}(10, 5, 4, 5, 0, 5)
-@test roc(gt, pr, ss, 1.00) == ROCNums{Int}(10, 5, 0, 5, 0, 10)
-
-
 ## roc
 
 gt = [0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1]
@@ -84,6 +58,9 @@ r2 = ROCNums{Int}(6, 5, 6, 1, 4, 0)
 r4 = ROCNums{Int}(6, 5, 6, 3, 2, 0)
 r6 = ROCNums{Int}(6, 5, 4, 5, 0, 2)
 
+@test roc(gt, ss, 2.0) == r2
+@test roc(gt, ss, 4.0) == r4
+@test roc(gt, ss, 6.0) == r6
 @test roc(gt, ss, 2.0, Forward) == r2
 @test roc(gt, ss, 4.0, Forward) == r4
 @test roc(gt, ss, 6.0, Forward) == r6
@@ -106,4 +83,24 @@ r6 = ROCNums{Int}(5, 6, 5, 3, 3, 0)
 @test roc(gt, ss, 6.0, Reverse) == r6
 
 @test roc(gt, ss, [6.0, 4.0, 2.0], Reverse) == [r6, r4, r2]
+
+gt = [0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2]
+pr = [1, 1, 1, 2, 2, 1, 1, 1, 1, 2, 2, 2, 2, 2, 1]
+ss = [0.2, 0.2, 0.2, 0.3, 0.3, 0.6, 0.6, 0.6, 0.6, 0.6, 0.8, 0.8, 0.8, 0.8, 0.8]
+
+r00 = roc(gt, (pr, ss), 0.00)
+r25 = roc(gt, (pr, ss), 0.25)
+r50 = roc(gt, (pr, ss), 0.50)
+r75 = roc(gt, (pr, ss), 0.75)
+r100 = roc(gt, (pr, ss), 1.00)
+
+@test r00 == ROCNums{Int}(10, 5, 8, 0, 5, 0)
+@test r25 == ROCNums{Int}(10, 5, 8, 3, 2, 0)
+@test r50 == ROCNums{Int}(10, 5, 8, 5, 0, 0)
+@test r75 == ROCNums{Int}(10, 5, 4, 5, 0, 5)
+@test r100 == ROCNums{Int}(10, 5, 0, 5, 0, 10)
+
+@test roc(gt, (pr, ss), 0.0:0.25:1.0) == [r00, r25, r50, r75, r100]
+@test roc(gt, (pr, ss), 7) == roc(gt, (pr, ss), 0.2:0.1:0.8, Forward)
+@test roc(gt, (pr, ss)) == roc(gt, (pr, ss), MLBase.lin_thresholds([0.2, 0.8], 100, Forward))
 

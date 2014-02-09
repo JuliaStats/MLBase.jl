@@ -137,11 +137,11 @@ length(v::ThresPredVec) = length(v.preds)
 getindex(v::ThresPredVec, i::Integer) = ifelse(lt(v.ord, v.scores[i], v.thres), 0, v.preds[i])
 
 # compute roc numbers based on predictions & scores & threshold
-roc(gt::IntegerVector, pr::IntegerVector, scores::RealVector, t::Real, ord::Ordering) = 
-    _roc(gt, ThresPredVec(pr, scores, t, ord))
+roc{PV<:IntegerVector,SV<:RealVector}(gt::IntegerVector, preds::(PV,SV), t::Real, ord::Ordering) = 
+    _roc(gt, ThresPredVec(preds..., t, ord))
 
-roc(gt::IntegerVector, pr::IntegerVector, scores::RealVector, thres::Real) =
-    roc(gt, pr, scores, thres, Forward)
+roc{PV<:IntegerVector,SV<:RealVector}(gt::IntegerVector, preds::(PV,SV), thres::Real) =
+    roc(gt, preds, thres, Forward)
 
 
 ## roc: produces a series of ROCNums instances with multiple thresholds
@@ -178,6 +178,7 @@ lin_thresholds(scores::RealArray, n::Integer, ord::ForwardOrdering) =
 lin_thresholds(scores::RealArray, n::Integer, ord::ReverseOrdering{ForwardOrdering}) = 
     ((s0, s1) = extrema(scores); intv = (s0 - s1) / (n-1); s1:intv:s0)
 
+# roc for binary predictions
 function roc(gt::IntegerVector, scores::RealVector, thresholds::RealVector, ord::Ordering)
     issorted(thresholds, ord) || error("thresholds must be sorted w.r.t. the given ordering.")
 
@@ -226,9 +227,71 @@ roc(gt::IntegerVector, scores::RealVector, n::Integer) = roc(gt, scores, n, Forw
 roc(gt::IntegerVector, scores::RealVector, ord::Ordering) = roc(gt, scores, 100, ord)
 roc(gt::IntegerVector, scores::RealVector) = roc(gt, scores, Forward)
 
+# roc for multi-way predictions
+function roc{PV<:IntegerVector,SV<:RealVector}(
+    gt::IntegerVector, preds::(PV,SV), thresholds::RealVector, ord::Ordering)
 
+    issorted(thresholds, ord) || error("thresholds must be sorted w.r.t. the given ordering.")
+    pr::PV = preds[1]
+    scores::SV = preds[2]
 
+    ns = length(scores)
+    nt = length(thresholds)
 
+    # scan scores and classify them into bins
+    hp = zeros(Int, nt + 1)
+    hn = zeros(Int, nt + 1)
+    htp = zeros(Int, nt + 1)
 
+    p = 0
+    n = 0
+    tp = 0
 
+    for i = 1:ns
+        @inbounds pi = pr[i]
+        @inbounds si = scores[i]
+        @inbounds gi = gt[i]
+        k = find_thresbin(si, thresholds, ord)
+        if _ispos(gi)
+            hp[k] += 1
+            p += 1
+
+            if pi == gi
+                htp[k] += 1
+                tp += 1
+            end
+        else
+            hn[k] += 1
+            n += 1
+        end
+    end
+
+    # produce results
+    r = Array(ROCNums{Int}, nt)
+    fn = 0
+    tn = 0
+    @inbounds for i = 1:nt
+        fn += hp[i]
+        tn += hn[i]
+        tp -= htp[i]
+        fp = n - tn
+        r[i] = ROCNums{Int}(p, n, tp, tn, fp, fn)
+    end
+    return r
+end
+
+roc{PV<:IntegerVector, SV<:RealVector}(gt::IntegerVector, preds::(PV,SV), thresholds::RealVector) =
+    roc(gt, preds, thresholds, Forward)
+
+roc{PV<:IntegerVector, SV<:RealVector}(gt::IntegerVector, preds::(PV,SV), n::Integer, ord::Ordering) = 
+    roc(gt, preds, lin_thresholds(preds[2],n,ord), ord)
+
+roc{PV<:IntegerVector, SV<:RealVector}(gt::IntegerVector, preds::(PV,SV), n::Integer) = 
+    roc(gt, preds, n, Forward)
+
+roc{PV<:IntegerVector, SV<:RealVector}(gt::IntegerVector, preds::(PV,SV), ord::Ordering) = 
+    roc(gt, preds, 100, ord)
+
+roc{PV<:IntegerVector, SV<:RealVector}(gt::IntegerVector, preds::(PV,SV)) = 
+    roc(gt, preds, Forward)
 
