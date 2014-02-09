@@ -7,23 +7,23 @@ using Base.Test
 
 ss = rand(8, 50)
 for i = 1:size(ss,2)
-	ss_i = ss[:,i]
-	kmax = indmax(ss_i)
-	kmin = indmin(ss_i)
-	vmax = ss_i[kmax]
-	vmin = ss_i[kmin]
+    ss_i = ss[:,i]
+    kmax = indmax(ss_i)
+    kmin = indmin(ss_i)
+    vmax = ss_i[kmax]
+    vmin = ss_i[kmin]
 
-	@test classify(ss_i) == kmax
-	@test classify(ss_i, to_max()) == kmax
-	@test classify(ss_i, to_min()) == kmin
+    @test classify(ss_i) == kmax
+    @test classify(ss_i, to_max()) == kmax
+    @test classify(ss_i, to_min()) == kmin
 
-	@test classify(ss_i, 0.8) == (vmax >= 0.8 ? kmax : 0)
-	@test classify(ss_i, 0.8, to_max()) == (vmax >= 0.8 ? kmax : 0)
-	@test classify(ss_i, 0.2, to_min()) == (vmin <= 0.2 ? kmin : 0)
+    @test classify(ss_i, 0.8) == (vmax >= 0.8 ? kmax : 0)
+    @test classify(ss_i, 0.8, to_max()) == (vmax >= 0.8 ? kmax : 0)
+    @test classify(ss_i, 0.2, to_min()) == (vmin <= 0.2 ? kmin : 0)
 
-	@test classify_withscore(ss_i) == (kmax, ss_i[kmax])
-	@test classify_withscore(ss_i, to_max()) == (kmax, ss_i[kmax])
-	@test classify_withscore(ss_i, to_min()) == (kmin, ss_i[kmin])
+    @test classify_withscore(ss_i) == (kmax, ss_i[kmax])
+    @test classify_withscore(ss_i, to_max()) == (kmax, ss_i[kmax])
+    @test classify_withscore(ss_i, to_min()) == (kmin, ss_i[kmin])
 end
 
 rmax = Int[indmax(ss[:,i]) for i = 1:size(ss,2)]

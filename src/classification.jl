@@ -9,6 +9,9 @@ typealias ToMaxOrMin Union(ToMax,ToMin)
 to_max() = ToMax()
 to_min() = ToMin()
 
+better(x::Real, y::Real, op::ToMax) = (x > y)
+better(x::Real, y::Real, op::ToMin) = (x < y) 
+
 # classify
 
 classify(x::RealVector, ::ToMax) = indmax(x)
@@ -65,8 +68,8 @@ classify_withscores{T<:Real}(x::RealMatrix{T}) = classify_withscores(x, to_max()
 
 # classify with threshold
 
-classify(x::RealVector, t::Real, ::ToMax) = (i = indmax(x); ifelse(x[i] >= t, i, 0))
-classify(x::RealVector, t::Real, ::ToMin) = (i = indmin(x); ifelse(x[i] <= t, i, 0))
+classify(x::RealVector, t::Real, op::ToMax) = (i = classify(x, op); ifelse(x[i] >= t, i, 0))
+classify(x::RealVector, t::Real, op::ToMin) = (i = classify(x, op); ifelse(x[i] <= t, i, 0))
 classify(x::RealVector, t::Real) = classify(x, t, to_max())
 
 function classify!(r::IntegerVector, x::RealMatrix, t::Real, op::ToMaxOrMin)
