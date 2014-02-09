@@ -13,6 +13,25 @@ b = [1, 1, 2, 2, 2, 3, 3, 3]
 @test correctrate(a, b) == 0.75
 @test errorrate(a, b) == 0.25
 
+## counthits & hitrates
+
+gt = [1, 1, 1, 1, 1, 2, 2, 2, 2, 2]
+rs = [1 2 2 1 3 2 1 1 3 3;
+      2 3 1 3 1 1 2 2 1 2;
+      4 4 3 2 2 3 3 3 4 1;
+      3 1 4 4 4 4 4 4 2 4]
+
+@test [counthits(gt, rs, k) for k=1:5] == [3, 8, 8, 10, 10]
+
+@test counthits(gt, rs, 1:3) == [3, 8, 8]
+@test counthits(gt, rs, [2, 4]) == [8, 10]
+@test counthits(gt, rs, 1:2:5) == [3, 8, 10] 
+
+@test_approx_eq [hitrate(gt, rs, k) for k=1:5] [0.3, 0.8, 0.8, 1.0, 1.0]
+@test_approx_eq hitrates(gt, rs, 1:3) [0.3, 0.8, 0.8]
+@test_approx_eq hitrates(gt, rs, [2, 4]) [0.8, 1.0]
+@test_approx_eq hitrates(gt, rs, 1:2:5) [0.3, 0.8, 1.0]
+
 ## ROCNums
 
 r = ROCNums{Int}(

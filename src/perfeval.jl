@@ -5,6 +5,69 @@
 correctrate(gt::IntegerVector, r::IntegerVector) = counteq(gt, r) / length(gt)
 errorrate(gt::IntegerVector, r::IntegerVector) = countne(gt, r) / length(gt)
 
+## counthits & hitrate
+
+function counthits(gt::IntegerVector, rklst::IntegerMatrix, k::Integer)
+    n = length(gt)
+    size(rklst, 2) == n || throw(DimensionMismatch("Input dimensions mismatch."))
+    m = min(size(rklst, 1), int(k))
+
+    cnt = 0
+    @inbounds for j = 1:n
+        rj = view(rklst, :, j)
+        gj = gt[j]
+        for i = 1:m
+            if rj[i] == gj
+                cnt += 1
+                break
+            end
+        end
+    end
+    return cnt::Int
+end
+
+function counthits(gt::IntegerVector, rklst::IntegerMatrix, ks::IntegerVector)
+    n = length(gt)
+    size(rklst, 2) == n || throw(DimensionMismatch("Input dimensions mismatch."))
+    issorted(ks) || throw(DimensionMismatch("ks must be sorted."))
+
+    m = min(size(rklst, 1), ks[end])
+    nk = length(ks)
+    cnts = zeros(Int, nk)
+    @inbounds for j = 1:n
+        rj = view(rklst, :, j)
+        gj = gt[j]
+        for i = 1:m
+            if rj[i] == gj
+                ik = 1
+                while ks[ik] < i; ik += 1; end
+                while ik <= nk
+                    cnts[ik] += 1
+                    ik += 1
+                end
+                break
+            end
+        end
+    end
+    return cnts
+end
+
+
+hitrate(gt::IntegerVector, rklst::IntegerMatrix, k::Integer) = 
+    (counthits(gt, rklst, k) / length(gt))::Float64
+
+function hitrates(gt::IntegerVector, rklst::IntegerMatrix, ks::IntegerVector)
+    n = length(gt)
+    h = counthits(gt, rklst, ks)
+    nk = length(ks)
+    r = Array(Float64, nk)
+    for i = 1:nk
+        r[i] = h[i] / n
+    end
+    return r
+end
+
+
 ## ROC
 
 immutable ROCNums{T<:Real}

@@ -43,6 +43,9 @@ module MLBase
 
     correctrate,    # compute correct rate of predictions
     errorrate,      # compute error rate of predictions
+    counthits,      # count the number of hits
+    hitrate,        # compute hit-rate of ranked lists at a specific rank
+    hitrates,       # compute hit-rate of ranked lists at multiple ranks
     roc,            # compute roc numbers from predictions
     true_positive,      # number of true positives 
     true_negative,      # number of true negatives 
