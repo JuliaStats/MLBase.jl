@@ -1,7 +1,6 @@
 # Cross validation
 
-
-## cross validation strategies
+## cross validation generators
 
 abstract CrossValGenerator
 
@@ -70,6 +69,58 @@ length(c::RandomSub) = c.k
 start(c::RandomSub) = 1
 next(c::RandomSub, s::Int) = (sample(1:c.n, c.sn; replace=false), s+1)
 done(c::RandomSub, s::Int) = (s > c.k)
+
+
+## Cross validation algorithm
+#
+#  estfun: model estimation function
+#
+#          model = estfun(train_inds)
+#
+#          it takes as input the indices of 
+#          the samples for training, and returns
+#          a trained model.
+#
+#  evalfun: model evaluation function
+#
+#           v = evalfun(model, test_inds)
+#
+#           it applies a trained model to a subset
+#           of samples whose indices are given in
+#           test_inds, and returns an overall score.
+#
+#  n:   the number of samples in the whole data set
+#
+#  gen: an iterable object (e.g. an instance of CrossValGenerator)
+#       where each element is a vector of indices
+#
+#  ord: ordering of the score
+#
+#  This function returns a tuple (best_model, best_score, best_traininds)
+#
+function cross_validate(estfun::Function, evalfun::Function, n::Integer, gen, ord::Ordering)
+    best_model = nothing
+    best_score = NaN   
+    best_inds = Int[]
+    first = true
+
+    for train_inds in gen
+        test_inds = setdiff(1:n, train_inds)
+        model = estfun(train_inds)
+        score = evalfun(model, test_inds)
+        if first || lt(ord, best_score, score)
+            best_model = model
+            best_score = score            
+            best_inds = train_inds
+            first = false
+        end
+    end
+
+    return (best_model, best_score, best_inds)
+end
+
+cross_validate(estfun::Function, evalfun::Function, n::Integer, gen) = 
+    cross_validate(estfun, evalfun, n, gen, Forward)
 
 
 

@@ -46,6 +46,8 @@ module MLBase
     LOOCV,              # leave-one-out cross validation plan
     RandomSub,          # repetitive random subsampling cross validation
 
+    cross_validate,     # perform cross-validation
+
     # perfeval
     ROCNums,        # A class to capture ROC numbers
 
