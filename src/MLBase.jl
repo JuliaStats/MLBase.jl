@@ -26,9 +26,6 @@ module MLBase
     countne,        # count the number of non-equal pairs
         
     # classification
-    ToMax,          # empty type to indicate the higher the value the better
-    ToMin,          # empty type to indicate the lower to value the better
-    ToMaxOrMin,     # Union(ToMax, ToMin)
     LabelMap,       # a type to represent a label map
 
     classify,       # predict class label(s) based on score values
