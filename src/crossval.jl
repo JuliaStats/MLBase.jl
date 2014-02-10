@@ -67,7 +67,7 @@ end
 length(c::RandomSub) = c.k
 
 start(c::RandomSub) = 1
-next(c::RandomSub, s::Int) = (sample(1:c.n, c.sn; replace=false), s+1)
+next(c::RandomSub, s::Int) = (sort!(sample(1:c.n, c.sn; replace=false)), s+1)
 done(c::RandomSub, s::Int) = (s > c.k)
 
 

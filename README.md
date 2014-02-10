@@ -2,10 +2,10 @@
 
 [![Build Status](https://travis-ci.org/JuliaStats/MLBase.jl.png)](https://travis-ci.org/JuliaStats/MLBase.jl)
 
-Basic functionalities for Machine Learning, including:
+Swiss knife for machine learning. Particularly, it provides a collection of useful tools for machine learning programs, including:
 
 - Data manipulation
-- Basic classification
+- Score-based classification
 - Cross validation
 - Performance evaluation (e.g. evaluating ROC)
 
@@ -83,7 +83,11 @@ julia> groupindices(lm, ["a", "a", "c", "b", "b"])
  [3]
 ```
 
-### Basic Classification
+### Score-based Classification
+
+No matter how sophisticated a classification framework is, the entire classification task generally consists of two steps: (1) assign a score/distance to each class, and (2) choose the class that yields the highest score/lowest distance.
+
+This package provides a function ``classify`` and its friends to accomplish the second step.
 
 - **classify**(x, ord)
 
@@ -139,6 +143,112 @@ julia> groupindices(lm, ["a", "a", "c", "b", "b"])
 - **classify_withscores!**(r, s, x)
 
     Equivalent to ``classify_withscores!(r, s, x, Forward)``.
+
+
+### Cross Validation
+
+This package implements several cross validation schemes: ``Kfold``, ``LOOCV``, and ``RandomSub``. Each scheme is an iterable object, of which each element is a vector of indices (indices of samples selected for training).
+
+- **Kfold**(n, k)
+
+    ``k``-fold cross validation over a set of ``n`` samples, which are randomly partitioned into ``k`` disjoint subsets of nearly the same sizes.
+
+    ```julia
+    julia> collect(Kfold(10, 3))
+    3-element Array{Any,1}:
+     [1,2,7]  
+     [4,5,8,9]
+     [3,6,10]
+    ```
+
+- **LOOCV**(n)
+
+    Leave-one-out cross validation over a set of ``n`` samples.
+
+    ```julia
+    julia> collect(LOOCV(4))
+    4-element Array{Any,1}:
+     [2,3,4]
+     [1,3,4]
+     [1,2,4]
+     [1,2,3]
+    ```
+
+- **RandomSub**(n, sn, k)
+
+    Repetitively random subsampling. Particularly, this generates ``k`` subsets of length ``sn`` from a data set with ``n`` samples. 
+
+    ```julia
+    julia> collect(RandomSub(10, 5, 3))
+    3-element Array{Any,1}:
+     [1,2,5,8,9] 
+     [2,5,7,8,10]
+     [1,3,5,6,7] 
+    ``` 
+
+The package also provides a function ``cross_validate`` as below to run a cross validation procedure.
+
+- **cross_validate**(estfun, evalfun, n, gen, ord)
+
+    Run a cross validation procedure.
+
+    - ``estfun``:  estimation function, which takes a vector of training indices as input and returns a learned model, as
+
+        ```julia
+        model = estfun(train_inds)
+        ```
+
+    - ``evalfun``: evaluation function, which takes a model and a vector of testing indices as input and returns a score that indicates the goodness of the model, as
+
+        ```julia
+        score = evalfun(model, test_inds)
+        ```
+
+    - ``n``: the total number of samples
+
+    - ``gen``: an iterable object that provides training indices, *e.g.*, a cross validation scheme as listed above.
+
+    - ``ord``: the ordering of the evaluated score. ``ord = Forward`` means that higher score indicates better model; ``ord = Reverse`` means that lower score indicates better model.
+
+    Here is a full example:
+
+    ```julia
+    # A simple example to demonstrate the use of cross validation
+    #
+    # Here, we consider a simple model: using a mean vector to represent
+    # a set of samples. The goodness of the model is assessed in terms
+    # of the RMSE (root-mean-square-error) evaluated on the testing set
+    #
+
+    using MLBase
+
+    # functions
+    compute_center(X::Matrix{Float64}) = vec(mean(X, 2))
+
+    compute_rmse(c::Vector{Float64}, X::Matrix{Float64}) = 
+        sqrt(mean(sum(abs2(X .- c),1)))
+
+    # data
+    const n = 200
+    const data = [2., 3.] .+ randn(2, n)
+
+    # cross validation
+
+    (c, v, inds) = cross_validate(
+        inds -> compute_center(data[:, inds]),        # training function
+        (c, inds) -> compute_rmse(c, data[:, inds]),  # evaluation function
+        n,              # total number of samples
+        Kfold(n, 5),    # cross validation plan: 5-fold 
+        Reverse)        # smaller score indicates better model
+    ```
+
+    Please refer to ``examples/crossval.jl`` for the entire script.
+
+
+
+
+
+
 
 
 
