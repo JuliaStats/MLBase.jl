@@ -51,9 +51,9 @@ Together with ``LabelMap``, the package also provides a function ``labelmap`` to
 ```julia
 julia> lm = labelmap(["a", "a", "b", "b", "c"])
 LabelMap (with 3 labels):
-[1]: a
-[2]: b
-[3]: c
+[1] a
+[2] b
+[3] c
 
 julia> labelencode(lm, "b")
 2
