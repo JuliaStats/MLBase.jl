@@ -55,7 +55,6 @@ LabelMap (with 3 labels):
 [2]: b
 [3]: c
 
-
 julia> labelencode(lm, "b")
 2
 
