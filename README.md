@@ -5,7 +5,7 @@
 Basic functionalities for Machine Learning, including:
 
 - Data manipulation
-- Simple classification
+- Basic classification
 - Cross validation
 - Performance evaluation (e.g. evaluating ROC)
 
@@ -83,7 +83,62 @@ julia> groupindices(lm, ["a", "a", "c", "b", "b"])
  [3]
 ```
 
+### Basic Classification
 
+- **classify**(x, ord)
+
+    Classify based on scores given in ``x`` and the order of scores specified in ``ord``.
+
+    Generally, ``ord`` can be any instance of type ``Ordering``. However, it usually enough to use either ``Forward`` or ``Reverse``:
+
+    - ``ord = Forward``: higher value indicates better match (*e.g.*, similarity)
+    - ``ord = Reverse``: lower value indicates better match (*e.g.*, distances)
+
+    When ``x`` is a vector, it produces an integer label. When ``x`` is a matrix, it produces a vector of integers, each for a column of ``x``.
+
+    ```julia
+    classify([0.2, 0.5, 0.3], Forward)  # --> 2
+    classify([0.2, 0.5, 0.3], Reverse)  # --> 1
+
+    classify([0.2 0.5 0.3; 0.7 0.6 0.2]', Forward) # --> [2, 1]
+    classify([0.2 0.5 0.3; 0.7 0.6 0.2]', Reverse) # --> [1, 3]
+    ```
+
+- **classify**(x)
+
+    Equivalent to ``classify(x, Forward)``.
+
+- **classify!**(r, x, ord)
+
+    Write predicted labels to ``r``. 
+
+- **classify!**(r, x)
+
+    Equivalent to ``classify!(r, x, Forward)``.
+
+- **classify_withscore**(x, ord)
+
+    Return a pair as ``(label, score)``, where ``score`` is the input score corresponding to the predicted label.
+
+- **classify_withscore**(x)
+
+    Equivalent to ``classify_withscore(x, Forward)``.
+
+- **classify_withscores**(x, ord)
+
+    This function applies to a matrix ``x`` comprised of multiple samples (each being a column). It returns a pair ``(labels, scores)``.
+
+- **classify_withscores**(x)
+
+    Equivalent to ``classify_withscores(x, Forward)``.
+
+- **classify_withscores!**(r, s, x, ord)
+
+    Write predicted labels to ``r`` and corresponding scores to ``s``.
+
+- **classify_withscores!**(r, s, x)
+
+    Equivalent to ``classify_withscores!(r, s, x, Forward)``.
 
 
 

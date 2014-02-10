@@ -120,7 +120,7 @@ function show(io::IO, lmap::LabelMap)
     n = length(lmap)
     println(io, "LabelMap (with $n labels):")
     for (i, v) in enumerate(keys(lmap))
-        println(io, "[$i]: $v")
+        println(io, "[$i] $v")
     end
 end
 
