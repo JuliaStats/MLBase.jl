@@ -1,8 +1,10 @@
-## MLBase.jl
+# MLBase.jl
 
 [![Build Status](https://travis-ci.org/JuliaStats/MLBase.jl.png)](https://travis-ci.org/JuliaStats/MLBase.jl)
 
-Swiss knife for machine learning. Particularly, it provides a collection of useful tools for machine learning programs, including:
+Swiss knife for machine learning. 
+
+This package does not implement specific machine learning algorithms. Instead, it provides a collection of useful tools to support machine learning programs, including:
 
 - Data manipulation
 - Score-based classification
@@ -11,7 +13,7 @@ Swiss knife for machine learning. Particularly, it provides a collection of usef
 
 -----------
 
-### Data Manipulation
+## Data Manipulation
 
 - **repeach**(a, n)
 
@@ -42,7 +44,7 @@ Swiss knife for machine learning. Particularly, it provides a collection of usef
     Count the number of occurrences of ``a[i] != b[i]``.    
 
 
-### Label Map
+## Label Map
 
 In machine learning, we often need to first attach each class with an integer label. This package provides a type ``LabelMap`` that captures the association between discrete values (*e.g* a finite set of strings) and integer labels. 
 
@@ -83,13 +85,13 @@ julia> groupindices(lm, ["a", "a", "c", "b", "b"])
  [3]
 ```
 
-### Score-based Classification
+## Score-based Classification
 
 No matter how sophisticated a classification framework is, the entire classification task generally consists of two steps: (1) assign a score/distance to each class, and (2) choose the class that yields the highest score/lowest distance.
 
 This package provides a function ``classify`` and its friends to accomplish the second step.
 
-- **classify**(x, ord)
+- **classify**(x[, ord])
 
     Classify based on scores given in ``x`` and the order of scores specified in ``ord``.
 
@@ -98,54 +100,38 @@ This package provides a function ``classify`` and its friends to accomplish the 
     - ``ord = Forward``: higher value indicates better match (*e.g.*, similarity)
     - ``ord = Reverse``: lower value indicates better match (*e.g.*, distances)
 
+    When ``ord`` is omitted, it is defaulted to ``Forward``.
+
     When ``x`` is a vector, it produces an integer label. When ``x`` is a matrix, it produces a vector of integers, each for a column of ``x``.
 
     ```julia
+    classify([0.2, 0.5, 0.3])  # --> 2
     classify([0.2, 0.5, 0.3], Forward)  # --> 2
     classify([0.2, 0.5, 0.3], Reverse)  # --> 1
 
+    classify([0.2 0.5 0.3; 0.7 0.6 0.2]') # --> [2, 1]
     classify([0.2 0.5 0.3; 0.7 0.6 0.2]', Forward) # --> [2, 1]
     classify([0.2 0.5 0.3; 0.7 0.6 0.2]', Reverse) # --> [1, 3]
     ```
 
-- **classify**(x)
-
-    Equivalent to ``classify(x, Forward)``.
-
-- **classify!**(r, x, ord)
+- **classify!**(r, x[, ord])
 
     Write predicted labels to ``r``. 
 
-- **classify!**(r, x)
-
-    Equivalent to ``classify!(r, x, Forward)``.
-
-- **classify_withscore**(x, ord)
+- **classify_withscore**(x[, ord])
 
     Return a pair as ``(label, score)``, where ``score`` is the input score corresponding to the predicted label.
 
-- **classify_withscore**(x)
-
-    Equivalent to ``classify_withscore(x, Forward)``.
-
-- **classify_withscores**(x, ord)
+- **classify_withscores**(x[, ord])
 
     This function applies to a matrix ``x`` comprised of multiple samples (each being a column). It returns a pair ``(labels, scores)``.
 
-- **classify_withscores**(x)
-
-    Equivalent to ``classify_withscores(x, Forward)``.
-
-- **classify_withscores!**(r, s, x, ord)
+- **classify_withscores!**(r, s, x[, ord])
 
     Write predicted labels to ``r`` and corresponding scores to ``s``.
 
-- **classify_withscores!**(r, s, x)
 
-    Equivalent to ``classify_withscores!(r, s, x, Forward)``.
-
-
-### Cross Validation
+## Cross Validation
 
 This package implements several cross validation schemes: ``Kfold``, ``LOOCV``, and ``RandomSub``. Each scheme is an iterable object, of which each element is a vector of indices (indices of samples selected for training).
 
@@ -210,6 +196,8 @@ The package also provides a function ``cross_validate`` as below to run a cross 
 
     - ``ord``: the ordering of the evaluated score. ``ord = Forward`` means that higher score indicates better model; ``ord = Reverse`` means that lower score indicates better model.
 
+    This function returns a tuple as ``(best_model, best_score, best_indices)``.
+
     Here is a full example:
 
     ```julia
@@ -233,7 +221,6 @@ The package also provides a function ``cross_validate`` as below to run a cross 
     const data = [2., 3.] .+ randn(2, n)
 
     # cross validation
-
     (c, v, inds) = cross_validate(
         inds -> compute_center(data[:, inds]),        # training function
         (c, inds) -> compute_rmse(c, data[:, inds]),  # evaluation function
@@ -245,10 +232,141 @@ The package also provides a function ``cross_validate`` as below to run a cross 
     Please refer to ``examples/crossval.jl`` for the entire script.
 
 
+## Performance Evaluation
+
+This package provides tools to assess the performance of a machine learning algorithm.
+
+#### Correct rate and error rate
+
+- **correctrate**(gt, pred)
+
+    Compute correct rate of predictions given by ``pred`` w.r.t. the ground truths given in ``gt``.
+
+- **errorrate**(gt, pred)
+
+    Compute error rate of predictions given by ``pred`` w.r.t. the ground truths given in ``gt``.
+
+#### Hit rate
+
+- **hitrate**(gt, ranklist, k)
+
+    Compute the hitrate of rank ``k`` for a ranked list of predictions given by ``ranklist`` w.r.t. the ground truths given in ``gt``. 
+
+    Particularly, if ``gt[i]`` is contained in ``ranklist[1:k, i]``, then the prediction for the ``i``-th sample is said to be *hit within rank ``k``*. The hitrate of rank ``k`` is the fraction of predictions that hit within rank ``k``.
+
+- **hitrates**(gt, ranklist, ks)
+
+    Compute hit-rates of multiple ranks (as given by a vector ``ks``). It returns a vector of hitrates ``r``, where ``r[i]`` corresponding to the rank ``ks[i]``.
+
+    Note that computing hit-rates for multiple ranks jointly is more efficient than computing them separately.
+
+#### ROC
+
+ROC (Receiver Operating Characteristics) is often used to measure the performance of a detector, thresholded classifier, or a verification algorithm.
+
+This package uses an immutable type ``ROCNums`` defined below to capture the ROC of an experiment:
+
+```julia
+immutable ROCNums{T<:Real}
+    p::T    # positive in ground-truth
+    n::T    # negative in ground-truth
+    tp::T   # correct positive prediction
+    tn::T   # correct negative prediction
+    fp::T   # (incorrect) positive prediction when ground-truth is negative
+    fn::T   # (incorrect) negative prediction when ground-truth is positive
+end
+```
+
+One can compute a variety of performance measurements from an instance of ``ROCNums`` (say ``r``):
+
+- **true_positive**(r)
+
+    the number of true positives (``r.tp``)
+
+- **true_negative**(r)
+
+    the number of true negatives (``r.tn``)
+
+- **false_positive**(r)
+
+    the number of false positives (``r.fp``)
+
+- **false_negative**(r)
+
+    the number of false negatives (``r.fn``)
+
+- **true_postive_rate**(r)
+
+    the fraction of positive samples correctly predicted as positive, defined as ``r.tp / r.p``
+
+- **true_negative_rate**(r)
+
+    the fraction of negative samples correctly predicted as negative, defined as ``r.tn / r.n``
+
+- **false_positive_rate**(r)
+    
+    the fraction of negative samples incorrectly predicted as positive, defined as ``r.fp / r.n``
+
+- **false_negative_rate**(r)
+
+    the fraction of positive samples incorrectly predicted as negative, defined as ``r.fn / r.p``
+
+- **recall**(r)
+
+    Equivalent to ``true_positive_rate(r)``.
+
+- **precision**(r)
+
+    the fraction of positive predictions that are correct, defined as ``r.tp / (r.tp + r.fp)``.
+
+- **f1score**(r)
+
+    the harmonic mean of ``recall(r)`` and ``precision(r)``.
 
 
+The package provides a function ``roc`` to compute an instance of ``ROCNums`` or a sequence of such instances from predictions.
+
+- **roc**(gt, pred)
+
+    compute an ROC instance based on ground-truths given in ``gt`` and predictions given in ``pred``.
+
+- **roc**(gt, scores, thres[, ord])
+
+    compute an ROC instance based on scores and a threshold ``thres``. 
+
+    Prediction is made as follows:
+    - when ``ord = Forward``: predicts 1 when ``scores[i] >= thres`` otherwise 0.
+    - when ``ord = Reverse``: predicts 1 when ``scores[i] <= thres`` otherwise 0.
+
+    When ``ord`` is omitted, it is defaulted to ``Forward``.
+
+    When ``thres`` is a single number, it produces a single ``ROCNums`` instance; when ``thres`` is a vector, it produces a vector of ``ROCNums`` instances. Jointly evaluating the ROC for multiple thresholds is generally much faster than evaluating for them individually.
 
 
+- **roc**(gt, (preds, scores), thres[, ord])
 
+    compute an ROC instance based on (unthresholded) predictions, scores and a threshold ``thres``. 
 
+    Prediction is made as follows:
+    - when ``ord = Forward``: predicts ``preds[i]`` when ``scores[i] >= thres`` otherwise 0.
+    - when ``ord = Reverse``: predicts ``preds[i]`` when ``scores[i] <= thres`` otherwise 0.
+
+    When ``ord`` is omitted, it is defaulted to ``Forward``.
+
+    When ``thres`` is a single number, it produces a single ``ROCNums`` instance; when ``thres`` is a vector, it produces a vector of ``ROCNums`` instances. Jointly evaluating the ROC for multiple thresholds is generally much faster than evaluating for them individually.
+
+- **roc**(gt, scores, n[, ord])
+- **roc**(gt, (preds, scores), n[, ord])
+
+    compute a sequence of ROC instances for ``n`` evenly spaced thresholds from ``minimum(scores)`` and ``maximum(scores)``.
+
+- **roc**(gt, scores, ord])
+- **roc**(gt, (preds, scores), ord])
+
+    Respectively equivalent to ``roc(gt, scores, 100, ord)`` and ``roc(gt, (preds, scores), 100, ord)``.
+
+- **roc**(gt, scores)
+- **roc**(gt, (preds, scores))
+
+    Respectively equivalent to ``roc(gt, scores, 100, Forward)`` and ``roc(gt, (preds, scores), 100, Forward)``.
 
