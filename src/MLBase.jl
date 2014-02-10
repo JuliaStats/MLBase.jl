@@ -64,7 +64,20 @@ module MLBase
     false_negative_rate,    # rate of false negatives
     recall,             # recall computed from ROCNums
     precision,          # precision computed from ROCNums
-    f1score             # F1-score computed from ROCNums
+    f1score,            # F1-score computed from ROCNums
+
+    # deviation
+    sqL2dist,       # squared L2 distance between two arrays
+    L2dist,         # L2 distance between two arrays
+    L1dist,         # L1 distance between two arrays
+    Linfdist,       # L-inf distance between two arrays
+    gkldiv,         # (Generalized) Kullback-Leibler divergence between two vectors
+    meanad,         # mean absolute deviation
+    maxad,          # maximum absolute deviation
+    msd,            # mean squared deviation
+    rmsd,           # root mean squared deviation
+    nrmsd,          # normalized rmsd
+    psnr            # peak signal-to-noise ratio (in dB)
 
     # source files
 
@@ -72,5 +85,6 @@ module MLBase
     include("classification.jl")
     include("crossval.jl")
     include("perfeval.jl")
+    include("deviation.jl")
 end
 

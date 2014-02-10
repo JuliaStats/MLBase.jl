@@ -31,16 +31,16 @@ function Linfdist{T<:Number}(a::ContiguousArray{T}, b::ContiguousArray{T})
     length(b) == n || throw(DimensionMismatch("Input dimension mismatch"))
     r = 0.0
     for i = 1:n
-        @inbounds a = abs(a[i] - b[i]) 
-        if r < a
-            r = a
+        @inbounds v = abs(a[i] - b[i]) 
+        if r < v
+            r = v
         end
     end
     return r     
 end
 
-# KL-divergence
-function _kldiv{T<:FloatingPoint}(a::ContiguousArray{T}, b::ContiguousArray{T})
+# Generalized KL-divergence
+function gkldiv{T<:FloatingPoint}(a::ContiguousArray{T}, b::ContiguousArray{T})
     n = length(a)
     r = 0.0
     for i = 1:n
@@ -55,19 +55,6 @@ function _kldiv{T<:FloatingPoint}(a::ContiguousArray{T}, b::ContiguousArray{T})
     return r::Float64
 end
 
-function kldiv{T<:FloatingPoint}(a::ContiguousVector{T}, b::ContiguousVector{T})
-    length(a) == length(b) || throw(DimensionMismatch("Input dimension mismatch"))
-    _kldiv(a, b)
-end
-
-function sumkldiv{T<:FloatingPoint}(a::ContiguousMatrix{T}, b::ContiguousMatrix{T})
-    size(a) == size(b) || throw(DimensionMismatch("Input dimension mismatch"))
-    _kldiv(a, b)
-end
-
-meankldiv{T<:FloatingPoint}(a::ContiguousMatrix{T}, b::ContiguousMatrix{T}) = sumkldiv(a, b) / size(a,2)
-
-
 # MeanAD: mean absolute deviation
 meanad{T<:Number}(a::ContiguousArray{T}, b::ContiguousArray{T}) = L1dist(a, b) / length(a)
 
@@ -81,7 +68,7 @@ msd{T<:Number}(a::ContiguousArray{T}, b::ContiguousArray{T}) = sqL2dist(a, b) / 
 rmsd{T<:Number}(a::ContiguousArray{T}, b::ContiguousArray{T}) = sqrt(msd(a, b))
 
 # NRMSD: normalized mean squared deviation
-function nrmsd{T<:Number}(a:ContiguousArray{T}, b::ContiguousArray{T})
+function nrmsd{T<:Number}(a::ContiguousArray{T}, b::ContiguousArray{T})
     amin, amax = extrema(a)
     rmsd(a, b) / (amax - amin)
 end
