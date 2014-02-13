@@ -123,3 +123,54 @@ function countne(a::IntegerVector, b::IntegerVector)
     return c
 end
 
+
+## standardize a dataset
+
+function standardize!{T<:Real}(X::DenseArray{T,2}; center::Bool=true, scale::Bool=true)
+    m, n = size(X)
+    center || scale || error("either center or scale must be true.")
+
+    u = Array(Float64, m)
+
+    if center
+        # compute mean
+        fill!(u, 0.0)
+        for j = 1:n
+            x = view(X,:,j)
+            for i = 1:m; u[i] += x[i]; end
+        end
+        scale!(u, 1.0 / n)
+
+        # subtract mean
+        for j = 1:n
+            x = view(X,:,j)
+            for i = 1:m; x[i] -= u[i]; end
+        end
+    end
+
+    if scale
+        # compute std
+        fill!(u, 0.0)
+        for j = 1:n
+            x = view(X,:,j)
+            for i = 1:m; u[i] += abs2(x[i]); end
+        end
+        for i = 1:m; u[i] = sqrt((n - 1) / u[i]); end
+
+        # scale
+        for j = 1:n
+            x = view(X,:,j)
+            for i = 1:m; x[i] *= u[i]; end
+        end
+    end
+    return X
+end
+
+standardize{T<:Real}(X::DenseArray{T,2}; center::Bool=true, scale::Bool=true)
+    = standardize!(copy(X); center=center, scale=scale)
+
+
+
+
+
+
