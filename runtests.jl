@@ -1,5 +1,6 @@
 
 tests = ["utils", 
+         "transforms",
          "classification", 
          "perfeval", 
          "crossval"]

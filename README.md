@@ -7,6 +7,7 @@ Swiss knife for machine learning.
 This package does not implement specific machine learning algorithms. Instead, it provides a collection of useful tools to support machine learning programs, including:
 
 - Data manipulation
+- Standardization
 - Score-based classification
 - Cross validation
 - Performance evaluation (e.g. evaluating ROC)
@@ -43,6 +44,51 @@ This package does not implement specific machine learning algorithms. Instead, i
 - **countne**(a, b)
 
     Count the number of occurrences of ``a[i] != b[i]``.    
+
+
+## Data Standardization
+
+Sometimes, it might be desirable to standardize a set of data before feeding it to a machine learning task (*e.g.* PCA), in order to balance the contributions of different components. 
+
+The package provides a ``Standardize`` type to capture the standardization transform, which is defined as below:
+
+```julia
+immutable Standardize <: AbstractAffineTransform
+    dim::Int
+    mean::Vector{Float64}
+    scale::Vector{Float64}
+end
+```
+Applying a standardization transform ``t`` to a vector ``x`` is defined as:
+
+```julia
+y[i] = t.scale[i] * (x[i] - t.mean[i])
+```
+Here, ``t.scale[i]`` is the inverse of the standard deviation of the i-th variable. After standarization, each component would have zero mean and unit standard deviation.
+
+Note we allow either ``mean`` or ``scale`` fields to be empty, which indicates that the step of shifting the mean or that of scaling the component would not be applied. 
+
+- **estimate**(Standardize, X[; center=true, scale=true])
+
+    Estimate a standardization transform from a given data set ``X``. 
+
+    This package follows the convention that each column of ``X`` is an observation and each row is a component/variable. 
+
+- **standardize**(t, X[; center=true, scale=true])
+
+    Estimate a standardization transform from ``X`` and apply it to ``X``. It returns a pair ``(Y, t)``, where ``Y`` is the transformed data matrix, and ``t`` is an instance of ``Standardize`` that represents the estimated transform.
+
+- **standardize!**(t, X[; center=true, scale=true])
+
+    Similar to ``standardize``, except that the transformation to ``X`` happens inplace.
+
+- **transform**(t, X)
+
+    Apply a transform ``t`` to ``X``, return the transformed vector/matrix.
+
+- **transform!**(t, X)
+
+    Apply a transform ``t`` to ``X`` inplace, return ``X``.
 
 
 ## Label Map

@@ -24,6 +24,18 @@ module MLBase
     repeachrow,     # repeat each row in a matrix
     counteq,        # count the number of equal pairs
     countne,        # count the number of non-equal pairs
+
+    # transforms
+    AbstractAffineTransform,
+    Standardize,    # the type to represent a standardizing transform
+
+    indim,          # input dimension of a transform
+    outdim,         # output dimension of a transform 
+    estimate,       # estimate a model or transformation
+    transform,      # apply a transformation to data
+    transform!,     # apply a transformation to data in place
+    standardize,    # estimate and apply a standardization
+    standardize!,   # estimate and apply a standardization in place
         
     # classification
     LabelMap,       # a type to represent a label map
@@ -82,6 +94,7 @@ module MLBase
     # source files
 
     include("utils.jl")
+    include("transforms.jl")
     include("classification.jl")
     include("crossval.jl")
     include("perfeval.jl")
