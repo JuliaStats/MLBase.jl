@@ -74,7 +74,7 @@ Note we allow either ``mean`` or ``scale`` fields to be empty, which indicates t
 
     This package follows the convention that each column of ``X`` is an observation and each row is a component/variable. 
 
-- **standardize**(t, X[; center=true, scale=true])
+- **standardize**(X[; center=true, scale=true])
 
     Estimate a standardization transform from ``X`` and apply it to ``X``. It returns a pair ``(Y, t)``, where ``Y`` is the transformed data matrix, and ``t`` is an instance of ``Standardize`` that represents the estimated transform.
 
