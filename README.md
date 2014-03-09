@@ -53,7 +53,7 @@ Sometimes, it might be desirable to standardize a set of data before feeding it 
 The package provides a ``Standardize`` type to capture the standardization transform, which is defined as below:
 
 ```julia
-immutable Standardize <: AbstractAffineTransform
+immutable Standardize
     dim::Int
     mean::Vector{Float64}
     scale::Vector{Float64}
