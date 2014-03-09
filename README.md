@@ -78,17 +78,17 @@ Note we allow either ``mean`` or ``scale`` fields to be empty, which indicates t
 
     Estimate a standardization transform from ``X`` and apply it to ``X``. It returns a pair ``(Y, t)``, where ``Y`` is the transformed data matrix, and ``t`` is an instance of ``Standardize`` that represents the estimated transform.
 
-- **standardize!**(t, X[; center=true, scale=true])
+- **standardize!**(X[; center=true, scale=true])
 
     Similar to ``standardize``, except that the transformation to ``X`` happens inplace.
 
 - **transform**(t, X)
 
-    Apply a transform ``t`` to ``X``, return the transformed vector/matrix.
+    Apply a standardization transform ``t`` to ``X``, return the transformed vector/matrix.
 
 - **transform!**(t, X)
 
-    Apply a transform ``t`` to ``X`` inplace, return ``X``.
+    Apply a standardization transform ``t`` to ``X`` inplace, return ``X``.
 
 
 ## Label Map
