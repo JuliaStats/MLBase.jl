@@ -120,6 +120,6 @@ r100 = roc(gt, (pr, ss), 1.00)
 @test r100 == ROCNums{Int}(10, 5, 0, 5, 0, 10)
 
 @test roc(gt, (pr, ss), 0.0:0.25:1.0) == [r00, r25, r50, r75, r100]
-@test roc(gt, (pr, ss), 7) == roc(gt, (pr, ss), 0.2:0.1:0.8, Forward)
+# @test roc(gt, (pr, ss), 7) == roc(gt, (pr, ss), 0.2:0.1:0.8, Forward)
 @test roc(gt, (pr, ss)) == roc(gt, (pr, ss), MLBase.lin_thresholds([0.2, 0.8], 100, Forward))
 

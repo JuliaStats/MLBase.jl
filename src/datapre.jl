@@ -1,12 +1,9 @@
 
 # various transforms
 
-abstract AbstractAffineTransform
-
-
 ### Standardization
 
-immutable Standardize <: AbstractAffineTransform
+immutable Standardize
     dim::Int
     mean::Vector{Float64}
     scale::Vector{Float64}

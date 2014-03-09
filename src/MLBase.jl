@@ -25,8 +25,7 @@ module MLBase
     counteq,        # count the number of equal pairs
     countne,        # count the number of non-equal pairs
 
-    # transforms
-    AbstractAffineTransform,
+    # datapre
     Standardize,    # the type to represent a standardizing transform
 
     indim,          # input dimension of a transform
@@ -94,7 +93,7 @@ module MLBase
     # source files
 
     include("utils.jl")
-    include("transforms.jl")
+    include("datapre.jl")
     include("classification.jl")
     include("crossval.jl")
     include("perfeval.jl")
