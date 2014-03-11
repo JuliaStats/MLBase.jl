@@ -1,5 +1,87 @@
 # Utilities
 
+## add/subtract a vector
+
+function addvec!(x::StridedVector, v::StridedVector)
+    n = length(x)
+    length(v) == n || error("Inconsistent vector length.")
+    @inbounds for i = 1:n
+        x[i] += v[i]
+    end
+    return x
+end
+
+function addvec!(x::StridedVector, v::StridedVector, c::Real)
+    n = length(x)
+    length(v) == n || error("Inconsistent vector length.")
+    @inbounds for i = 1:n
+        x[i] += v[i] * c
+    end
+    return x
+end
+
+function subtractvec!(x::StridedVector, v::StridedVector)
+    n = length(x)
+    length(v) == n || error("Inconsistent vector length.")
+    @inbounds for i = 1:n
+        x[i] -= v[i]
+    end
+    return x
+end
+
+function subtractvec!(x::StridedVector, v::StridedVector, c::Real)
+    n = length(x)
+    length(v) == n || error("Inconsistent vector length.")
+    @inbounds for i = 1:n
+        x[i] -= v[i] * c
+    end
+    return x
+end
+
+## add/subtract each column
+
+function addeachcol!(x::DenseMatrix, v::StridedVector)
+    n = length(x)
+    length(v) == n || error("Inconsistent vector length.")
+    @inbounds for i = 1:n
+        x[i] += v[i]
+    end
+    return x
+end
+
+function addeachcol!(x::StridedVector, v::StridedVector, c::Real)
+    n = length(x)
+    length(v) == n || error("Inconsistent vector length.")
+    @inbounds for i = 1:n
+        x[i] += v[i] * c
+    end
+    return x
+end
+
+function subtracteachcol!(x::StridedVector, v::StridedVector)
+    n = length(x)
+    length(v) == n || error("Inconsistent vector length.")
+    @inbounds for i = 1:n
+        x[i] -= v[i]
+    end
+    return x
+end
+
+function subtracteachcol!(x::StridedVector, v::StridedVector, c::Real)
+    n = length(x)
+    length(v) == n || error("Inconsistent vector length.")
+    @inbounds for i = 1:n
+        x[i] -= v[i] * c
+    end
+    return x
+end
+
+
+
+
+
+
+
 ## repeat each element in a vector
 
 function repeach{T}(x::AbstractVector{T}, n::Integer)
