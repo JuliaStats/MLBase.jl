@@ -90,15 +90,6 @@ module MLBase
     nrmsd,          # normalized rmsd
     psnr            # peak signal-to-noise ratio (in dB)
 
-
-    # common types
-
-    export DenseVector, DenseMatrix, DenseVecOrMat
-
-    typealias DenseVector{T} DenseArray{T,1}
-    typealias DenseMatrix{T} DenseArray{T,2}
-    typealias DenseVecOrMat{T} Union(DenseArray{T,1},DenseArray{T,2}) 
-
     # source files
 
     include("utils.jl")
