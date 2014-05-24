@@ -46,6 +46,7 @@ module MLBase
     classify_withscores!,   # inplace version of classify_withscores
     labelmap,       # construct a label map from a list of labels
     labelencode,    # encode a sequence of discrete values using a label map
+    labeldecode,    # decode the label to the associated discrete value
     groupindices,   # grouped indices based on labels
 
     # crossval

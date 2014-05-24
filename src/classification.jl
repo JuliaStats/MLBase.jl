@@ -144,6 +144,11 @@ labelencode{T}(lmap::LabelMap{T}, x) = lmap.v2i[convert(T, x)]
 labelencode{T}(lmap::LabelMap{T}, xs::AbstractArray{T}) = 
     reshape(Int[labelencode(lmap, x) for x in xs], size(xs))
 
+# decode the label to the associated discrete value
+labeldecode{T}(lmap::LabelMap{T}, y::Int) = lmap.vs[y]
+labeldecode{T}(lmap::LabelMap{T}, ys::AbstractArray{Int}) = 
+    reshape(T[labeldecode(lmap, y) for y in ys], size(ys))
+
 ## group labels
 
 function groupindices(k::Int, xs::IntegerVector; warning::Bool=true)
