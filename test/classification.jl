@@ -54,6 +54,7 @@ lmap = labelmap(xs)
 
 @test keys(lmap) == ["a", "b", "c"]
 @test labelencode(lmap, xs) == labels
+@test labeldecode(lmap, labels) == xs
 
 # groupindices
 
