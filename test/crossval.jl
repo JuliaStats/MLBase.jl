@@ -10,7 +10,7 @@ for i = 1:3
 	@test isa(ss[i], Vector{Int})
 	@test issorted(ss[i])
 end
-x = vcat(ss...)
+x = vcat(map(s -> setdiff(1:12, s), ss)...)
 @test sort(x) == [1:12]
 
 ## LOOCV

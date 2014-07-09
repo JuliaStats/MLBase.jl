@@ -26,8 +26,8 @@ immutable KfoldState
 end
 
 start(c::Kfold) = KfoldState(1, 1, iround(c.coeff))
-next(c::Kfold, s::KfoldState) = 
-    (i = s.i+1; (sort!(c.permseq[s.s:s.e]), KfoldState(i, s.e+1, iround(c.coeff * i))))
+next(c::Kfold, s::KfoldState) =
+    (i = s.i+1; (setdiff(1:length(c.permseq), c.permseq[s.s:s.e]), KfoldState(i, s.e+1, iround(c.coeff * i))))
 done(c::Kfold, s::KfoldState) = (s.i > c.k)
 
 
