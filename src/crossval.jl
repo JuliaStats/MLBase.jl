@@ -104,8 +104,8 @@ function cross_validate(estfun::Function, evalfun::Function, n::Integer, gen, or
     best_inds = Int[]
     first = true
 
-    for test_inds in gen
-        train_inds = setdiff(1:n, test_inds)
+    for train_inds in gen
+        test_inds = setdiff(1:n, train_inds)
         model = estfun(train_inds)
         score = evalfun(model, test_inds)
         if first || lt(ord, best_score, score)
