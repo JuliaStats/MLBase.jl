@@ -1,4 +1,3 @@
-
 using MLBase
 using Base.Test
 
@@ -12,6 +11,19 @@ for i = 1:3
 end
 x = vcat(ss...)
 @test sort(x) == [1:12]
+
+##StratifiedKfold
+
+strat = [:a, :a, :b, :b, :c, :c, :b, :c, :a]
+@test_throws ErrorException StratifiedKfold(strat, 4)
+ss = collect(StratifiedKfold(strat, 3))
+for i in 1:2
+    @test isa(ss[i], Vector{Int})
+	@test issorted(ss[i])
+    @test length(unique(strat[ss[i]])) == 3
+end
+x = vcat(map(s -> setdiff(1:9, s), ss)...)
+@test sort(x) == [1:9]
 
 ## LOOCV
 
@@ -35,3 +47,15 @@ ss = collect(LOOCV(4))
 # 	@test length(unique(ss[i])) == 5
 # end
 
+## StratifiedRandomSum
+
+strat =  [:a, :a, :b, :b, :c, :c, :b, :c, :a]
+@test_throws ErrorException StratifiedRandomSub(strat, 2, 10)
+ss = collect(StratifiedRandomSub(strat, 6, 10))
+@test length(ss) == 10
+@test all(map(length, ss) .== 6)
+
+#make sure small strata are (probably) always represented
+strat = push!(repeach([:a], 100), :b)
+ss = collect(StratifiedRandomSub(strat, 4, 100))
+@test all(map(s -> :b ∈ strat[s], ss))

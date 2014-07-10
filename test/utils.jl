@@ -28,3 +28,12 @@ b = [1, 3, 3, 4, 6, 7, 8]
 
 @test counteq(a, b) == 3
 @test countne(a, b) == 4
+
+
+# unique_inverse
+a = [:a, :a, :b, :c, :b, :a]
+ui = MLBase.unique_inverse(a)
+@test isa(ui, (Vector{Symbol}, Vector{Vector{Int}}))
+b = Array(Symbol, mapreduce(length, +, ui[2]))
+for (obj, idx) in zip(ui...) b[idx] = obj end
+@test a == b

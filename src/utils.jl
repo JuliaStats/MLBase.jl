@@ -123,3 +123,21 @@ function countne(a::IntegerVector, b::IntegerVector)
     return c
 end
 
+
+## return the unique values of A and a vector of vectors of indexes to reconstruct
+## the original array
+
+function unique_inverse(A::AbstractArray)
+    out = Array(eltype(A),0)
+    out_idx = Array(Vector{Int}, 0)
+    seen = Dict{eltype(A), Int}()
+    for (idx, x) in enumerate(A)
+        if !in(x, keys(seen))
+            seen[x] = length(seen) + 1
+            push!(out, x)
+            push!(out_idx, Int[])
+        end
+        push!(out_idx[seen[x]], idx)
+    end
+    out, out_idx
+end
