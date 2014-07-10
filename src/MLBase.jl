@@ -52,8 +52,10 @@ module MLBase
     # crossval
     CrossValGenerator,  # abstract base class for all cross-validation plans
     Kfold,              # K-fold cross validation plan
+    StratifiedKfold,        # stratified K-fold cross validation plan
     LOOCV,              # leave-one-out cross validation plan
-    RandomSub,          # repetitive random subsampling cross validation
+    RandomSub,              # repeated random subsampling cross validation
+    StratifiedRandomSub,    # stratified repeated random subsampling
 
     cross_validate,     # perform cross-validation
 

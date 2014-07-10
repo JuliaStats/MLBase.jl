@@ -30,6 +30,38 @@ next(c::Kfold, s::KfoldState) =
     (i = s.i+1; (sort!(c.permseq[s.s:s.e]), KfoldState(i, s.e+1, iround(c.coeff * i))))
 done(c::Kfold, s::KfoldState) = (s.i > c.k)
 
+# Stratified K-fold
+
+immutable StratifiedKfold <: CrossValGenerator
+    n::Int                         #Total number of observations
+    permseqs::Vector{Vector{Int}}  #Vectors of vectors of indexes for each stratum
+    k::Int                         #Number of splits
+    coeffs::Vector{Float64}        #About how many observations per strata are in a val set
+    function StratifiedKfold(strata, k)
+        2 <= k <= length(strata) || error("The value of k must be in [2, length(strata)].")
+        strata_labels, permseqs = unique_inverse(strata)
+        map(shuffle!, permseqs)
+        coeffs = Float64[]
+        for (stratum, permseq) in zip(strata_labels, permseqs)
+            k <= length(permseq) || error("k is greater than the length of stratum $stratum")
+            push!(coeffs, length(permseq) / k)
+        end
+        new(length(strata), permseqs, k, coeffs)
+    end
+end
+
+length(c::StratifiedKfold) = c.k
+
+start(c::StratifiedKfold) = 1
+function next(c::StratifiedKfold, s::Int)
+    r = Int[]
+    for (permseq, coeff) in zip(c.permseqs, c.coeffs)
+        a, b = iround([s-1, s] .* coeff)
+        append!(r, view(permseq, a+1:b))
+    end
+    setdiff(1:c.n, r), s+1
+end
+done(c::StratifiedKfold, s::Int) = (s > c.k)
 
 # LOOCV (Leave-one-out cross-validation)
 
@@ -70,6 +102,48 @@ start(c::RandomSub) = 1
 next(c::RandomSub, s::Int) = (sort!(sample(1:c.n, c.sn; replace=false)), s+1)
 done(c::RandomSub, s::Int) = (s > c.k)
 
+# Stratified repeated random sub-sampling
+
+immutable StratifiedRandomSub <: CrossValGenerator
+    idxs::Vector{Vector{Int}}    # total length
+    sn::Int                      # length of subset
+    sns::Vector{Int}             # num from each stratum for each subset
+    k::Int                       # number of subsets
+    function StratifiedRandomSub(strata, sn, k)
+        n = length(strata)
+        strata_labels, idxs = unique_inverse(strata)
+        sn >= length(strata_labels) || error("sn is too small for all strata to be represented")
+        lengths_ord = sortperm(map(length, idxs))
+        sns = zeros(Int, n)
+        remaining_n = n   # total in the strata we haven't seen yet
+        remaining_sn = sn # total room in the subset that hasn't been "assinged" to a stratum yet
+        #loop through strata from smallest to largest, making sure there is at least one idx
+        #from each strata in each subset:
+        for stratum_num in lengths_ord
+            stratum_n = length(idxs[stratum_num])
+            remaining_proportion = remaining_sn/remaining_n
+            stratum_sn = max(iround(remaining_proportion*stratum_n), 1)
+            remaining_n -= stratum_n
+            remaining_sn -= stratum_sn
+            sns[stratum_num] = stratum_sn
+        end
+        #@assert mapreduce(sum, +, sns) == sn
+        new(idxs, sn, sns, k)
+    end
+end
+
+length(c::StratifiedRandomSub) = c.k
+
+start(c::StratifiedRandomSub) = 1
+function next(c::StratifiedRandomSub, s::Int)
+    idxs = Array(Int, 0)
+    sizehint(idxs, c.sn)
+    for (stratum_sn, stratum_idxs) in zip(c.sns, c.idxs)
+        append!(idxs, sample(stratum_idxs, stratum_sn, replace=false))
+    end
+    (sort!(idxs), s+1)
+end
+done(c::StratifiedRandomSub, s::Int) = (s > c.k)
 
 ## Cross validation algorithm
 #

@@ -193,6 +193,18 @@ This package implements several cross validation schemes: ``Kfold``, ``LOOCV``, 
      [4,5,8,9]
      [3,6,10]
     ```
+- **StratifiedKfold**(strata, k)
+
+    Like ``Kfold``, but indexes in each strata (defined by unique values of an iterator `strata`) are distributed approximately equally across the ``k`` folds.
+    Each strata should have at least ``k`` members.
+
+    ```julia
+    julia> collect(StratifiedKfold([:a, :a, :a, :b, :b, :c, :c, :a, :b, :c], 3))
+    3-element Array{Any,1}:
+     [1,2,4,6,8,9,10]
+     [3,4,5,7,8,10]
+     [1,2,3,5,6,7,9]
+    ```
 
 - **LOOCV**(n)
 
@@ -218,6 +230,22 @@ This package implements several cross validation schemes: ``Kfold``, ``LOOCV``, 
      [2,5,7,8,10]
      [1,3,5,6,7] 
     ``` 
+
+- **StratifiedRandomSum**(strata, sn, k)
+
+    Like ``RandomSub``,  but indexes in each strata (defined by unique values of an iterator `strata`) are distributed approximately equally across the ``k`` subsets.
+    ``sn`` should be greater than the number of strata, so that each stratum can be represented in each subset.
+
+    ```julia
+    julia> collect(StratifiedRandomSub([:a, :a, :a, :b, :b, :c, :c, :a, :b, :c], 7, 5))
+    5-element Array{Any,1}:
+     [1,2,3,4,6,7,9]
+     [1,3,4,6,8,9,10]
+     [1,3,5,7,8,9,10]
+     [1,2,4,7,8,9,10]
+     [1,2,3,4,5,6,10]
+    ```
+
 
 The package also provides a function ``cross_validate`` as below to run a cross validation procedure.
 
