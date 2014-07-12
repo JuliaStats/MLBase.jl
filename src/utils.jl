@@ -127,7 +127,7 @@ end
 ## return the unique values of A and a vector of vectors of indexes to reconstruct
 ## the original array
 
-function unique_inverse(A::AbstractArray)
+function unique_inverse(A)
     out = Array(eltype(A),0)
     out_idx = Array(Vector{Int}, 0)
     seen = Dict{eltype(A), Int}()
