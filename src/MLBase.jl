@@ -26,16 +26,18 @@ module MLBase
     countne,        # count the number of non-equal pairs
 
     # datapre
-    Standardize,    # the type to represent a standardizing transform
+    Standardize,    # the type to represent a abstract standardizing transform
+    ZScore,         # the type to represent a z-score standardizing transform
+    MinMax,         # the type to represent a minmax standardizing transform
 
     indim,          # input dimension of a transform
-    outdim,         # output dimension of a transform 
+    outdim,         # output dimension of a transform
     estimate,       # estimate a model or transformation
     transform,      # apply a transformation to data
     transform!,     # apply a transformation to data in place
     standardize,    # estimate and apply a standardization
     standardize!,   # estimate and apply a standardization in place
-        
+
     # classification
     LabelMap,       # a type to represent a label map
 
