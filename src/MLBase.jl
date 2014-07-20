@@ -2,13 +2,13 @@ module MLBase
 
     using Reexport
     using ArrayViews
+    using Iterators
     @reexport using StatsBase
 
     import Base: length, show, keys, precision, length, getindex
     import Base: start, next, done
     import Base.Order: lt, Ordering, ForwardOrdering, ReverseOrdering, Forward, Reverse
     import StatsBase: RealVector, IntegerVector, RealMatrix, IntegerMatrix, RealArray
-    import StatsBase: sample
 
     export
 
