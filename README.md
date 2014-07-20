@@ -14,4 +14,10 @@ This package does not implement specific machine learning algorithms. Instead, i
 
 **Notes:** This package depends on [StatsBase](https://github.com/JuliaStats/StatsBase.jl) and reexport all names therefrom. It also depends on [ArrayViews](https://github.com/lindahua/ArrayViews.jl) and reexport the ``view`` function.
 
+### Resources
+
+- **Documentation:** <http://mlbasejl.readthedocs.org/en/latest/>
+- **ReleaseNotes:** <https://github.com/JuliaStats/MLBase.jl/blob/master/NEWS.md>
+
+
 
