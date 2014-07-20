@@ -20,6 +20,7 @@ Welcome to MLBase's documentation!
    classification.rst
    perfeval.rst
    crossval.rst
+   modeltune.rst
 
 
 .. Indices and tables
