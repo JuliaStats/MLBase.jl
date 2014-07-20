@@ -13,6 +13,7 @@ immutable Standardize
     scale::Vector{Float64}
 
     function Standardize(d::Int, m::Vector{Float64}, s::Vector{Float64})
+        Base.depwarn("Standardize is deprecated. Please use mean_and_std and zscore in StatsBase instead.", :Standardize)
         lenm = length(m)
         lens = length(s)
         lenm == d || lenm == 0 || throw(DimensionMismatch("Inconsistent dimensions."))
