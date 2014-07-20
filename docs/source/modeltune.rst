@@ -13,6 +13,16 @@ Many machine learning algorithms and models come with design parameters that nee
 
     :return: a 3-tuple, as ``(best_model, best_cfg, best_score)``. Here, ``best_cfg`` is a tuple comprised of the parameters in the best setting (the one that yields the best score).
 
+    **Keyword arguments:**
+
+    - ``ord``: It may take either of ``Forward`` or ``Reverse``:
+
+        * ``ord=Forward``: higher score value indicates better model (default)
+        * ``ord=Reverse``: lower score value indicates better model.
+
+    - ``verbose``: boolean, whether to show progress information. (default = ``false``).
+
+
     **Note:** For some learning algorithms, there may be some constraint of the parameters (*e.g* one parameter must be smaller than another, etc). If a certain combination of parameters is not valid, the ``estfun`` may return nothing, in which case, the function would ignore those particular settings.
 
     **Example:**
@@ -46,8 +56,8 @@ Many machine learning algorithms and models come with design parameters that nee
         r = gridtune(estfun, evalfun, 
                     ("regcoef", [1.0e-3, 1.0e-2, 1.0e-1, 1.0]), 
                     ("bias", (true, false)); 
-                    ord=Reverse,
-                    verbose=true)
+                    ord=Reverse,    # smaller msd value indicates better model
+                    verbose=true)   # show progress information
 
         best_model, best_cfg, best_score = r
 
