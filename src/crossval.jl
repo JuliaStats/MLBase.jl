@@ -163,34 +163,27 @@ done(c::StratifiedRandomSub, s::Int) = (s > c.k)
 #           of samples whose indices are given in
 #           test_inds, and returns an overall score.
 #
-#  n:   the number of samples in the whole data set
+#  n:   the total number of samples
 #
 #  gen: an iterable object (e.g. an instance of CrossValGenerator)
 #       where each element is a vector of indices
 #
-#  ord: ordering of the score
+#  This function returns a tuple a vector of validation scores
 #
-#  This function returns a tuple (best_model, best_score, best_traininds)
-#
-function cross_validate(estfun::Function, evalfun::Function, n::Integer, gen, ord::Ordering)
+function cross_validate(estfun::Function, evalfun::Function, n::Int, gen)
     best_model = nothing
     best_score = NaN   
     best_inds = Int[]
     first = true
 
-    for train_inds in gen
+    scores = Float64[]
+    for (i, train_inds) in enumerate(gen)
         test_inds = setdiff(1:n, train_inds)
         model = estfun(train_inds)
         score = evalfun(model, test_inds)
-        if first || lt(ord, best_score, score)
-            best_model = model
-            best_score = score            
-            best_inds = train_inds
-            first = false
-        end
+        push!(scores, score)
     end
-
-    return (best_model, best_score, best_inds)
+    return scores
 end
 
 cross_validate(estfun::Function, evalfun::Function, n::Integer, gen) = 
