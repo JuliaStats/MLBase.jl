@@ -78,7 +78,7 @@ Cross Validation Function
 
 The package also provides a function ``cross_validate`` as below to run a cross validation procedure.
 
-.. function:: cross_validate(estfun, evalfun, n, gen, ord)
+.. function:: cross_validate(estfun, evalfun, n, gen)
 
     Run a cross validation procedure.
 
@@ -99,12 +99,7 @@ The package also provides a function ``cross_validate`` as below to run a cross 
 
     :param gen: An iterable object that provides training indices, *e.g.*, one of the cross validation schemes listed above.
 
-    :param ord: The ordering of the evaluated score, which can take either of the following values
-
-        - ``Forward``: higher score indicates better model (this is the default).
-        - ``Reverse``: lower score indicates better model.
-
-    :return: a tuple as ``(best_model, best_score, best_indices)``.
+    :return: a vector of scores obtained in the multiple runs.
 
     **Example:**
 
@@ -130,12 +125,15 @@ The package also provides a function ``cross_validate`` as below to run a cross 
         const data = [2., 3.] .+ randn(2, n)
 
         # cross validation
-        (c, v, inds) = cross_validate(
+        scores = cross_validate(
             inds -> compute_center(data[:, inds]),        # training function
             (c, inds) -> compute_rmse(c, data[:, inds]),  # evaluation function
             n,              # total number of samples
-            Kfold(n, 5),    # cross validation plan: 5-fold 
-            Reverse)        # smaller score indicates better model
+            Kfold(n, 5))    # cross validation plan: 5-fold 
+
+        # get the mean and std of the scores
+        (m, s) = mean_and_std(scores)
+
     
     Please refer to ``examples/crossval.jl`` for the entire script.
 
