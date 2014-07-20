@@ -14,4 +14,4 @@ before_install:
   - sudo apt-get install libpcre3-dev julia -y
 script:
   - julia -e 'Pkg.init(); run(`ln -s $(pwd()) $(Pkg.dir("MLBase"))`); Pkg.pin("MLBase"); Pkg.resolve()'
-  - julia ./runtests.jl
+  - julia ./test/runtests.jl
