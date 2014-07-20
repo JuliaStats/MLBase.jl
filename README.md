@@ -17,7 +17,4 @@ This package does not implement specific machine learning algorithms. Instead, i
 ### Resources
 
 - **Documentation:** <http://mlbasejl.readthedocs.org/en/latest/>
-- **ReleaseNotes:** <https://github.com/JuliaStats/MLBase.jl/blob/master/NEWS.md>
-
-
-
+- **Release Notes:** <https://github.com/JuliaStats/MLBase.jl/blob/master/NEWS.md>
