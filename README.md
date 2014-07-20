@@ -184,14 +184,14 @@ This package implements several cross validation schemes: ``Kfold``, ``LOOCV``, 
 
 - **Kfold**(n, k)
 
-    ``k``-fold cross validation over a set of ``n`` samples, which are randomly partitioned into ``k`` disjoint subsets of nearly the same sizes.
+    ``k``-fold cross validation over a set of ``n`` samples, which are randomly partitioned into ``k`` disjoint validation sets of nearly the same sizes. This generates ``k`` training subsets of length about ``n*(1-1/k)``.
 
     ```julia
     julia> collect(Kfold(10, 3))
     3-element Array{Any,1}:
-     [1,2,7]  
-     [4,5,8,9]
-     [3,6,10]
+     [1,3,4,6,7,8,10]
+     [2,5,7,8,9,10]
+     [1,2,3,4,5,6,9]
     ```
 - **StratifiedKfold**(strata, k)
 

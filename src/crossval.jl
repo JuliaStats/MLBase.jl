@@ -26,8 +26,8 @@ immutable KfoldState
 end
 
 start(c::Kfold) = KfoldState(1, 1, iround(c.coeff))
-next(c::Kfold, s::KfoldState) = 
-    (i = s.i+1; (sort!(c.permseq[s.s:s.e]), KfoldState(i, s.e+1, iround(c.coeff * i))))
+next(c::Kfold, s::KfoldState) =
+    (i = s.i+1; (setdiff(1:length(c.permseq), c.permseq[s.s:s.e]), KfoldState(i, s.e+1, iround(c.coeff * i))))
 done(c::Kfold, s::KfoldState) = (s.i > c.k)
 
 # Stratified K-fold
@@ -178,8 +178,8 @@ function cross_validate(estfun::Function, evalfun::Function, n::Integer, gen, or
     best_inds = Int[]
     first = true
 
-    for test_inds in gen
-        train_inds = setdiff(1:n, test_inds)
+    for train_inds in gen
+        test_inds = setdiff(1:n, train_inds)
         model = estfun(train_inds)
         score = evalfun(model, test_inds)
         if first || lt(ord, best_score, score)

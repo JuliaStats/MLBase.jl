@@ -9,7 +9,7 @@ for i = 1:3
 	@test isa(ss[i], Vector{Int})
 	@test issorted(ss[i])
 end
-x = vcat(ss...)
+x = vcat(map(s -> setdiff(1:12, s), ss)...)
 @test sort(x) == [1:12]
 
 ##StratifiedKfold
@@ -34,6 +34,10 @@ ss = collect(LOOCV(4))
 @test ss[2] == [1, 3, 4]
 @test ss[3] == [1, 2, 4]
 @test ss[4] == [1, 2, 3]
+
+## Test LOOCV and Kfold are the same for n=k
+@test Set(LOOCV(4)) == Set(Kfold(4,4))
+
 
 ## RandomSub
 
