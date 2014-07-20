@@ -53,9 +53,9 @@ Many machine learning algorithms and models come with design parameters that nee
 
         ## print results
 
-        θ, b = best_model
+        a, b = best_model
         println("Best model:") 
-        println("  θ = $(θ')"), 
+        println("  a = $(a')"), 
         println("  b = $b")
         println("Best config: regcoef = $(best_cfg[1]), bias = $(best_cfg[2])")
         println("Best score: $(best_score)")
