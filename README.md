@@ -12,7 +12,7 @@ This package does not implement specific machine learning algorithms. Instead, i
 - Cross validation
 - Performance evaluation (e.g. evaluating ROC)
 
-**Notes:** This package depends on [StatsBase](https://github.com/JuliaStats/StatsBase.jl) and reexport all names therefrom. It also depends on [ArrayViews](https://github.com/lindahua/ArrayViews.jl) and reexport the ``view`` function.
+**Notes:** This package depends on [StatsBase](https://github.com/JuliaStats/StatsBase.jl) and reexports all names therefrom. It also depends on [ArrayViews](https://github.com/lindahua/ArrayViews.jl) and reexports the ``view`` function.
 
 -----------
 
@@ -40,7 +40,7 @@ This package does not implement specific machine learning algorithms. Instead, i
 
 - **counteq**(a, b) 
 
-    Count the number of occurences of ``a[i] == b[i]``.
+    Count the number of occurrences of ``a[i] == b[i]``.
 
 - **countne**(a, b)
 
@@ -65,9 +65,9 @@ Applying a standardization transform ``t`` to a vector ``x`` is defined as:
 ```julia
 y[i] = t.scale[i] * (x[i] - t.mean[i])
 ```
-Here, ``t.scale[i]`` is the inverse of the standard deviation of the i-th variable. After standarization, each component would have zero mean and unit standard deviation.
+Here, ``t.scale[i]`` is the inverse of the standard deviation of the i-th variable. After standardization, each component would have zero mean and unit standard deviation.
 
-Note we allow either ``mean`` or ``scale`` fields to be empty, which indicates that the step of shifting the mean or that of scaling the component would not be applied. 
+Note that we allow either ``mean`` or ``scale`` fields to be empty, which indicates that the step of shifting the mean or that of scaling the component would not be applied. 
 
 - **estimate**(Standardize, X[; center=true, scale=true])
 
