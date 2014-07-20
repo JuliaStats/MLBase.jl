@@ -12,7 +12,7 @@ This package does not implement specific machine learning algorithms. Instead, i
 - Cross validation
 - Performance evaluation (e.g. evaluating ROC)
 
-**Notes:** This package depends on [StatsBase](https://github.com/JuliaStats/StatsBase.jl) and reexport all names therefrom. It also depends on [ArrayViews](https://github.com/lindahua/ArrayViews.jl) and reexport the ``view`` function.
+**Notes:** This package depends on [StatsBase](https://github.com/JuliaStats/StatsBase.jl) and reexports all names therefrom. It also depends on [ArrayViews](https://github.com/lindahua/ArrayViews.jl) and reexports the ``view`` function.
 
 ### Resources
 
