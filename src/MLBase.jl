@@ -48,6 +48,7 @@ module MLBase
 
     correctrate,    # compute correct rate of predictions
     errorrate,      # compute error rate of predictions
+    confusmat,      # compute confusion matrix
     counthits,      # count the number of hits
     hitrate,        # compute hit-rate of ranked lists at a specific rank
     hitrates,       # compute hit-rate of ranked lists at multiple ranks

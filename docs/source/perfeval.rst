@@ -3,7 +3,7 @@ Performance Evaluation
 
 This package provides tools to assess the performance of a machine learning algorithm.
 
-Correct rate and Error rate
+Classification Performance
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. function:: correctrate(gt, pred)
@@ -13,6 +13,39 @@ Correct rate and Error rate
 .. function:: errorrate(gt, pred)
 
     Compute error rate of predictions given by ``pred`` w.r.t. the ground truths given in ``gt``.
+
+.. function:: confusmat(k, gt, pred)
+
+    Compute the confusion matrix of the predictions given by ``pred`` w.r.t. the ground truths given in ``gt``.
+    Here, ``k`` is the number of classes.
+
+    It returns an integer matrix ``R`` of size ``(k, k)``, such that ``R(i, j) == countnz((gt .== i) & (pred .== j))``.
+
+    **Examples:**
+
+    .. code-block:: julia
+
+        julia> gt = [1, 1, 1, 2, 2, 2, 3, 3];
+
+        julia> pred = [1, 1, 2, 2, 2, 3, 3, 3];
+
+        julia> C = confusmat(3, gt, pred)   # compute confusion matrix
+        3x3 Array{Int64,2}:
+         2  1  0
+         0  2  1
+         0  0  2
+
+        julia> C ./ sum(C, 2)   # normalize per class 
+        3x3 Array{Float64,2}:
+         0.666667  0.333333  0.0     
+         0.0       0.666667  0.333333
+         0.0       0.0       1.0
+
+        julia> trace(C) / length(gt)  # compute correct rate from confusion matrix
+        0.75
+
+        julia> correctrate(gt, pred)
+        0.75
 
 Hit rate (for retrieval tasks)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

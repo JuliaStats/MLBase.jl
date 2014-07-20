@@ -13,6 +13,10 @@ b = [1, 1, 2, 2, 2, 3, 3, 3]
 @test correctrate(a, b) == 0.75
 @test errorrate(a, b) == 0.25
 
+## confusmat
+
+@test confusmat(3, a, b) == [2 1 0; 0 2 1; 0 0 2]
+
 ## counthits & hitrates
 
 gt = [1, 1, 1, 1, 1, 2, 2, 2, 2, 2]

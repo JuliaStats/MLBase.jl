@@ -5,6 +5,20 @@
 correctrate(gt::IntegerVector, r::IntegerVector) = counteq(gt, r) / length(gt)
 errorrate(gt::IntegerVector, r::IntegerVector) = countne(gt, r) / length(gt)
 
+## confusion matrix
+
+function confusmat(k::Integer, gts::IntegerVector, preds::IntegerVector)
+    n = length(gts)
+    length(preds) == n || throw(DimensionMismatch("Inconsistent lengths."))
+    R = zeros(Int, k, k)
+    for i = 1:n
+        @inbounds g = gts[i]
+        @inbounds p = preds[i]
+        R[g, p] += 1
+    end
+    return R
+end
+
 ## counthits & hitrate
 
 function counthits(gt::IntegerVector, rklst::IntegerMatrix, k::Integer)
