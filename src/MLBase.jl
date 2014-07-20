@@ -19,8 +19,6 @@ module MLBase
     repeach,        # repeat each element in a vector 
     repeachcol,     # repeat each column in a matrix
     repeachrow,     # repeat each row in a matrix
-    counteq,        # count the number of equal pairs
-    countne,        # count the number of non-equal pairs
         
     # classification
     LabelMap,       # a type to represent a label map
@@ -64,7 +62,10 @@ module MLBase
     false_negative_rate,    # rate of false negatives
     recall,             # recall computed from ROCNums
     precision,          # precision computed from ROCNums
-    f1score             # F1-score computed from ROCNums
+    f1score,            # F1-score computed from ROCNums
+
+    # modeltune
+    gridtune           # grid-based model tuning (search best config)
 
     # source files
 
@@ -72,6 +73,7 @@ module MLBase
     include("classification.jl")
     include("crossval.jl")
     include("perfeval.jl")
+    include("modeltune.jl")
     
     include("deprecates.jl")
 end

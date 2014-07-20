@@ -2,7 +2,8 @@
 tests = ["utils", 
          "classification", 
          "perfeval", 
-         "crossval"]
+         "crossval", 
+         "modeltune"]
 
 for t in tests
     fp = "$t.jl"

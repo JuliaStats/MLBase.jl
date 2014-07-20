@@ -9,8 +9,9 @@ This package does not implement specific machine learning algorithms. Instead, i
 
 - Data manipulation & preprocessing
 - Score-based classification
+- Performance evaluation (*e.g.* evaluating ROC)
 - Cross validation
-- Performance evaluation (e.g. evaluating ROC)
+- Model tuning (*i.e.* search best settings of parameters)
 
 **Notes:** This package depends on [StatsBase](https://github.com/JuliaStats/StatsBase.jl) and reexports all names therefrom. It also depends on [ArrayViews](https://github.com/lindahua/ArrayViews.jl) and reexports the ``view`` function.
 
