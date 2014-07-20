@@ -9,4 +9,4 @@
 #### From v0.4 to v0.5
 
 - Move documentation from Readme to [Sphinx Docs](http://mlbasejl.readthedocs.org/en/latest/)
-
+- ``cross_validate`` now returns a vector of scores (see [here](http://mlbasejl.readthedocs.org/en/latest/crossval.html#cross_validate)).
