@@ -5,7 +5,7 @@ tests = ["utils",
          "crossval"]
 
 for t in tests
-    fp = joinpath("test", "$t.jl")
+    fp = "$t.jl"
     println("* running $fp ...")
     include(fp)
 end
