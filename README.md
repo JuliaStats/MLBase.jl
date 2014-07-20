@@ -7,12 +7,12 @@ Swiss knife for machine learning.
 
 This package does not implement specific machine learning algorithms. Instead, it provides a collection of useful tools to support machine learning programs, including:
 
-- Data manipulation
-- Standardization
+- Data manipulation & preprocessing
 - Score-based classification
 - Cross validation
 - Performance evaluation (e.g. evaluating ROC)
-- Computing deviation between arrays
+
+**Notes:** This package depends on [StatsBase](https://github.com/JuliaStats/StatsBase.jl) and reexport all names therefrom. It also depends on [ArrayViews](https://github.com/lindahua/ArrayViews.jl) and reexport the ``view`` function.
 
 -----------
 
