@@ -1,4 +1,8 @@
 
+export Standardize 
+
+export standardize, standardize!, transform
+
 # various transforms
 
 ### Standardization

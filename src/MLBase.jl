@@ -1,7 +1,8 @@
 module MLBase
 
+    using Reexport
     using ArrayViews
-    using StatsBase
+    @reexport using StatsBase
 
     import Base: length, show, keys, precision, length, getindex
     import Base: start, next, done
@@ -14,27 +15,12 @@ module MLBase
     # reexport from Base.Order
     Forward, Reverse,
 
-    # reexport some functions from StatsBase
-    counts, addcounts!, countmap, proportions, 
-    indicatormat, sample, weights, WeightVec, wmean,
-
     # utils
     repeach,        # repeat each element in a vector 
     repeachcol,     # repeat each column in a matrix
     repeachrow,     # repeat each row in a matrix
     counteq,        # count the number of equal pairs
     countne,        # count the number of non-equal pairs
-
-    # datapre
-    Standardize,    # the type to represent a standardizing transform
-
-    indim,          # input dimension of a transform
-    outdim,         # output dimension of a transform 
-    estimate,       # estimate a model or transformation
-    transform,      # apply a transformation to data
-    transform!,     # apply a transformation to data in place
-    standardize,    # estimate and apply a standardization
-    standardize!,   # estimate and apply a standardization in place
         
     # classification
     LabelMap,       # a type to represent a label map
@@ -78,28 +64,15 @@ module MLBase
     false_negative_rate,    # rate of false negatives
     recall,             # recall computed from ROCNums
     precision,          # precision computed from ROCNums
-    f1score,            # F1-score computed from ROCNums
-
-    # deviation
-    sqL2dist,       # squared L2 distance between two arrays
-    L2dist,         # L2 distance between two arrays
-    L1dist,         # L1 distance between two arrays
-    Linfdist,       # L-inf distance between two arrays
-    gkldiv,         # (Generalized) Kullback-Leibler divergence between two vectors
-    meanad,         # mean absolute deviation
-    maxad,          # maximum absolute deviation
-    msd,            # mean squared deviation
-    rmsd,           # root mean squared deviation
-    nrmsd,          # normalized rmsd
-    psnr            # peak signal-to-noise ratio (in dB)
+    f1score             # F1-score computed from ROCNums
 
     # source files
 
     include("utils.jl")
-    include("datapre.jl")
     include("classification.jl")
     include("crossval.jl")
     include("perfeval.jl")
-    include("deviation.jl")
+    
+    include("deprecates.jl")
 end
 
