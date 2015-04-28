@@ -3,7 +3,7 @@ using Base.Test
 
 ## gridtune
 
-oracle = ((Int, Symbol)=>Float64)[
+oracle = (Tuple{Int, Symbol}=>Float64)[
     (1, :a) => 2.0,
     (2, :a) => 1.0,
     (3, :a) => 3.0,

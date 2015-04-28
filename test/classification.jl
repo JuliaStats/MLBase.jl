@@ -58,7 +58,7 @@ lmap = labelmap(xs)
 
 # groupindices
 
-gs = {[1,2,5,8],[3,4,6],[7]}
+gs = Any[[1,2,5,8],[3,4,6],[7]]
 
 @test groupindices(3, labels) == gs
 @test groupindices(lmap, xs) == gs

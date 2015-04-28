@@ -4,7 +4,7 @@ _always_true(xs...) = true
 
 function gridtune(estfun::Function,             # model estimation function
                   evalfun::Function,            # model evaluation function
-                  params::(String, Any)...;     # parameters to tune
+                  params::Tuple{String, Any}...;     # parameters to tune
                   ord::Ordering=Forward,        # ordering of score
                   verbose::Bool=false)          # whether to display the progress      
 
