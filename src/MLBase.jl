@@ -3,6 +3,7 @@ module MLBase
     using Reexport
     using ArrayViews
     using Iterators
+    using Compat
     @reexport using StatsBase
 
     import Base: length, show, keys, precision, length, getindex

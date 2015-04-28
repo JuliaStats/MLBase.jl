@@ -2,11 +2,11 @@
 
 _always_true(xs...) = true
 
-function gridtune(estfun::Function,             # model estimation function
-                  evalfun::Function,            # model evaluation function
-                  params::Tuple{String, Any}...;     # parameters to tune
-                  ord::Ordering=Forward,        # ordering of score
-                  verbose::Bool=false)          # whether to display the progress      
+function gridtune(estfun::Function,                          # model estimation function
+                  evalfun::Function,                         # model evaluation function
+                  params::@compat(Tuple{String, Any})...;    # parameters to tune
+                  ord::Ordering=Forward,                     # ordering of score
+                  verbose::Bool=false)                       # whether to display the progress      
 
     np = length(params)
     pnames = [p[1] for p in params]
