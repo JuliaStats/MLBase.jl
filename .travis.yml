@@ -3,7 +3,7 @@ os:
     - linux
     - osx
 julia:
-    - release
+    # - release # definitions of Tuples are not compliant with Julia -0.3 
     - nightly
 notifications:
     email: false
