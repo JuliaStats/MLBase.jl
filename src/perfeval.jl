@@ -24,7 +24,7 @@ end
 function counthits(gt::IntegerVector, rklst::IntegerMatrix, k::Integer)
     n = length(gt)
     size(rklst, 2) == n || throw(DimensionMismatch("Input dimensions mismatch."))
-    m = min(size(rklst, 1), int(k))
+    m = min(size(rklst, 1), @compat(Int(k)))
 
     cnt = 0
     @inbounds for j = 1:n

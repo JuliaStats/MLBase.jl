@@ -129,7 +129,7 @@ end
 function labelmap{T}(xs::AbstractArray{T})
     l = 0
     vs = T[]
-    v2i = (T=>Int)[]
+    v2i = Dict{T, Int}()
     for x in xs
         if !haskey(v2i, x)
             push!(vs, x)

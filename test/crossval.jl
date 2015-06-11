@@ -10,7 +10,7 @@ for i = 1:3
     @test issorted(ss[i])
 end
 x = vcat(map(s -> setdiff(1:12, s), ss)...)
-@test sort(x) == [1:12]
+@test sort(x) == collect(1:12)
 
 ## StratifiedKfold
 
@@ -23,7 +23,7 @@ for i in 1:2
     @test length(unique(strat[ss[i]])) == 3
 end
 x = vcat(map(s -> setdiff(1:9, s), ss)...)
-@test sort(x) == [1:9]
+@test sort(x) == collect(1:9)
 
 ## LOOCV
 
