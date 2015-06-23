@@ -25,9 +25,9 @@ immutable KfoldState
     e::Int      # ending index
 end
 
-start(c::Kfold) = KfoldState(1, 1, iround(c.coeff))
+start(c::Kfold) = KfoldState(1, 1, @compat(round(Integer,c.coeff)))
 next(c::Kfold, s::KfoldState) =
-    (i = s.i+1; (setdiff(1:length(c.permseq), c.permseq[s.s:s.e]), KfoldState(i, s.e+1, iround(c.coeff * i))))
+    (i = s.i+1; (setdiff(1:length(c.permseq), c.permseq[s.s:s.e]), KfoldState(i, s.e+1, @compat(round(Integer,c.coeff * i)))))
 done(c::Kfold, s::KfoldState) = (s.i > c.k)
 
 # Stratified K-fold
@@ -56,7 +56,7 @@ start(c::StratifiedKfold) = 1
 function next(c::StratifiedKfold, s::Int)
     r = Int[]
     for (permseq, coeff) in zip(c.permseqs, c.coeffs)
-        a, b = iround([s-1, s] .* coeff)
+        a, b = @compat(round(Integer, [s-1, s] .* coeff))
         append!(r, view(permseq, a+1:b))
     end
     setdiff(1:c.n, r), s+1
@@ -122,7 +122,7 @@ immutable StratifiedRandomSub <: CrossValGenerator
         for stratum_num in lengths_ord
             stratum_n = length(idxs[stratum_num])
             remaining_proportion = remaining_sn/remaining_n
-            stratum_sn = max(iround(remaining_proportion*stratum_n), 1)
+            stratum_sn = max(@compat(round(Integer, remaining_proportion*stratum_n)), 1)
             remaining_n -= stratum_n
             remaining_sn -= stratum_sn
             sns[stratum_num] = stratum_sn
@@ -137,7 +137,7 @@ length(c::StratifiedRandomSub) = c.k
 start(c::StratifiedRandomSub) = 1
 function next(c::StratifiedRandomSub, s::Int)
     idxs = Array(Int, 0)
-    sizehint(idxs, c.sn)
+    sizehint!(idxs, c.sn)
     for (stratum_sn, stratum_idxs) in zip(c.sns, c.idxs)
         append!(idxs, sample(stratum_idxs, stratum_sn, replace=false))
     end
