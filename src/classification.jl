@@ -289,11 +289,11 @@ end
 
 function labelencode{T}(classEncoding::SignedClassEncoding{T}, targets::Vector{T})
   indicies = labelencode(classEncoding.labelmap, targets)
-  iround(indicies - 1.5)
+  round(Integer,2(indicies - 1.5))
 end
 
 function labeldecode{T}(classEncoding::SignedClassEncoding{T}, values::Vector{Int})
-  indicies = iround((values / 2.) + 1.5)
+  indicies = round(Integer,(values / 2.) + 1.5)
   labeldecode(classEncoding.labelmap, indicies)
 end
 
@@ -312,7 +312,7 @@ end
 
 function labeldecode{T}(classEncoding::OneOfKClassEncoding{T}, values::Matrix{Int})
   numLabels = classEncoding.nlabels
-  indicies = convert(Vector{Int}, values * [1:numLabels])
+  indicies = convert(Vector{Int}, values * collect(1:numLabels))
   labeldecode(classEncoding.labelmap, indicies)
 end
 
