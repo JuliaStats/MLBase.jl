@@ -17,10 +17,10 @@ module MLBase
     Forward, Reverse,
 
     # utils
-    repeach,        # repeat each element in a vector 
+    repeach,        # repeat each element in a vector
     repeachcol,     # repeat each column in a matrix
     repeachrow,     # repeat each row in a matrix
-        
+
     # classification
     LabelMap,       # a type to represent a label map
 
@@ -33,6 +33,15 @@ module MLBase
     labelencode,    # encode a sequence of discrete values using a label map
     labeldecode,    # decode the label to the associated discrete value
     groupindices,   # grouped indices based on labels
+    classDistribution, # computes the number of observations per class
+    ClassEncoding,  # abstract base class representing a class encoding
+    BinaryClassEncoding,      # abstract base class for all binary class encodings
+    MultinomialClassEncoding, # abstract base class for all binary class encodings
+    ZeroOneClassEncoding,     # class encoding to for {0, 1}
+    SignedClassEncoding,      # class encoding to for {-1, 1}
+    MultivalueClassEncoding,  # class encoding to for 1:k or 0:k-1
+    OneOfKClassEncoding,      # class encoding to one-out-of-k
+    OneHotClassEncoding,      # Typealias for one-out-of-k encoding
 
     # crossval
     CrossValGenerator,  # abstract base class for all cross-validation plans
@@ -54,11 +63,11 @@ module MLBase
     hitrate,        # compute hit-rate of ranked lists at a specific rank
     hitrates,       # compute hit-rate of ranked lists at multiple ranks
     roc,            # compute roc numbers from predictions
-    true_positive,      # number of true positives 
-    true_negative,      # number of true negatives 
+    true_positive,      # number of true positives
+    true_negative,      # number of true negatives
     false_positive,     # number of false positives
     false_negative,     # number of false negatives
-    true_positive_rate,     # rate of true positives 
+    true_positive_rate,     # rate of true positives
     true_negative_rate,     # rate of true negatives
     false_positive_rate,    # rate of false positives
     false_negative_rate,    # rate of false negatives
@@ -76,7 +85,7 @@ module MLBase
     include("crossval.jl")
     include("perfeval.jl")
     include("modeltune.jl")
-    
+
     include("deprecates.jl")
 end
 
