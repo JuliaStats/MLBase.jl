@@ -60,7 +60,7 @@ ss = collect(StratifiedRandomSub(strat, 6, 10))
 #make sure small strata are (probably) always represented
 strat = push!(repeach([:a], 100), :b)
 ss = collect(StratifiedRandomSub(strat, 4, 100))
-@test all(map(s -> :b ∈ strat[s], ss))
+@test all(s -> :b ∈ strat[s], ss)
 
 
 ## cross validation
@@ -71,4 +71,3 @@ scores = cross_validate(
             (m, inds) -> m / sum(inds),
             4, LOOCV(4))
 @test scores == [9 / 1, 8 / 2, 7 / 3, 6 / 4]
-
