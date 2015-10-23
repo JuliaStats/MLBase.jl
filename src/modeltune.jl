@@ -4,9 +4,9 @@ _always_true(xs...) = true
 
 function gridtune(estfun::Function,                          # model estimation function
                   evalfun::Function,                         # model evaluation function
-                  params::@compat(Tuple{String, Any})...;    # parameters to tune
+                  params::@compat(Tuple{AbstractString, Any})...;    # parameters to tune
                   ord::Ordering=Forward,                     # ordering of score
-                  verbose::Bool=false)                       # whether to display the progress      
+                  verbose::Bool=false)                       # whether to display the progress
 
     np = length(params)
     pnames = [p[1] for p in params]
@@ -36,8 +36,8 @@ function gridtune(estfun::Function,                          # model estimation 
             print("[")
             for i = 1:np
                 print("$(pnames[i])=$(cf[i])")
-                if i < np 
-                    print(", ") 
+                if i < np
+                    print(", ")
                 end
             end
             println("] => $v")
@@ -49,4 +49,3 @@ function gridtune(estfun::Function,                          # model estimation 
     end
     return (best_model, best_cfg, best_score)
 end
-
