@@ -1,5 +1,5 @@
 
-export Standardize 
+export Standardize
 
 export standardize, standardize!, transform
 
@@ -101,8 +101,8 @@ function transform!{YT<:Real,XT<:Real}(y::DenseArray{YT,2}, t::Standardize, x::D
     return y
 end
 
-transform!{T<:FloatingPoint}(t::Standardize, x::DenseArray{T,1}) = transform!(x, t, x)
-transform!{T<:FloatingPoint}(t::Standardize, x::DenseArray{T,2}) = transform!(x, t, x)
+transform!{T<:AbstractFloat}(t::Standardize, x::DenseArray{T,1}) = transform!(x, t, x)
+transform!{T<:AbstractFloat}(t::Standardize, x::DenseArray{T,2}) = transform!(x, t, x)
 
 transform{T<:Real}(t::Standardize, x::DenseArray{T,1}) = transform!(Array(Float64, size(x)), t, x)
 transform{T<:Real}(t::Standardize, x::DenseArray{T,2}) = transform!(Array(Float64, size(x)), t, x)
@@ -116,7 +116,7 @@ function estimate{T<:Real}(::Type{Standardize}, X::DenseArray{T,2}; center::Bool
     m = Array(Float64, ifelse(center, d, 0))
     s = Array(Float64, ifelse(scale, d, 0))
 
-    if center 
+    if center
         fill!(m, 0.0)
         for j = 1:n
             xj = view(X, :, j)
@@ -160,9 +160,8 @@ function standardize{T<:Real}(X::DenseArray{T,2}; center::Bool=true, scale::Bool
     return (Y, t)
 end
 
-function standardize!{T<:FloatingPoint}(X::DenseArray{T,2}; center::Bool=true, scale::Bool=true)
+function standardize!{T<:AbstractFloat}(X::DenseArray{T,2}; center::Bool=true, scale::Bool=true)
     t = estimate(Standardize, X; center=center, scale=scale)
     Y = transform!(t, X)
     return (Y, t)
 end
-
