@@ -1,10 +1,11 @@
 # MLBase.jl
 
-Swiss knife for machine learning. 
+Swiss knife for machine learning.
 
 [![Build Status](https://travis-ci.org/JuliaStats/MLBase.jl.svg?branch=master)](https://travis-ci.org/JuliaStats/MLBase.jl)
-[![MLBase](http://pkg.julialang.org/badges/MLBase_0.3.svg)](http://pkg.julialang.org/?pkg=MLBase&ver=0.3)
-[![MLBase](http://pkg.julialang.org/badges/MLBase_0.4.svg)](http://pkg.julialang.org/?pkg=MLBase&ver=0.4)
+[![MLBase](http://pkg.julialang.org/badges/MLBase_0.4.svg)](http://pkg.julialang.org/?pkg=MLBase)
+[![MLBase](http://pkg.julialang.org/badges/MLBase_0.5.svg)](http://pkg.julialang.org/?pkg=MLBase)
+[![Coveralls](https://coveralls.io/repos/github/JuliaStats/MLBase.jl/badge.svg?branch=master)](https://coveralls.io/github/JuliaStats/MLBase.jl?branch=master)
 
 This package does not implement specific machine learning algorithms. Instead, it provides a collection of useful tools to support machine learning programs, including:
 
@@ -14,7 +15,7 @@ This package does not implement specific machine learning algorithms. Instead, i
 - Cross validation
 - Model tuning (*i.e.* search best settings of parameters)
 
-**Notes:** This package depends on [StatsBase](https://github.com/JuliaStats/StatsBase.jl) and reexports all names therefrom. It also depends on [ArrayViews](https://github.com/lindahua/ArrayViews.jl) and reexports the ``view`` function.
+**Notes:** This package depends on [StatsBase](https://github.com/JuliaStats/StatsBase.jl) and reexports all names therefrom.
 
 ### Resources
 

@@ -1,6 +1,5 @@
-julia 0.3
+julia 0.4
 Reexport
-ArrayViews 0.4.8-
 StatsBase 0.6.9-
 Iterators
-Compat
+Compat 0.8.7

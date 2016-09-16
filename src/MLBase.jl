@@ -1,9 +1,9 @@
 module MLBase
 
     using Reexport
-    using ArrayViews
     using Iterators
     using Compat
+    using Compat: view
     @reexport using StatsBase
 
     import Base: length, show, keys, precision, length, getindex
@@ -17,10 +17,10 @@ module MLBase
     Forward, Reverse,
 
     # utils
-    repeach,        # repeat each element in a vector 
+    repeach,        # repeat each element in a vector
     repeachcol,     # repeat each column in a matrix
     repeachrow,     # repeat each row in a matrix
-        
+
     # classification
     LabelMap,       # a type to represent a label map
 
@@ -54,11 +54,11 @@ module MLBase
     hitrate,        # compute hit-rate of ranked lists at a specific rank
     hitrates,       # compute hit-rate of ranked lists at multiple ranks
     roc,            # compute roc numbers from predictions
-    true_positive,      # number of true positives 
-    true_negative,      # number of true negatives 
+    true_positive,      # number of true positives
+    true_negative,      # number of true negatives
     false_positive,     # number of false positives
     false_negative,     # number of false negatives
-    true_positive_rate,     # rate of true positives 
+    true_positive_rate,     # rate of true positives
     true_negative_rate,     # rate of true negatives
     false_positive_rate,    # rate of false positives
     false_negative_rate,    # rate of false negatives
@@ -76,7 +76,7 @@ module MLBase
     include("crossval.jl")
     include("perfeval.jl")
     include("modeltune.jl")
-    
+
     include("deprecates.jl")
 end
 
