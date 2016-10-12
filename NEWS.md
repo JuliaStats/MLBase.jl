@@ -10,5 +10,5 @@
 
 - Move documentation from Readme to [Sphinx Docs](http://mlbasejl.readthedocs.org/en/latest/)
 - ``cross_validate`` now returns a vector of scores (see [here](http://mlbasejl.readthedocs.org/en/latest/crossval.html#cross_validate)).
-- New function ``gridtune``: search for the best settings of paramters (see [here](http://mlbasejl.readthedocs.org/en/latest/modeltune.html#gridtune)).
+- New function ``gridtune``: search for the best settings of parameters (see [here](http://mlbasejl.readthedocs.org/en/latest/modeltune.html#gridtune)).
 - New function ``confusmat``: compute confusion matrix (see [here](http://mlbasejl.readthedocs.org/en/latest/perfeval.html#confusmat)).
