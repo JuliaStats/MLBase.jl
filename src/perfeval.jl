@@ -174,9 +174,6 @@ immutable BinaryThresPredVec{ScoreVec <: RealVector,
     ord::Ord
 end
 
-BinaryThresPredVec{SVec<:RealVector,T<:Real,Ord<:Ordering}(scores::SVec, thres::T, ord::Ord) = 
-    BinaryThresPredVec{SVec,T,Ord}(scores, thres, ord)
-
 length(v::BinaryThresPredVec) = length(v.scores)
 getindex(v::BinaryThresPredVec, i::Integer) = !lt(v.ord, v.scores[i], v.thres)
 
