@@ -104,14 +104,16 @@ classify(x::RealMatrix, t::Real) = classify(x, t, Forward)
 ## label map
 
 immutable LabelMap{K}
-    vs::Array{K}
+    vs::Vector{K}
     v2i::Dict{K,Int}
+
+    function LabelMap(vs, v2i)
+        length(vs) == length(v2i) || throw(DimensionMismatch("lengths of vs and v2i mismatch"))
+        new(vs, v2i)
+    end
 end
 
-function LabelMap{K}(vs::Array{K}, v2i::Dict{K,Int})
-    length(vs) == length(v2i) || throw(DimensionMismatch("Lengths of vs and v2i mismatch"))
-    LabelMap{K}(vs, v2i)
-end
+LabelMap{K}(vs::Vector{K}, v2i::Dict{K,Int}) = LabelMap{K}(vs, v2i)
 
 length(lmap::LabelMap) = length(lmap.vs)
 keys(lmap::LabelMap) = lmap.vs
