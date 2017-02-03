@@ -8,7 +8,6 @@ Welcome to MLBase's documentation!
 
 - `Reexport <https://github.com/simonster/Reexport.jl>`_: to support name reexport
 - `StatsBase <https://github.com/JuliaStats/StatsBase.jl>`_: all names in StatsBase are reexported
-- `ArrayViews <https://github.com/lindahua/ArrayViews.jl>`_: ``view`` is reexported
 - `Iterators <https://github.com/JuliaLang/Iterators.jl>`_: to support grid search
 
 **Contents:**
@@ -29,4 +28,3 @@ Welcome to MLBase's documentation!
 .. * :ref:`genindex`
 .. * :ref:`modindex`
 .. * :ref:`search`
-
