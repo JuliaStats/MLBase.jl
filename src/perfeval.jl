@@ -67,7 +67,7 @@ function counthits(gt::IntegerVector, rklst::IntegerMatrix, ks::IntegerVector)
 end
 
 
-hitrate(gt::IntegerVector, rklst::IntegerMatrix, k::Integer) = 
+hitrate(gt::IntegerVector, rklst::IntegerMatrix, k::Integer) =
     (counthits(gt, rklst, k) / length(gt))::Float64
 
 function hitrates(gt::IntegerVector, rklst::IntegerMatrix, ks::IntegerVector)
@@ -114,8 +114,14 @@ false_positive_rate(x::ROCNums) = x.fp / x.n
 false_negative_rate(x::ROCNums) = x.fn / x.p
 
 recall(x::ROCNums) = true_positive_rate(x)
+sensitivity(x::ROCNums) = true_positive_rate(x)
+specificity(x::ROCNums) = true_negative_rate(x)
 precision(x::ROCNums) = x.tp / (x.tp + x.fp)
+positive_predictive_value(x::ROCNums) = precision(x)
+negative_predictive_value(x::ROCNums) = x.tn / (x.tn + x.fn)
+false_discovery_rate(x::ROCNums) = x.fp / (x.tp + x.fp)
 
+accuracy(x::ROCNums) = (x.tp + x.tn) / (x.p + x.n)
 f1score(x::ROCNums) = (tp2 = x.tp + x.tp; tp2 / (tp2 + x.fp + x.fn) )
 
 
@@ -178,7 +184,7 @@ length(v::BinaryThresPredVec) = length(v.scores)
 getindex(v::BinaryThresPredVec, i::Integer) = !lt(v.ord, v.scores[i], v.thres)
 
 # compute roc numbers based on scores & threshold
-roc(gt::IntegerVector, scores::RealVector, t::Real, ord::Ordering) = 
+roc(gt::IntegerVector, scores::RealVector, t::Real, ord::Ordering) =
     _roc(gt, BinaryThresPredVec(scores, t, ord))
 
 roc(gt::IntegerVector, scores::RealVector, thres::Real) =
@@ -211,7 +217,7 @@ length(v::ThresPredVec) = length(v.preds)
 getindex(v::ThresPredVec, i::Integer) = ifelse(lt(v.ord, v.scores[i], v.thres), 0, v.preds[i])
 
 # compute roc numbers based on predictions & scores & threshold
-roc{PV<:IntegerVector,SV<:RealVector}(gt::IntegerVector, preds::@compat(Tuple{PV,SV}), t::Real, ord::Ordering) = 
+roc{PV<:IntegerVector,SV<:RealVector}(gt::IntegerVector, preds::@compat(Tuple{PV,SV}), t::Real, ord::Ordering) =
     _roc(gt, ThresPredVec(preds..., t, ord))
 
 roc{PV<:IntegerVector,SV<:RealVector}(gt::IntegerVector, preds::@compat(Tuple{PV,SV}), thres::Real) =
@@ -246,10 +252,10 @@ end
 
 find_thresbin(x::Real, thresholds::RealVector) = find_thresbin(x, thresholds, Forward)
 
-lin_thresholds(scores::RealArray, n::Integer, ord::ForwardOrdering) = 
+lin_thresholds(scores::RealArray, n::Integer, ord::ForwardOrdering) =
     ((s0, s1) = extrema(scores); intv = (s1 - s0) / (n-1); s0:intv:s1)
 
-lin_thresholds(scores::RealArray, n::Integer, ord::ReverseOrdering{ForwardOrdering}) = 
+lin_thresholds(scores::RealArray, n::Integer, ord::ReverseOrdering{ForwardOrdering}) =
     ((s0, s1) = extrema(scores); intv = (s0 - s1) / (n-1); s1:intv:s0)
 
 # roc for binary predictions
@@ -293,7 +299,7 @@ end
 
 roc(gt::IntegerVector, scores::RealVector, thresholds::RealVector) = roc(gt, scores, thresholds, Forward)
 
-roc(gt::IntegerVector, scores::RealVector, n::Integer, ord::Ordering) = 
+roc(gt::IntegerVector, scores::RealVector, n::Integer, ord::Ordering) =
     roc(gt, scores, lin_thresholds(scores, n, ord), ord)
 
 roc(gt::IntegerVector, scores::RealVector, n::Integer) = roc(gt, scores, n, Forward)
@@ -357,15 +363,14 @@ end
 roc{PV<:IntegerVector, SV<:RealVector}(gt::IntegerVector, preds::@compat(Tuple{PV,SV}), thresholds::RealVector) =
     roc(gt, preds, thresholds, Forward)
 
-roc{PV<:IntegerVector, SV<:RealVector}(gt::IntegerVector, preds::@compat(Tuple{PV,SV}), n::Integer, ord::Ordering) = 
+roc{PV<:IntegerVector, SV<:RealVector}(gt::IntegerVector, preds::@compat(Tuple{PV,SV}), n::Integer, ord::Ordering) =
     roc(gt, preds, lin_thresholds(preds[2],n,ord), ord)
 
-roc{PV<:IntegerVector, SV<:RealVector}(gt::IntegerVector, preds::@compat(Tuple{PV,SV}), n::Integer) = 
+roc{PV<:IntegerVector, SV<:RealVector}(gt::IntegerVector, preds::@compat(Tuple{PV,SV}), n::Integer) =
     roc(gt, preds, n, Forward)
 
-roc{PV<:IntegerVector, SV<:RealVector}(gt::IntegerVector, preds::@compat(Tuple{PV,SV}), ord::Ordering) = 
+roc{PV<:IntegerVector, SV<:RealVector}(gt::IntegerVector, preds::@compat(Tuple{PV,SV}), ord::Ordering) =
     roc(gt, preds, 100, ord)
 
-roc{PV<:IntegerVector, SV<:RealVector}(gt::IntegerVector, preds::@compat(Tuple{PV,SV})) = 
+roc{PV<:IntegerVector, SV<:RealVector}(gt::IntegerVector, preds::@compat(Tuple{PV,SV})) =
     roc(gt, preds, Forward)
-

@@ -35,9 +35,9 @@ Classification Performance
          0  2  1
          0  0  2
 
-        julia> C ./ sum(C, 2)   # normalize per class 
+        julia> C ./ sum(C, 2)   # normalize per class
         3x3 Array{Float64,2}:
-         0.666667  0.333333  0.0     
+         0.666667  0.333333  0.0
          0.0       0.666667  0.333333
          0.0       0.0       1.0
 
@@ -52,7 +52,7 @@ Hit rate (for retrieval tasks)
 
 .. function:: hitrate(gt, ranklist, k)
 
-    Compute the hitrate of rank ``k`` for a ranked list of predictions given by ``ranklist`` w.r.t. the ground truths given in ``gt``. 
+    Compute the hitrate of rank ``k`` for a ranked list of predictions given by ``ranklist`` w.r.t. the ground truths given in ``gt``.
 
     Particularly, if ``gt[i]`` is contained in ``ranklist[1:k, i]``, then the prediction for the ``i``-th sample is said to be *hit within rank ``k``*. The hitrate of rank ``k`` is the fraction of predictions that hit within rank ``k``.
 
@@ -111,7 +111,7 @@ One can compute a variety of performance measurements from an instance of ``ROCN
     the fraction of negative samples correctly predicted as negative, defined as ``r.tn / r.n``
 
 .. function:: false_positive_rate(r)
-    
+
     the fraction of negative samples incorrectly predicted as positive, defined as ``r.fp / r.n``
 
 .. function:: false_negative_rate(r)
@@ -122,9 +122,33 @@ One can compute a variety of performance measurements from an instance of ``ROCN
 
     Equivalent to ``true_positive_rate(r)``.
 
+.. function:: sensitivity(r)
+
+    Equivalent to ``true_positive_rate(r)``, for semantic convenience.
+
+.. function:: specificity(r)
+
+    Equivalent to ``true_positive_rate(r)``, for semantic convenience.
+
 .. function:: precision(r)
 
     the fraction of positive predictions that are correct, defined as ``r.tp / (r.tp + r.fp)``.
+
+.. function:: positive_predictive_value(r)
+
+    Equivalent to ``precision(r)``.
+
+.. function:: negative_predictive_value(r)
+
+    the fraction of negative predictions that are correct, defined as ``r.tn / (r.tn + r.fn)``.
+
+.. function:: false_discovery_rate(r)
+
+    the fraction of positive predictions that are incorrect, defined as ``r.fp / (r.tp + r.fp)``.
+
+.. function:: accuracy(r)
+
+    the fraction of all predictions that are correct, defined as ``(r.tp + r.tn) / (r.p + r.n)``.
 
 .. function:: f1score(r)
 
@@ -141,7 +165,7 @@ The package provides a function ``roc`` to compute an instance of ``ROCNums`` or
 
 .. function:: roc(gt, scores, thres[, ord])
 
-    Compute an ROC instance or an ROC curve (a vector of ``ROC`` instances), based on given scores and a threshold ``thres``. 
+    Compute an ROC instance or an ROC curve (a vector of ``ROC`` instances), based on given scores and a threshold ``thres``.
 
     Prediction will be made as follows:
 
@@ -152,15 +176,15 @@ The package provides a function ``roc`` to compute an instance of ``ROCNums`` or
 
     **Returns:**
 
-    - When ``thres`` is a single number, it produces a single ``ROCNums`` instance; 
-    - When ``thres`` is a vector, it produces a vector of ``ROCNums`` instances. 
+    - When ``thres`` is a single number, it produces a single ``ROCNums`` instance;
+    - When ``thres`` is a vector, it produces a vector of ``ROCNums`` instances.
 
     **Note:** Jointly evaluating an ROC curve for multiple thresholds is generally much faster than evaluating for them individually.
 
 
 .. function:: roc(gt, (preds, scores), thres[, ord])
 
-    Compute an ROC instance or an ROC curve (a vector of ``ROC`` instances) for multi-class classification, based on given predictions, scores and a threshold ``thres``. 
+    Compute an ROC instance or an ROC curve (a vector of ``ROC`` instances) for multi-class classification, based on given predictions, scores and a threshold ``thres``.
 
     Prediction is made as follows:
 
@@ -172,7 +196,7 @@ The package provides a function ``roc`` to compute an instance of ``ROCNums`` or
     **Returns:**
 
     - When ``thres`` is a single number, it produces a single ``ROCNums`` instance.
-    - When ``thres`` is a vector, it produces an ROC curve (a vector of ``ROCNums`` instances). 
+    - When ``thres`` is a vector, it produces an ROC curve (a vector of ``ROCNums`` instances).
 
     **Note:** Jointly evaluating an ROC curve for multiple thresholds is generally much faster than evaluating for them individually.
 
@@ -199,5 +223,3 @@ The package provides a function ``roc`` to compute an instance of ``ROCNums`` or
 .. function:: roc(gt, (preds, scores))
 
     Equivalent to ``roc(gt, (preds, scores), 100, Forward)``.
-
-
