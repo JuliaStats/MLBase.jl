@@ -63,7 +63,13 @@ module MLBase
     false_positive_rate,    # rate of false positives
     false_negative_rate,    # rate of false negatives
     recall,             # recall computed from ROCNums
+    sensitivity,        # sensitivity computed from ROCNums
+    specificity,        # specificity computed from ROCNums
     precision,          # precision computed from ROCNums
+    positive_predictive_value,  # positive predictive value computed from ROCNums
+    negative_predictive_value,  # negative predictive value computed from ROCNums
+    false_discovery_rate,       # false discovery rate computed from ROCNums
+    accuracy,           # accuracy computed from ROCNums
     f1score,            # F1-score computed from ROCNums
 
     # modeltune
@@ -79,4 +85,3 @@ module MLBase
 
     include("deprecates.jl")
 end
-

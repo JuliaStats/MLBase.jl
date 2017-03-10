@@ -3,7 +3,7 @@ using MLBase
 using Base.Test
 
 import StatsBase
-import StatsBase: harmmean 
+import StatsBase: harmmean
 
 ## correctrate & errorrate
 
@@ -29,7 +29,7 @@ rs = [1 2 2 1 3 2 1 1 3 3;
 
 @test counthits(gt, rs, 1:3) == [3, 8, 8]
 @test counthits(gt, rs, [2, 4]) == [8, 10]
-@test counthits(gt, rs, 1:2:5) == [3, 8, 10] 
+@test counthits(gt, rs, 1:2:5) == [3, 8, 10]
 
 @test_approx_eq [hitrate(gt, rs, k) for k=1:5] [0.3, 0.8, 0.8, 1.0, 1.0]
 @test_approx_eq hitrates(gt, rs, 1:3) [0.3, 0.8, 0.8]
@@ -57,7 +57,13 @@ r = ROCNums{Int}(
 @test false_negative_rate(r) == 0.20
 
 @test recall(r) == 0.80
+@test sensitivity(r) == 0.80
+@test specificity(r) == 0.75
 @test precision(r) == (8/13)
+@test positive_predictive_value(r) == (8/13)
+@test negative_predictive_value(r) == (15/17)
+@test false_discovery_rate(r) == (5/13)
+@test accuracy(r) == (23/30)
 @test_approx_eq f1score(r) harmmean([recall(r), precision(r)])
 
 
@@ -126,4 +132,3 @@ r100 = roc(gt, (pr, ss), 1.00)
 @test roc(gt, (pr, ss), 0.0:0.25:1.0) == [r00, r25, r50, r75, r100]
 # @test roc(gt, (pr, ss), 7) == roc(gt, (pr, ss), 0.2:0.1:0.8, Forward)
 @test roc(gt, (pr, ss)) == roc(gt, (pr, ss), MLBase.lin_thresholds([0.2, 0.8], 100, Forward))
-
