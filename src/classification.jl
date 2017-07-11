@@ -32,7 +32,7 @@ end
 
 classify!(r::IntegerVector, x::RealMatrix) = classify!(r, x, Forward)
 
-classify(x::RealMatrix, ord::Ordering) = classify!(Array(Int, size(x,2)), x, ord)
+classify(x::RealMatrix, ord::Ordering) = classify!(Array{Int}(size(x,2)), x, ord)
 classify(x::RealMatrix) = classify(x, Forward)
 
 # classify with score(s)
@@ -70,8 +70,8 @@ classify_withscores!(r::IntegerVector, s::RealVector, x::RealMatrix) =
 
 function classify_withscores{T<:Real}(x::RealMatrix{T}, ord::Ordering)
     n = size(x, 2)
-    r = Array(Int, n)
-    s = Array(T, n)
+    r = Array{Int}(n)
+    s = Array{T}(n)
     return classify_withscores!(r, s, x, ord)
 end
 
@@ -97,7 +97,7 @@ end
 
 classify!(r::IntegerVector, x::RealMatrix, t::Real) = classify!(r, x, t, Forward)
 
-classify(x::RealMatrix, t::Real, ord::Ordering) = classify!(Array(Int, size(x,2)), x, t, ord)
+classify(x::RealMatrix, t::Real, ord::Ordering) = classify!(Array{Int}(size(x,2)), x, t, ord)
 classify(x::RealMatrix, t::Real) = classify(x, t, Forward)  
 
 
@@ -107,13 +107,13 @@ immutable LabelMap{K}
     vs::Vector{K}
     v2i::Dict{K,Int}
 
-    function LabelMap(vs, v2i)
+    function LabelMap{K}(vs, v2i) where K
         length(vs) == length(v2i) || throw(DimensionMismatch("lengths of vs and v2i mismatch"))
-        new(vs, v2i)
+        new(vs,v2i) 
     end
 end
 
-LabelMap{K}(vs::Vector{K}, v2i::Dict{K,Int}) = LabelMap{K}(vs, v2i)
+LabelMap{K}(vs::Vector{K}, v2i::Dict{K,Int})= LabelMap{K}(vs, v2i)
 
 length(lmap::LabelMap) = length(lmap.vs)
 keys(lmap::LabelMap) = lmap.vs
@@ -154,7 +154,7 @@ labeldecode{T}(lmap::LabelMap{T}, ys::AbstractArray{Int}) =
 ## group labels
 
 function groupindices(k::Int, xs::IntegerVector; warning::Bool=true)
-    gs = Array(Vector{Int}, k)
+    gs = Array{Vector{Int}}(k)
     for i = 1:k
         gs[i] = Int[]
     end
@@ -176,7 +176,7 @@ end
 
 function groupindices{T}(lmap::LabelMap{T}, xs::AbstractArray{T})
     k = length(lmap)
-    gs = Array(Vector{Int}, k)
+    gs = Array{Vector{Int}}(k)
     for i = 1:k
         gs[i] = Int[]
     end

@@ -74,7 +74,7 @@ function hitrates(gt::IntegerVector, rklst::IntegerMatrix, ks::IntegerVector)
     n = length(gt)
     h = counthits(gt, rklst, ks)
     nk = length(ks)
-    r = Array(Float64, nk)
+    r = Array{Float64}(nk)
     for i = 1:nk
         r[i] = h[i] / n
     end
@@ -278,7 +278,7 @@ function roc(gt::IntegerVector, scores::RealVector, thresholds::RealVector, ord:
     end
 
     # produce results
-    r = Array(ROCNums{Int}, nt)
+    r = Array{ROCNums{Int}}(nt)
     fn = 0
     tn = 0
     @inbounds for i = 1:nt
@@ -341,7 +341,7 @@ function roc{PV<:IntegerVector,SV<:RealVector}(
     end
 
     # produce results
-    r = Array(ROCNums{Int}, nt)
+    r = Array{ROCNums{Int}}(nt)
     fn = 0
     tn = 0
     @inbounds for i = 1:nt

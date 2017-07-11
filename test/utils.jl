@@ -26,6 +26,6 @@ a = rand(3, 4)
 a = [:a, :a, :b, :c, :b, :a]
 ui = MLBase.unique_inverse(a)
 @test isa(ui, @compat(Tuple{Vector{Symbol}, Vector{Vector{Int}}}))
-b = Array(Symbol, mapreduce(length, +, ui[2]))
+b = Array{Symbol}(mapreduce(length, +, ui[2]))
 for (obj, idx) in zip(ui...) b[idx] = obj end
 @test a == b
