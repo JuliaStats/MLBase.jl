@@ -3,8 +3,7 @@
 Swiss knife for machine learning.
 
 [![Build Status](https://travis-ci.org/JuliaStats/MLBase.jl.svg?branch=master)](https://travis-ci.org/JuliaStats/MLBase.jl)
-[![MLBase](http://pkg.julialang.org/badges/MLBase_0.4.svg)](http://pkg.julialang.org/?pkg=MLBase)
-[![MLBase](http://pkg.julialang.org/badges/MLBase_0.5.svg)](http://pkg.julialang.org/?pkg=MLBase)
+[![MLBase](http://pkg.julialang.org/badges/MLBase_0.6.svg)](http://pkg.julialang.org/?pkg=MLBase)
 [![Coveralls](https://coveralls.io/repos/github/JuliaStats/MLBase.jl/badge.svg?branch=master)](https://coveralls.io/github/JuliaStats/MLBase.jl?branch=master)
 
 This package does not implement specific machine learning algorithms. Instead, it provides a collection of useful tools to support machine learning programs, including:
