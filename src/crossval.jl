@@ -2,7 +2,7 @@
 
 ## cross validation generators
 
-abstract type CrossValGenerator end
+@compat abstract type CrossValGenerator end
 
 # K-fold 
 
