@@ -4,7 +4,7 @@
 
 function repeach{T}(x::AbstractVector{T}, n::Integer)
     k = length(x)
-    r = Array(T, k * n)
+    r = Array{T}(k * n)
     p = 0
     @inbounds for i = 1:k
         xi = x[i]
@@ -18,7 +18,7 @@ end
 function repeach{T}(x::AbstractVector{T}, ns::IntegerVector)
     k = length(x)
     length(ns) == k || throw(DimensionMismatch("length(ns) should be equal to k."))
-    r = Array(T, sum(ns))
+    r = Array{T}(sum(ns))
     p = 0
     @inbounds for i = 1:k
         xi = x[i]
@@ -35,7 +35,7 @@ end
 function repeachcol{T}(x::DenseArray{T,2}, n::Integer)
     m = size(x, 1)
     k = size(x, 2)
-    r = Array(T, m, k * n)
+    r = Array{T}(m, k * n)
     p = 0
     @inbounds for i = 1:k
         xi = view(x, :, i)
@@ -66,7 +66,7 @@ end
 function repeachrow{T}(x::DenseArray{T,2}, n::Integer)
     k = size(x, 1)
     m = size(x, 2)
-    r = Array(T, k * n, m)
+    r = Array{T}(k * n, m)
     p = 0
     @inbounds for icol = 1:m
         p = 0
@@ -83,7 +83,7 @@ end
 function repeachrow{T}(x::DenseArray{T,2}, ns::IntegerVector)
     k = size(x, 1)
     m = size(x, 2)
-    r = Array(T, sum(ns), m)
+    r = Array{T}(sum(ns), m)
     @inbounds for icol = 1:m
         p = 0
         for i = 1:k
@@ -101,8 +101,8 @@ end
 ## the original array
 
 function unique_inverse(A)
-    out = Array(eltype(A),0)
-    out_idx = Array(Vector{Int}, 0)
+    out = Array{eltype(A)}(0)
+    out_idx = Array{Vector{Int}}(0)
     seen = Dict{eltype(A), Int}()
     for (idx, x) in enumerate(A)
         if !in(x, keys(seen))

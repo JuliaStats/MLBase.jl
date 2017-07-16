@@ -31,10 +31,10 @@ rs = [1 2 2 1 3 2 1 1 3 3;
 @test counthits(gt, rs, [2, 4]) == [8, 10]
 @test counthits(gt, rs, 1:2:5) == [3, 8, 10] 
 
-@test_approx_eq [hitrate(gt, rs, k) for k=1:5] [0.3, 0.8, 0.8, 1.0, 1.0]
-@test_approx_eq hitrates(gt, rs, 1:3) [0.3, 0.8, 0.8]
-@test_approx_eq hitrates(gt, rs, [2, 4]) [0.8, 1.0]
-@test_approx_eq hitrates(gt, rs, 1:2:5) [0.3, 0.8, 1.0]
+@test [hitrate(gt, rs, k) for k=1:5] ≈ [0.3, 0.8, 0.8, 1.0, 1.0]
+@test hitrates(gt, rs, 1:3) ≈ [0.3, 0.8, 0.8]
+@test hitrates(gt, rs, [2, 4]) ≈ [0.8, 1.0]
+@test hitrates(gt, rs, 1:2:5) ≈ [0.3, 0.8, 1.0]
 
 ## ROCNums
 
@@ -58,7 +58,7 @@ r = ROCNums{Int}(
 
 @test recall(r) == 0.80
 @test precision(r) == (8/13)
-@test_approx_eq f1score(r) harmmean([recall(r), precision(r)])
+@test f1score(r) ≈ harmmean([recall(r), precision(r)])
 
 
 ## auxiliary: find_thresbin & lin_threshold
@@ -126,4 +126,3 @@ r100 = roc(gt, (pr, ss), 1.00)
 @test roc(gt, (pr, ss), 0.0:0.25:1.0) == [r00, r25, r50, r75, r100]
 # @test roc(gt, (pr, ss), 7) == roc(gt, (pr, ss), 0.2:0.1:0.8, Forward)
 @test roc(gt, (pr, ss)) == roc(gt, (pr, ss), MLBase.lin_thresholds([0.2, 0.8], 100, Forward))
-

@@ -104,8 +104,8 @@ end
 transform!{T<:AbstractFloat}(t::Standardize, x::DenseArray{T,1}) = transform!(x, t, x)
 transform!{T<:AbstractFloat}(t::Standardize, x::DenseArray{T,2}) = transform!(x, t, x)
 
-transform{T<:Real}(t::Standardize, x::DenseArray{T,1}) = transform!(Array(Float64, size(x)), t, x)
-transform{T<:Real}(t::Standardize, x::DenseArray{T,2}) = transform!(Array(Float64, size(x)), t, x)
+transform{T<:Real}(t::Standardize, x::DenseArray{T,1}) = transform!(Array{Float64}(size(x)), t, x)
+transform{T<:Real}(t::Standardize, x::DenseArray{T,2}) = transform!(Array{Float64}(size(x)), t, x)
 
 # estimate a standardize transform
 
@@ -113,8 +113,8 @@ function estimate{T<:Real}(::Type{Standardize}, X::DenseArray{T,2}; center::Bool
     d, n = size(X)
     n >= 2 || error("X must contain at least two columns.")
 
-    m = Array(Float64, ifelse(center, d, 0))
-    s = Array(Float64, ifelse(scale, d, 0))
+    m = Array{Float64}(ifelse(center, d, 0))
+    s = Array{Float64}(ifelse(scale, d, 0))
 
     if center
         fill!(m, 0.0)

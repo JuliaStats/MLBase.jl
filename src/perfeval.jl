@@ -24,7 +24,7 @@ end
 function counthits(gt::IntegerVector, rklst::IntegerMatrix, k::Integer)
     n = length(gt)
     size(rklst, 2) == n || throw(DimensionMismatch("Input dimensions mismatch."))
-    m = min(size(rklst, 1), @compat(Int(k)))
+    m = min(size(rklst, 1), Int(k))
 
     cnt = 0
     @inbounds for j = 1:n
@@ -74,7 +74,7 @@ function hitrates(gt::IntegerVector, rklst::IntegerMatrix, ks::IntegerVector)
     n = length(gt)
     h = counthits(gt, rklst, ks)
     nk = length(ks)
-    r = Array(Float64, nk)
+    r = Array{Float64}(nk)
     for i = 1:nk
         r[i] = h[i] / n
     end
@@ -211,10 +211,10 @@ length(v::ThresPredVec) = length(v.preds)
 getindex(v::ThresPredVec, i::Integer) = ifelse(lt(v.ord, v.scores[i], v.thres), 0, v.preds[i])
 
 # compute roc numbers based on predictions & scores & threshold
-roc{PV<:IntegerVector,SV<:RealVector}(gt::IntegerVector, preds::@compat(Tuple{PV,SV}), t::Real, ord::Ordering) = 
+roc{PV<:IntegerVector,SV<:RealVector}(gt::IntegerVector, preds::Tuple{PV,SV}, t::Real, ord::Ordering) = 
     _roc(gt, ThresPredVec(preds..., t, ord))
 
-roc{PV<:IntegerVector,SV<:RealVector}(gt::IntegerVector, preds::@compat(Tuple{PV,SV}), thres::Real) =
+roc{PV<:IntegerVector,SV<:RealVector}(gt::IntegerVector, preds::Tuple{PV,SV}, thres::Real) =
     roc(gt, preds, thres, Forward)
 
 
@@ -278,7 +278,7 @@ function roc(gt::IntegerVector, scores::RealVector, thresholds::RealVector, ord:
     end
 
     # produce results
-    r = Array(ROCNums{Int}, nt)
+    r = Array{ROCNums{Int}}(nt)
     fn = 0
     tn = 0
     @inbounds for i = 1:nt
@@ -303,7 +303,7 @@ roc(gt::IntegerVector, scores::RealVector) = roc(gt, scores, Forward)
 
 # roc for multi-way predictions
 function roc{PV<:IntegerVector,SV<:RealVector}(
-    gt::IntegerVector, preds::@compat(Tuple{PV,SV}), thresholds::RealVector, ord::Ordering)
+    gt::IntegerVector, preds::Tuple{PV,SV}, thresholds::RealVector, ord::Ordering)
 
     issorted(thresholds, ord) || error("thresholds must be sorted w.r.t. the given ordering.")
     pr::PV = preds[1]
@@ -341,7 +341,7 @@ function roc{PV<:IntegerVector,SV<:RealVector}(
     end
 
     # produce results
-    r = Array(ROCNums{Int}, nt)
+    r = Array{ROCNums{Int}}(nt)
     fn = 0
     tn = 0
     @inbounds for i = 1:nt
@@ -354,18 +354,18 @@ function roc{PV<:IntegerVector,SV<:RealVector}(
     return r
 end
 
-roc{PV<:IntegerVector, SV<:RealVector}(gt::IntegerVector, preds::@compat(Tuple{PV,SV}), thresholds::RealVector) =
+roc{PV<:IntegerVector, SV<:RealVector}(gt::IntegerVector, preds::Tuple{PV,SV}, thresholds::RealVector) =
     roc(gt, preds, thresholds, Forward)
 
-roc{PV<:IntegerVector, SV<:RealVector}(gt::IntegerVector, preds::@compat(Tuple{PV,SV}), n::Integer, ord::Ordering) = 
+roc{PV<:IntegerVector, SV<:RealVector}(gt::IntegerVector, preds::Tuple{PV,SV}, n::Integer, ord::Ordering) = 
     roc(gt, preds, lin_thresholds(preds[2],n,ord), ord)
 
-roc{PV<:IntegerVector, SV<:RealVector}(gt::IntegerVector, preds::@compat(Tuple{PV,SV}), n::Integer) = 
+roc{PV<:IntegerVector, SV<:RealVector}(gt::IntegerVector, preds::Tuple{PV,SV}, n::Integer) = 
     roc(gt, preds, n, Forward)
 
-roc{PV<:IntegerVector, SV<:RealVector}(gt::IntegerVector, preds::@compat(Tuple{PV,SV}), ord::Ordering) = 
+roc{PV<:IntegerVector, SV<:RealVector}(gt::IntegerVector, preds::Tuple{PV,SV}, ord::Ordering) = 
     roc(gt, preds, 100, ord)
 
-roc{PV<:IntegerVector, SV<:RealVector}(gt::IntegerVector, preds::@compat(Tuple{PV,SV})) = 
+roc{PV<:IntegerVector, SV<:RealVector}(gt::IntegerVector, preds::Tuple{PV,SV}) = 
     roc(gt, preds, Forward)
 
