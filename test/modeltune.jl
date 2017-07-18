@@ -1,5 +1,4 @@
 using MLBase
-using Compat
 using Base.Test
 
 ## gridtune

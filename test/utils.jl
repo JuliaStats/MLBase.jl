@@ -1,7 +1,6 @@
 # Tests of intstats.jl
 
 using MLBase
-using Compat
 using Base.Test
 
 # repeach

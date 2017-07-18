@@ -2,8 +2,6 @@ module MLBase
 
     using Reexport
     using IterTools
-    using Compat
-    using Compat: view
     @reexport using StatsBase
 
     import Base: length, show, keys, precision, length, getindex
