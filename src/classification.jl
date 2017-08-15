@@ -68,14 +68,14 @@ end
 classify_withscores!(r::IntegerVector, s::RealVector, x::RealMatrix) = 
     classify_withscores!(r, s, x, Forward)
 
-function classify_withscores{T<:Real}(x::RealMatrix{T}, ord::Ordering)
+function classify_withscores(x::RealMatrix{T}, ord::Ordering) where T<:Real
     n = size(x, 2)
     r = Array{Int}(n)
     s = Array{T}(n)
     return classify_withscores!(r, s, x, ord)
 end
 
-classify_withscores{T<:Real}(x::RealMatrix{T}) = classify_withscores(x, Forward)
+classify_withscores(x::RealMatrix{T}) where {T<:Real} = classify_withscores(x, Forward)
 
 
 # classify with threshold
@@ -103,7 +103,7 @@ classify(x::RealMatrix, t::Real) = classify(x, t, Forward)
 
 ## label map
 
-immutable LabelMap{K}
+struct LabelMap{K}
     vs::Vector{K}
     v2i::Dict{K,Int}
 
@@ -113,7 +113,7 @@ immutable LabelMap{K}
     end
 end
 
-LabelMap{K}(vs::Vector{K}, v2i::Dict{K,Int})= LabelMap{K}(vs, v2i)
+LabelMap(vs::Vector{K}, v2i::Dict{K,Int}) where {K}= LabelMap{K}(vs, v2i)
 
 length(lmap::LabelMap) = length(lmap.vs)
 keys(lmap::LabelMap) = lmap.vs
@@ -128,7 +128,7 @@ end
 
 
 # build a label map (value -> label) from a sequences of values
-function labelmap{T}(xs::AbstractArray{T})
+function labelmap(xs::AbstractArray{T}) where T
     l = 0
     vs = T[]
     v2i = Dict{T, Int}()
@@ -142,13 +142,13 @@ function labelmap{T}(xs::AbstractArray{T})
 end
 
 # use a map to encode discrete values into labels
-labelencode{T}(lmap::LabelMap{T}, x) = lmap.v2i[convert(T, x)]
-labelencode{T}(lmap::LabelMap{T}, xs::AbstractArray{T}) = 
+labelencode(lmap::LabelMap{T}, x) where {T} = lmap.v2i[convert(T, x)]
+labelencode(lmap::LabelMap{T}, xs::AbstractArray{T}) where {T} = 
     reshape(Int[labelencode(lmap, x) for x in xs], size(xs))
 
 # decode the label to the associated discrete value
-labeldecode{T}(lmap::LabelMap{T}, y::Int) = lmap.vs[y]
-labeldecode{T}(lmap::LabelMap{T}, ys::AbstractArray{Int}) = 
+labeldecode(lmap::LabelMap{T}, y::Int) where {T} = lmap.vs[y]
+labeldecode(lmap::LabelMap{T}, ys::AbstractArray{Int}) where {T} = 
     reshape(T[labeldecode(lmap, y) for y in ys], size(ys))
 
 ## group labels
@@ -174,7 +174,7 @@ function groupindices(k::Int, xs::IntegerVector; warning::Bool=true)
 end
 
 
-function groupindices{T}(lmap::LabelMap{T}, xs::AbstractArray{T})
+function groupindices(lmap::LabelMap{T}, xs::AbstractArray{T}) where T
     k = length(lmap)
     gs = Array{Vector{Int}}(k)
     for i = 1:k

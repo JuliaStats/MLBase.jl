@@ -6,7 +6,7 @@ abstract type CrossValGenerator end
 
 # K-fold 
 
-immutable Kfold <: CrossValGenerator
+struct Kfold <: CrossValGenerator
     permseq::Vector{Int}
     k::Int
     coeff::Float64
@@ -19,7 +19,7 @@ end
 
 length(c::Kfold) = c.k
 
-immutable KfoldState
+struct KfoldState
     i::Int      # the i-th of the subset 
     s::Int      # starting index
     e::Int      # ending index
@@ -32,7 +32,7 @@ done(c::Kfold, s::KfoldState) = (s.i > c.k)
 
 # Stratified K-fold
 
-immutable StratifiedKfold <: CrossValGenerator
+struct StratifiedKfold <: CrossValGenerator
     n::Int                         #Total number of observations
     permseqs::Vector{Vector{Int}}  #Vectors of vectors of indexes for each stratum
     k::Int                         #Number of splits
@@ -77,7 +77,7 @@ function leave_one_out(n::Int, i::Int)
     return x
 end
 
-immutable LOOCV <: CrossValGenerator
+struct LOOCV <: CrossValGenerator
     n::Int
 end
 
@@ -90,7 +90,7 @@ done(c::LOOCV, s::Int) = (s > c.n)
 
 # Repeated random sub-sampling
 
-immutable RandomSub <: CrossValGenerator
+struct RandomSub <: CrossValGenerator
     n::Int    # total length
     sn::Int   # length of each subset
     k::Int    # number of subsets
@@ -104,7 +104,7 @@ done(c::RandomSub, s::Int) = (s > c.k)
 
 # Stratified repeated random sub-sampling
 
-immutable StratifiedRandomSub <: CrossValGenerator
+struct StratifiedRandomSub <: CrossValGenerator
     idxs::Vector{Vector{Int}}    # total length
     sn::Int                      # length of subset
     sns::Vector{Int}             # num from each stratum for each subset

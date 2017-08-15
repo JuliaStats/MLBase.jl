@@ -84,7 +84,7 @@ end
 
 ## ROC
 
-immutable ROCNums{T<:Real}
+struct ROCNums{T<:Real}
     p::T    # positive in ground-truth
     n::T    # negative in ground-truth
     tp::T   # correct positive prediction
@@ -166,9 +166,9 @@ roc(gt::IntegerVector, pr::IntegerVector) = _roc(gt, pr)
 #
 #   v[i] := scores[i] < thres ? 0 : 1
 #
-immutable BinaryThresPredVec{ScoreVec <: RealVector,
-                             T <: Real,
-                             Ord <: Ordering}
+struct BinaryThresPredVec{ScoreVec <: RealVector,
+                          T <: Real,
+                          Ord <: Ordering}
     scores::ScoreVec
     thres::T
     ord::Ord
@@ -189,10 +189,10 @@ roc(gt::IntegerVector, scores::RealVector, thres::Real) =
 #
 #   v[i] := scores[i] < thres ? 0 : preds[i]
 #
-immutable ThresPredVec{PredVec <: IntegerVector,
-                       ScoreVec <: RealVector,
-                       T <: Real,
-                       Ord <: Ordering}
+struct ThresPredVec{PredVec <: IntegerVector,
+                    ScoreVec <: RealVector,
+                    T <: Real,
+                    Ord <: Ordering}
 
     preds::PredVec
     scores::ScoreVec
@@ -200,8 +200,8 @@ immutable ThresPredVec{PredVec <: IntegerVector,
     ord::Ordering
 end
 
-function ThresPredVec{PVec<:IntegerVector,SVec<:RealVector,T<:Real,Ord<:Ordering}(
-    preds::PVec, scores::SVec, thres::T, ord::Ord)
+function ThresPredVec(
+    preds::PVec, scores::SVec, thres::T, ord::Ord) where {PVec<:IntegerVector,SVec<:RealVector,T<:Real,Ord<:Ordering}
     n = length(preds)
     length(scores) == n || throw(DimensionMismatch("Inconsistent lengths."))
     ThresPredVec{PVec,SVec,T,Ord}(preds, scores, thres, ord)
@@ -211,10 +211,10 @@ length(v::ThresPredVec) = length(v.preds)
 getindex(v::ThresPredVec, i::Integer) = ifelse(lt(v.ord, v.scores[i], v.thres), 0, v.preds[i])
 
 # compute roc numbers based on predictions & scores & threshold
-roc{PV<:IntegerVector,SV<:RealVector}(gt::IntegerVector, preds::Tuple{PV,SV}, t::Real, ord::Ordering) = 
+roc(gt::IntegerVector, preds::Tuple{PV,SV}, t::Real, ord::Ordering) where {PV<:IntegerVector,SV<:RealVector} = 
     _roc(gt, ThresPredVec(preds..., t, ord))
 
-roc{PV<:IntegerVector,SV<:RealVector}(gt::IntegerVector, preds::Tuple{PV,SV}, thres::Real) =
+roc(gt::IntegerVector, preds::Tuple{PV,SV}, thres::Real) where {PV<:IntegerVector,SV<:RealVector} =
     roc(gt, preds, thres, Forward)
 
 
@@ -302,8 +302,8 @@ roc(gt::IntegerVector, scores::RealVector, ord::Ordering) = roc(gt, scores, 100,
 roc(gt::IntegerVector, scores::RealVector) = roc(gt, scores, Forward)
 
 # roc for multi-way predictions
-function roc{PV<:IntegerVector,SV<:RealVector}(
-    gt::IntegerVector, preds::Tuple{PV,SV}, thresholds::RealVector, ord::Ordering)
+function roc(
+    gt::IntegerVector, preds::Tuple{PV,SV}, thresholds::RealVector, ord::Ordering) where {PV<:IntegerVector,SV<:RealVector}
 
     issorted(thresholds, ord) || error("thresholds must be sorted w.r.t. the given ordering.")
     pr::PV = preds[1]
@@ -354,18 +354,18 @@ function roc{PV<:IntegerVector,SV<:RealVector}(
     return r
 end
 
-roc{PV<:IntegerVector, SV<:RealVector}(gt::IntegerVector, preds::Tuple{PV,SV}, thresholds::RealVector) =
+roc(gt::IntegerVector, preds::Tuple{PV,SV}, thresholds::RealVector) where {PV<:IntegerVector, SV<:RealVector} =
     roc(gt, preds, thresholds, Forward)
 
-roc{PV<:IntegerVector, SV<:RealVector}(gt::IntegerVector, preds::Tuple{PV,SV}, n::Integer, ord::Ordering) = 
+roc(gt::IntegerVector, preds::Tuple{PV,SV}, n::Integer, ord::Ordering) where {PV<:IntegerVector, SV<:RealVector} = 
     roc(gt, preds, lin_thresholds(preds[2],n,ord), ord)
 
-roc{PV<:IntegerVector, SV<:RealVector}(gt::IntegerVector, preds::Tuple{PV,SV}, n::Integer) = 
+roc(gt::IntegerVector, preds::Tuple{PV,SV}, n::Integer) where {PV<:IntegerVector, SV<:RealVector} = 
     roc(gt, preds, n, Forward)
 
-roc{PV<:IntegerVector, SV<:RealVector}(gt::IntegerVector, preds::Tuple{PV,SV}, ord::Ordering) = 
+roc(gt::IntegerVector, preds::Tuple{PV,SV}, ord::Ordering) where {PV<:IntegerVector, SV<:RealVector} = 
     roc(gt, preds, 100, ord)
 
-roc{PV<:IntegerVector, SV<:RealVector}(gt::IntegerVector, preds::Tuple{PV,SV}) = 
+roc(gt::IntegerVector, preds::Tuple{PV,SV}) where {PV<:IntegerVector, SV<:RealVector} = 
     roc(gt, preds, Forward)
 
