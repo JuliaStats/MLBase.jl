@@ -2,7 +2,7 @@
 
 ## repeat each element in a vector
 
-function repeach{T}(x::AbstractVector{T}, n::Integer)
+function repeach(x::AbstractVector{T}, n::Integer) where T
     k = length(x)
     r = Array{T}(k * n)
     p = 0
@@ -15,7 +15,7 @@ function repeach{T}(x::AbstractVector{T}, n::Integer)
     return r
 end
 
-function repeach{T}(x::AbstractVector{T}, ns::IntegerVector)
+function repeach(x::AbstractVector{T}, ns::IntegerVector) where T
     k = length(x)
     length(ns) == k || throw(DimensionMismatch("length(ns) should be equal to k."))
     r = Array{T}(sum(ns))
@@ -32,7 +32,7 @@ end
 
 ## repeat each column in a matrix
 
-function repeachcol{T}(x::DenseArray{T,2}, n::Integer)
+function repeachcol(x::DenseArray{T,2}, n::Integer) where T
     m = size(x, 1)
     k = size(x, 2)
     r = Array{T}(m, k * n)
@@ -46,7 +46,7 @@ function repeachcol{T}(x::DenseArray{T,2}, n::Integer)
     return r
 end
 
-function repeachcol{T}(x::DenseArray{T,2}, ns::IntegerVector)
+function repeachcol(x::DenseArray{T,2}, ns::IntegerVector) where T
     m = size(x, 1)
     k = size(x, 2)
     r = zeros(T, m, sum(ns))
@@ -63,7 +63,7 @@ end
 
 ## repeat each row in a matrix
 
-function repeachrow{T}(x::DenseArray{T,2}, n::Integer)
+function repeachrow(x::DenseArray{T,2}, n::Integer) where T
     k = size(x, 1)
     m = size(x, 2)
     r = Array{T}(k * n, m)
@@ -80,7 +80,7 @@ function repeachrow{T}(x::DenseArray{T,2}, n::Integer)
     return r
 end
 
-function repeachrow{T}(x::DenseArray{T,2}, ns::IntegerVector)
+function repeachrow(x::DenseArray{T,2}, ns::IntegerVector) where T
     k = size(x, 1)
     m = size(x, 2)
     r = Array{T}(sum(ns), m)

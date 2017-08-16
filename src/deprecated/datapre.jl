@@ -7,7 +7,7 @@ export standardize, standardize!, transform
 
 ### Standardization
 
-immutable Standardize
+struct Standardize
     dim::Int
     mean::Vector{Float64}
     scale::Vector{Float64}
@@ -25,7 +25,7 @@ end
 indim(t::Standardize) = t.dim
 outdim(t::Standardize) = t.dim
 
-function transform!{YT<:Real,XT<:Real}(y::DenseArray{YT,1}, t::Standardize, x::DenseArray{XT,1})
+function transform!(y::DenseArray{YT,1}, t::Standardize, x::DenseArray{XT,1}) where {YT<:Real,XT<:Real}
     d = t.dim
     length(x) == length(y) == d || throw(DimensionMismatch("Inconsistent dimensions."))
 
@@ -56,7 +56,7 @@ function transform!{YT<:Real,XT<:Real}(y::DenseArray{YT,1}, t::Standardize, x::D
     return y
 end
 
-function transform!{YT<:Real,XT<:Real}(y::DenseArray{YT,2}, t::Standardize, x::DenseArray{XT,2})
+function transform!(y::DenseArray{YT,2}, t::Standardize, x::DenseArray{XT,2}) where {YT<:Real,XT<:Real}
     d = t.dim
     size(x,1) == size(y,1) == d || throw(DimensionMismatch("Inconsistent dimensions."))
     n = size(x,2)
@@ -101,15 +101,15 @@ function transform!{YT<:Real,XT<:Real}(y::DenseArray{YT,2}, t::Standardize, x::D
     return y
 end
 
-transform!{T<:AbstractFloat}(t::Standardize, x::DenseArray{T,1}) = transform!(x, t, x)
-transform!{T<:AbstractFloat}(t::Standardize, x::DenseArray{T,2}) = transform!(x, t, x)
+transform!(t::Standardize, x::DenseArray{T,1}) where {T<:AbstractFloat} = transform!(x, t, x)
+transform!(t::Standardize, x::DenseArray{T,2}) where {T<:AbstractFloat} = transform!(x, t, x)
 
-transform{T<:Real}(t::Standardize, x::DenseArray{T,1}) = transform!(Array{Float64}(size(x)), t, x)
-transform{T<:Real}(t::Standardize, x::DenseArray{T,2}) = transform!(Array{Float64}(size(x)), t, x)
+transform(t::Standardize, x::DenseArray{T,1}) where {T<:Real} = transform!(Array{Float64}(size(x)), t, x)
+transform(t::Standardize, x::DenseArray{T,2}) where {T<:Real} = transform!(Array{Float64}(size(x)), t, x)
 
 # estimate a standardize transform
 
-function estimate{T<:Real}(::Type{Standardize}, X::DenseArray{T,2}; center::Bool=true, scale::Bool=true)
+function estimate(::Type{Standardize}, X::DenseArray{T,2}; center::Bool=true, scale::Bool=true) where T<:Real
     d, n = size(X)
     n >= 2 || error("X must contain at least two columns.")
 
@@ -154,13 +154,13 @@ end
 
 # standardize
 
-function standardize{T<:Real}(X::DenseArray{T,2}; center::Bool=true, scale::Bool=true)
+function standardize(X::DenseArray{T,2}; center::Bool=true, scale::Bool=true) where T<:Real
     t = estimate(Standardize, X; center=center, scale=scale)
     Y = transform(t, X)
     return (Y, t)
 end
 
-function standardize!{T<:AbstractFloat}(X::DenseArray{T,2}; center::Bool=true, scale::Bool=true)
+function standardize!(X::DenseArray{T,2}; center::Bool=true, scale::Bool=true) where T<:AbstractFloat
     t = estimate(Standardize, X; center=center, scale=scale)
     Y = transform!(t, X)
     return (Y, t)
