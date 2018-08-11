@@ -9,7 +9,7 @@ module MLBase
     import Base: start, next, done, iterate
     import Base.Order: lt, Ordering, ForwardOrdering, ReverseOrdering, Forward, Reverse
     import StatsBase: RealVector, IntegerVector, RealMatrix, IntegerMatrix, RealArray
-    import Iterators: product
+    import IterTools: product
 
     export
 
