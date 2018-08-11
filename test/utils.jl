@@ -1,7 +1,7 @@
 # Tests of intstats.jl
 
 using MLBase
-using Base.Test
+using Test
 
 # repeach
 
@@ -25,6 +25,6 @@ a = rand(3, 4)
 a = [:a, :a, :b, :c, :b, :a]
 ui = MLBase.unique_inverse(a)
 @test isa(ui, Tuple{Vector{Symbol}, Vector{Vector{Int}}})
-b = Array{Symbol}(mapreduce(length, +, ui[2]))
-for (obj, idx) in zip(ui...) b[idx] = obj end
+b = Array{Symbol}(undef, mapreduce(length, +, ui[2]))
+for (obj, idx) in zip(ui...) b[idx] .= obj end
 @test a == b
