@@ -26,20 +26,13 @@ struct KfoldState
 end
 
 # A version check allows to maintain compatibility with earlier versions
-if VERSION < v"0.7.0"
-    start(c::Kfold) = KfoldState(1, 1, round.(Integer,c.coeff))
-    next(c::Kfold, s::KfoldState) =
-        (i = s.i+1; (setdiff(1:length(c.permseq), c.permseq[s.s:s.e]), KfoldState(i, s.e+1, round.(Integer,c.coeff * i))))
-    done(c::Kfold, s::KfoldState) = (s.i > c.k)
-else
-    function Base.iterate(c::Kfold, state::KfoldState=KfoldState(1, 1, round.(Integer, c.coeff)))
-        i, s, e = state.i, state.s, state.e
-        (i > c.k) && return nothing
-        i += 1
-        sd = setdiff(1:length(c.permseq), c.permseq[s:e])
-        kst = KfoldState(i, e + 1, round.(Integer, c.coeff * i))
-        return (i; (sd, kst))
-    end
+function Base.iterate(c::Kfold, state::KfoldState=KfoldState(1, 1, round.(Integer, c.coeff)))
+    i, s, e = state.i, state.s, state.e
+    (i > c.k) && return nothing
+    i += 1
+    sd = setdiff(1:length(c.permseq), c.permseq[s:e])
+    kst = KfoldState(i, e + 1, round.(Integer, c.coeff * i))
+    return (i; (sd, kst))
 end
 
 # Stratified K-fold
@@ -64,27 +57,14 @@ end
 
 length(c::StratifiedKfold) = c.k
 
-if VERSION < v"0.7.0"
-    start(c::StratifiedKfold) = 1
-    function next(c::StratifiedKfold, s::Int)
-        r = Int[]
-        for (permseq, coeff) in zip(c.permseqs, c.coeffs)
-            a, b = round.(Integer, [s-1, s] .* coeff)
-            append!(r, view(permseq, a+1:b))
-        end
-        setdiff(1:c.n, r), s+1
+function Base.iterate(c::StratifiedKfold, s::Int=1)
+    (s > c.k) && return nothing
+    r = Int[]
+    for (permseq, coeff) in zip(c.permseqs, c.coeffs)
+        a, b = round.(Integer, [s-1, s] .* coeff)
+        append!(r, view(permseq, a+1:b))
     end
-    done(c::StratifiedKfold, s::Int) = (s > c.k)
-else
-    function Base.iterate(c::StratifiedKfold, s::Int=1)
-        (s > c.k) && return nothing
-        r = Int[]
-        for (permseq, coeff) in zip(c.permseqs, c.coeffs)
-            a, b = round.(Integer, [s-1, s] .* coeff)
-            append!(r, view(permseq, a+1:b))
-        end
-        return setdiff(1:c.n, r), s+1
-    end
+    return setdiff(1:c.n, r), s+1
 end
 
 # LOOCV (Leave-one-out cross-validation)
@@ -107,15 +87,9 @@ end
 
 length(c::LOOCV) = c.n
 
-if VERSION < v"0.7.0"
-    start(c::LOOCV) = 1
-    next(c::LOOCV, s::Int) = (leave_one_out(c.n, s), s+1)
-    done(c::LOOCV, s::Int) = (s > c.n)
-else
-    function iterate(c::LOOCV, s::Int=1)
-        (s > c.n) && return nothing
-        return (leave_one_out(c.n, s), s + 1)
-    end
+function iterate(c::LOOCV, s::Int=1)
+    (s > c.n) && return nothing
+    return (leave_one_out(c.n, s), s + 1)
 end
 
 # Repeated random sub-sampling
@@ -128,15 +102,9 @@ end
 
 length(c::RandomSub) = c.k
 
-if VERSION < v"0.7.0"
-    start(c::RandomSub) = 1
-    next(c::RandomSub, s::Int) = (sort!(sample(1:c.n, c.sn; replace=false)), s+1)
-    done(c::RandomSub, s::Int) = (s > c.k)
-else
-    function iterate(c::RandomSub, s::Int=1)
-        (s > c.k) && return nothing
-        return (sort!(sample(1:c.n, c.sn; replace=false)), s+1)
-    end
+function iterate(c::RandomSub, s::Int=1)
+    (s > c.k) && return nothing
+    return (sort!(sample(1:c.n, c.sn; replace=false)), s+1)
 end
 
 # Stratified repeated random sub-sampling
@@ -171,27 +139,14 @@ end
 
 length(c::StratifiedRandomSub) = c.k
 
-if VERSION < v"0.7.0"
-    start(c::StratifiedRandomSub) = 1
-    function next(c::StratifiedRandomSub, s::Int)
-        idxs = Array{Int}(undef, 0)
-        sizehint!(idxs, c.sn)
-        for (stratum_sn, stratum_idxs) in zip(c.sns, c.idxs)
-            append!(idxs, sample(stratum_idxs, stratum_sn, replace=false))
-        end
-        (sort!(idxs), s+1)
+function iterate(c::StratifiedRandomSub, s::Int=1)
+    (s > c.k) && return nothing
+    idxs = Array{Int}(undef, 0)
+    sizehint!(idxs, c.sn)
+    for (stratum_sn, stratum_idxs) in zip(c.sns, c.idxs)
+        append!(idxs, sample(stratum_idxs, stratum_sn, replace=false))
     end
-    done(c::StratifiedRandomSub, s::Int) = (s > c.k)
-else
-    function iterate(c::StratifiedRandomSub, s::Int=1)
-        (s > c.k) && return nothing
-        idxs = Array{Int}(undef, 0)
-        sizehint!(idxs, c.sn)
-        for (stratum_sn, stratum_idxs) in zip(c.sns, c.idxs)
-            append!(idxs, sample(stratum_idxs, stratum_sn, replace=false))
-        end
-        return (sort!(idxs), s + 1)
-    end
+    return (sort!(idxs), s + 1)
 end
 
 ## Cross validation algorithm
