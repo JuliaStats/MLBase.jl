@@ -6,8 +6,7 @@ module MLBase
     @reexport using StatsBase
 
     import Base: length, show, keys, precision, length, getindex
-    (VERSION < v"0.7.0") && import Base: start, next, done
-    (VERSION >= v"0.7.0") && import Base: iterate
+    import Base: iterate
     import Base.Order: lt, Ordering, ForwardOrdering, ReverseOrdering, Forward, Reverse
     import StatsBase: RealVector, IntegerVector, RealMatrix, IntegerMatrix, RealArray
     import IterTools: product
