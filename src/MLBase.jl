@@ -2,12 +2,14 @@ module MLBase
 
     using Reexport
     using IterTools
+    using Random
     @reexport using StatsBase
 
     import Base: length, show, keys, precision, length, getindex
-    import Base: start, next, done
+    import Base: iterate
     import Base.Order: lt, Ordering, ForwardOrdering, ReverseOrdering, Forward, Reverse
     import StatsBase: RealVector, IntegerVector, RealMatrix, IntegerMatrix, RealArray
+    import IterTools: product
 
     export
 
@@ -77,4 +79,3 @@ module MLBase
 
     include("deprecates.jl")
 end
-

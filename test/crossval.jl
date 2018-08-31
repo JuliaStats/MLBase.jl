@@ -1,5 +1,5 @@
 using MLBase
-using Base.Test
+using Test
 
 ## Kfold
 

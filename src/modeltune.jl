@@ -16,7 +16,7 @@ function gridtune(estfun::Function,                          # model estimation 
     t = 0
     first = true
     local best_score, best_model, best_cfg
-    for cf in product(pvals...)
+    for cf in Iterators.product(pvals...)
         t += 1
         m = estfun(cf...)
         if m == nothing

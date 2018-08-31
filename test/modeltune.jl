@@ -1,5 +1,5 @@
 using MLBase
-using Base.Test
+using Test
 
 ## gridtune
 
@@ -25,4 +25,3 @@ p2 = ("y", [:a, :b])
 @test rmodel == 1.0
 @test rcfg == (2, :a)
 @test rscore == 2.0
-

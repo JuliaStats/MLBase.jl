@@ -1,15 +1,15 @@
 # Tests of intstats.jl
 
 using MLBase
-using Base.Test
+using Test
 
 # classify
 
 ss = rand(8, 50)
 for i = 1:size(ss,2)
     ss_i = ss[:,i]
-    kmax = indmax(ss_i)
-    kmin = indmin(ss_i)
+    kmax = argmax(ss_i)
+    kmin = argmin(ss_i)
     vmax = ss_i[kmax]
     vmin = ss_i[kmin]
 
@@ -26,13 +26,13 @@ for i = 1:size(ss,2)
     @test classify_withscore(ss_i, Reverse) == (kmin, ss_i[kmin])
 end
 
-rmax = Int[indmax(ss[:,i]) for i = 1:size(ss,2)]
-rmin = Int[indmin(ss[:,i]) for i = 1:size(ss,2)]
-vmax = ss[sub2ind(size(ss), rmax, 1:size(ss,2))]
-vmin = ss[sub2ind(size(ss), rmin, 1:size(ss,2))]
+rmax = Int[argmax(ss[:,i]) for i = 1:size(ss,2)]
+rmin = Int[argmin(ss[:,i]) for i = 1:size(ss,2)]
+vmax = ss[LinearIndices(size(ss))[CartesianIndex.(rmax, 1:size(ss,2))]]
+vmin = ss[LinearIndices(size(ss))[CartesianIndex.(rmin, 1:size(ss,2))]]
 
-trmax = copy(rmax); trmax[vmax .< 0.8] = 0
-trmin = copy(rmin); trmin[vmin .> 0.2] = 0
+trmax = copy(rmax); trmax[vmax .< 0.8] .= 0
+trmin = copy(rmin); trmin[vmin .> 0.2] .= 0
 
 @test classify(ss) == rmax
 @test classify(ss, Forward) == rmax
@@ -62,4 +62,3 @@ gs = Any[[1,2,5,8],[3,4,6],[7]]
 
 @test groupindices(3, labels) == gs
 @test groupindices(lmap, xs) == gs
-

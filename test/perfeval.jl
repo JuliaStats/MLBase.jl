@@ -1,9 +1,9 @@
 
 using MLBase
-using Base.Test
+using Test
 
 import StatsBase
-import StatsBase: harmmean 
+import StatsBase: harmmean
 
 ## correctrate & errorrate
 
@@ -29,7 +29,7 @@ rs = [1 2 2 1 3 2 1 1 3 3;
 
 @test counthits(gt, rs, 1:3) == [3, 8, 8]
 @test counthits(gt, rs, [2, 4]) == [8, 10]
-@test counthits(gt, rs, 1:2:5) == [3, 8, 10] 
+@test counthits(gt, rs, 1:2:5) == [3, 8, 10]
 
 @test [hitrate(gt, rs, k) for k=1:5] ≈ [0.3, 0.8, 0.8, 1.0, 1.0]
 @test hitrates(gt, rs, 1:3) ≈ [0.3, 0.8, 0.8]
