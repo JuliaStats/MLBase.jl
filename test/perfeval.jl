@@ -15,7 +15,7 @@ b = [1, 1, 2, 2, 2, 3, 3, 3]
 
 ## confusmat
 
-@test confusmat(a, b) == [2 1 0; 0 2 1; 0 0 2]
+@test confusmat(a, b) == [0 1 0 0; 0 1 1 0; 0 0 2 1; 0 0 0 2]
 
 ## counthits & hitrates
 
