@@ -14,12 +14,12 @@ Classification Performance
 
     Compute error rate of predictions given by ``pred`` w.r.t. the ground truths given in ``gt``.
 
-.. function:: confusmat(k, gt, pred)
+.. function:: confusmat(gt, pred)
 
     Compute the confusion matrix of the predictions given by ``pred`` w.r.t. the ground truths given in ``gt``.
-    Here, ``k`` is the number of classes.
 
-    It returns an integer matrix ``R`` of size ``(k, k)``, such that ``R(i, j) == countnz((gt .== i) & (pred .== j))``.
+    It returns an integer matrix ``R`` of size ``(k, k)`` where k is the number of classes in ``gt``, 
+    such that ``R(i, j) == countnz((gt .== i) & (pred .== j))``.
 
     **Examples:**
 
@@ -29,7 +29,7 @@ Classification Performance
 
         julia> pred = [1, 1, 2, 2, 2, 3, 3, 3];
 
-        julia> C = confusmat(3, gt, pred)   # compute confusion matrix
+        julia> C = confusmat(gt, pred)   # compute confusion matrix
         3x3 Array{Int64,2}:
          2  1  0
          0  2  1
