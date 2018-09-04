@@ -10,8 +10,8 @@ import StatsBase: harmmean
 a = [0, 1, 1, 2, 2, 2, 3, 3]
 b = [1, 1, 2, 2, 2, 3, 3, 3]
 
-@test correctrate(a, b) == 0.75
-@test errorrate(a, b) == 0.25
+@test correctrate(a, b) == 0.625
+@test errorrate(a, b) == 0.375
 
 ## confusmat
 
