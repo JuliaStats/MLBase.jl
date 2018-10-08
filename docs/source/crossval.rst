@@ -57,7 +57,7 @@ Cross Validation Schemes
          [2,5,7,8,10]
          [1,3,5,6,7] 
     
-.. function:: StratifiedRandomSum(strata, sn, k)
+.. function:: StratifiedRandomSub(strata, sn, k)
 
     Like ``RandomSub``,  but indexes in each strata (defined by unique values of an iterator `strata`) are distributed approximately equally across the ``k`` subsets.
     ``sn`` should be greater than the number of strata, so that each stratum can be represented in each subset.
