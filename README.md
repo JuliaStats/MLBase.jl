@@ -2,8 +2,7 @@
 
 Swiss knife for machine learning.
 
-[![Build Status](https://travis-ci.org/JuliaStats/MLBase.jl.svg?branch=master)](https://travis-ci.org/JuliaStats/MLBase.jl)
-[![MLBase](http://pkg.julialang.org/badges/MLBase_0.6.svg)](http://pkg.julialang.org/?pkg=MLBase)
+[![Build Status](https://github.com/JuliaStats/MLBase.jl/workflows/CI/badge.svg)](https://github.com/JuliaStats/MLBase.jl/actions?query=workflow%3ACI+branch%3Amaster)
 [![Coveralls](https://coveralls.io/repos/github/JuliaStats/MLBase.jl/badge.svg?branch=master)](https://coveralls.io/github/JuliaStats/MLBase.jl?branch=master)
 [![Documentation Status](https://readthedocs.org/projects/mlbasejl/badge/?version=latest)](http://mlbasejl.readthedocs.io/en/latest/?badge=latest)
 
