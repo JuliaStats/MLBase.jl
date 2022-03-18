@@ -115,10 +115,14 @@ The package also provides a function ``cross_validate`` as below to run a cross 
         using MLBase
 
         # functions
-        compute_center(X::Matrix{Float64}) = vec(mean(X, 2))
+        compute_center(X::Matrix{Float64}) = vec(mean(X, dims=2))
+        function compute_center(X::Matrix{Float64}, inds)
+            temp = data[:,inds]
+            return vec(mean([temp],2))
+        end
 
-        compute_rmse(c::Vector{Float64}, X::Matrix{Float64}) = 
-            sqrt(mean(sum(abs2(X .- c),1)))
+        compute_rmse(c::Vector{Float64}, X::Matrix{Float64}) =
+            sqrt(mean(sum(abs2.(X .- c))))
 
         # data
         const n = 200
@@ -129,7 +133,7 @@ The package also provides a function ``cross_validate`` as below to run a cross 
             inds -> compute_center(data[:, inds]),        # training function
             (c, inds) -> compute_rmse(c, data[:, inds]),  # evaluation function
             n,              # total number of samples
-            Kfold(n, 5))    # cross validation plan: 5-fold 
+            Kfold(n, 5))    # cross validation plan: 5-fold
 
         # get the mean and std of the scores
         (m, s) = mean_and_std(scores)
