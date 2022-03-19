@@ -51,7 +51,7 @@ Many machine learning algorithms and models come with design parameters that nee
             return bias ? (s[1:end-1], s[end]) : (s, 0.0)
         end
 
-        evalfun(m) = msd(X_te * m[1] + m[2], y_te) 
+        evalfun(m) = msd(X_te * m[1] .+ m[2], y_te)
 
         r = gridtune(estfun, evalfun, 
                     ("regcoef", [1.0e-3, 1.0e-2, 1.0e-1, 1.0]), 
