@@ -11,9 +11,9 @@ struct Kfold <: CrossValGenerator
     k::Int
     coeff::Float64
 
-    function Kfold(n::Int, k::Int)
+    function Kfold(n::Int, k::Int, rng::AbstractRNG = MersenneTwister())
         2 <= k <= n || error("The value of k must be in [2, length(a)].")
-        new(randperm(n), k, n / k)
+        new(randperm(rng, n), k, n / k)
     end
 end
 
@@ -42,10 +42,10 @@ struct StratifiedKfold <: CrossValGenerator
     permseqs::Vector{Vector{Int}}  #Vectors of vectors of indexes for each stratum
     k::Int                         #Number of splits
     coeffs::Vector{Float64}        #About how many observations per strata are in a val set
-    function StratifiedKfold(strata, k)
+    function StratifiedKfold(strata, k, rng::AbstractRNG = MersenneTwister())
         2 <= k <= length(strata) || error("The value of k must be in [2, length(strata)].")
         strata_labels, permseqs = unique_inverse(strata)
-        map(shuffle!, permseqs)
+        map( s -> shuffle!(rng, s), permseqs)
         coeffs = Float64[]
         for (stratum, permseq) in zip(strata_labels, permseqs)
             k <= length(permseq) || error("k is greater than the length of stratum $stratum")
@@ -98,13 +98,19 @@ struct RandomSub <: CrossValGenerator
     n::Int    # total length
     sn::Int   # length of each subset
     k::Int    # number of subsets
+    rng::AbstractRNG # Random number generator
+
+    function RandomSub(n::Int, sn::Int, k::Int, rng::AbstractRNG = MersenneTwister())
+        new(n, sn, k, rng)
+    end
+
 end
 
 length(c::RandomSub) = c.k
 
 function iterate(c::RandomSub, s::Int=1)
     (s > c.k) && return nothing
-    return (sort!(sample(1:c.n, c.sn; replace=false)), s+1)
+    return (sort!(sample(c.rng, 1:c.n, c.sn; replace=false)), s+1)
 end
 
 # Stratified repeated random sub-sampling
