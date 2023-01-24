@@ -6,9 +6,9 @@ This package implements several cross validation schemes: ``Kfold``, ``LOOCV``, 
 Cross Validation Schemes
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-.. function:: Kfold(n, k)
+.. function:: Kfold(n, k[, rng])
 
-    ``k``-fold cross validation over a set of ``n`` samples, which are randomly partitioned into ``k`` disjoint validation sets of nearly the same sizes. This generates ``k`` training subsets of length about ``n*(1-1/k)``.
+    ``k``-fold cross validation over a set of ``n`` samples, which are randomly partitioned into ``k`` disjoint validation sets of nearly the same sizes. This generates ``k`` training subsets of length about ``n*(1-1/k)``. Use ``rng`` to pass a pseudorandom number generator in order to control the generation of the partitions.  If ``rng`` is omitted, its default value is ``Random.MersenneTwister()``.
 
     .. code-block:: julia
 
@@ -18,9 +18,9 @@ Cross Validation Schemes
          [2,5,7,8,9,10]
          [1,2,3,4,5,6,9]
     
-.. function:: StratifiedKfold(strata, k)
+.. function:: StratifiedKfold(strata, k[, rng])
 
-    Like ``Kfold``, but indexes in each strata (defined by unique values of an iterator `strata`) are distributed approximately equally across the ``k`` folds. Each strata should have at least ``k`` members.
+    Like ``Kfold``, but indexes in each strata (defined by unique values of an iterator `strata`) are distributed approximately equally across the ``k`` folds. Each strata should have at least ``k`` members. Use ``rng`` to pass a pseudorandom number generator in order to control the generation of the partitions.  If ``rng`` is omitted, its default value is ``Random.MersenneTwister()``.
 
     .. code-block:: julia
 
@@ -45,9 +45,9 @@ Cross Validation Schemes
          [1,2,3]
     
 
-.. function:: RandomSub(n, sn, k)
+.. function:: RandomSub(n, sn, k[, rng])
 
-    Repetitively random subsampling. Particularly, this generates ``k`` subsets of length ``sn`` from a data set with ``n`` samples. 
+    Repetitively random subsampling. Particularly, this generates ``k`` subsets of length ``sn`` from a data set with ``n`` samples. Use ``rng`` to pass a pseudorandom number generator in order to control the generation of the partitions.  If ``rng`` is omitted, its default value is ``Random.MersenneTwister()``.
 
     .. code-block:: julia
 
