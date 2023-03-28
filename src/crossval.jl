@@ -11,11 +11,13 @@ struct Kfold <: CrossValGenerator
     k::Int
     coeff::Float64
 
-    function Kfold(n::Int, k::Int, rng::AbstractRNG = MersenneTwister())
+    function Kfold(rng::AbstractRNG, n::Int, k::Int)
         2 <= k <= n || error("The value of k must be in [2, length(a)].")
         new(randperm(rng, n), k, n / k)
     end
 end
+
+Kfold(n::Int, k::Int) = Kfold(Random.GLOBAL_RNG, n, k)
 
 length(c::Kfold) = c.k
 
@@ -42,7 +44,7 @@ struct StratifiedKfold <: CrossValGenerator
     permseqs::Vector{Vector{Int}}  #Vectors of vectors of indexes for each stratum
     k::Int                         #Number of splits
     coeffs::Vector{Float64}        #About how many observations per strata are in a val set
-    function StratifiedKfold(strata, k, rng::AbstractRNG = MersenneTwister())
+    function StratifiedKfold(rng::AbstractRNG, strata, k)
         2 <= k <= length(strata) || error("The value of k must be in [2, length(strata)].")
         strata_labels, permseqs = unique_inverse(strata)
         map( s -> shuffle!(rng, s), permseqs)
@@ -54,6 +56,8 @@ struct StratifiedKfold <: CrossValGenerator
         new(length(strata), permseqs, k, coeffs)
     end
 end
+
+StratifiedKfold(strata, k) = StratifiedKfold(Random.GLOBAL_RNG, strata, k)
 
 length(c::StratifiedKfold) = c.k
 
@@ -100,11 +104,13 @@ struct RandomSub <: CrossValGenerator
     k::Int    # number of subsets
     rng::AbstractRNG # Random number generator
 
-    function RandomSub(n::Int, sn::Int, k::Int, rng::AbstractRNG = MersenneTwister())
+    function RandomSub(rng::AbstractRNG, n::Int, sn::Int, k::Int)
         new(n, sn, k, rng)
     end
 
 end
+
+RandomSub(n::Int, sn::Int, k::Int) = RandomSub(Random.GLOBAL_RNG, n::Int, sn::Int, k::Int)
 
 length(c::RandomSub) = c.k
 
