@@ -6,9 +6,9 @@ This package implements several cross validation schemes: ``Kfold``, ``LOOCV``, 
 Cross Validation Schemes
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-.. function:: Kfold(n, k[, rng])
+.. function:: Kfold([rng=GLOBAL_RNG], n, k)
 
-    ``k``-fold cross validation over a set of ``n`` samples, which are randomly partitioned into ``k`` disjoint validation sets of nearly the same sizes. This generates ``k`` training subsets of length about ``n*(1-1/k)``. Use ``rng`` to pass a pseudorandom number generator in order to control the generation of the partitions.  If ``rng`` is omitted, its default value is ``Random.MersenneTwister()``.
+    ``k``-fold cross validation over a set of ``n`` samples, which are randomly partitioned into ``k`` disjoint validation sets of nearly the same sizes. This generates ``k`` training subsets of length about ``n*(1-1/k)``. Use ``rng`` to pass a pseudorandom number generator in order to control the generation of the partitions.
 
     .. code-block:: julia
 
@@ -18,9 +18,9 @@ Cross Validation Schemes
          [2,5,7,8,9,10]
          [1,2,3,4,5,6,9]
     
-.. function:: StratifiedKfold(strata, k[, rng])
+.. function:: StratifiedKfold([rng=GLOBAL_RNG], strata, k)
 
-    Like ``Kfold``, but indexes in each strata (defined by unique values of an iterator `strata`) are distributed approximately equally across the ``k`` folds. Each strata should have at least ``k`` members. Use ``rng`` to pass a pseudorandom number generator in order to control the generation of the partitions.  If ``rng`` is omitted, its default value is ``Random.MersenneTwister()``.
+    Like ``Kfold``, but indexes in each strata (defined by unique values of an iterator `strata`) are distributed approximately equally across the ``k`` folds. Each strata should have at least ``k`` members. Use ``rng`` to pass a pseudorandom number generator in order to control the generation of the partitions.
 
     .. code-block:: julia
 
@@ -45,9 +45,9 @@ Cross Validation Schemes
          [1,2,3]
     
 
-.. function:: RandomSub(n, sn, k[, rng])
+.. function:: RandomSub([rng=GLOBAL_RNG], n, sn, k)
 
-    Repetitively random subsampling. Particularly, this generates ``k`` subsets of length ``sn`` from a data set with ``n`` samples. Use ``rng`` to pass a pseudorandom number generator in order to control the generation of the partitions.  If ``rng`` is omitted, its default value is ``Random.MersenneTwister()``.
+    Repetitively random subsampling. Particularly, this generates ``k`` subsets of length ``sn`` from a data set with ``n`` samples. Use ``rng`` to pass a pseudorandom number generator in order to control the generation of the partitions.  If ``rng`` is omitted, its default value is ``Random.MersenneTwister()``. Use ``rng`` to pass a pseudorandom number generator in order to control the generation of the partitions.
 
     .. code-block:: julia
 
