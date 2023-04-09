@@ -99,15 +99,10 @@ end
 # Repeated random sub-sampling
 
 struct RandomSub <: CrossValGenerator
+    rng::AbstractRNG # Random number generator
     n::Int    # total length
     sn::Int   # length of each subset
     k::Int    # number of subsets
-    rng::AbstractRNG # Random number generator
-
-    function RandomSub(rng::AbstractRNG, n::Int, sn::Int, k::Int)
-        new(n, sn, k, rng)
-    end
-
 end
 
 RandomSub(n::Int, sn::Int, k::Int) = RandomSub(Random.GLOBAL_RNG, n::Int, sn::Int, k::Int)
