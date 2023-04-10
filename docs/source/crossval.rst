@@ -47,7 +47,7 @@ Cross Validation Schemes
 
 .. function:: RandomSub([rng=GLOBAL_RNG], n, sn, k)
 
-    Repetitively random subsampling. Particularly, this generates ``k`` subsets of length ``sn`` from a data set with ``n`` samples. Use ``rng`` to pass a pseudorandom number generator in order to control the generation of the partitions.  If ``rng`` is omitted, its default value is ``Random.MersenneTwister()``. Use ``rng`` to pass a pseudorandom number generator in order to control the generation of the partitions.
+    Repetitively random subsampling. Particularly, this generates ``k`` subsets of length ``sn`` from a data set with ``n`` samples. Use ``rng`` to pass a pseudorandom number generator in order to control the generation of the partitions.
 
     .. code-block:: julia
 
