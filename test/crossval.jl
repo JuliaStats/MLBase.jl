@@ -1,4 +1,5 @@
 using MLBase
+using Random
 using Test
 
 ## Kfold
@@ -12,6 +13,25 @@ end
 x = vcat(map(s -> setdiff(1:12, s), ss)...)
 @test sort(x) == collect(1:12)
 
+
+# Verify that we are indeed controlling the random partitioning
+# by specifying in the first argument a random number generator.
+# The test involves calling Kfold with arbitrary chosen n,k pairs
+# for the same seed choice picked from an arbitrarily defined set.
+# Desired outcome is that for the same seed, we should get the same folds.
+
+for seed in [1, 101, 10101]
+    for n in [20, 30, 31]
+        for k in [2, 3, 7]
+            aux1 = collect(Kfold(MersenneTwister(seed), n, k))
+            aux2 = collect(Kfold(MersenneTwister(seed), n, k))
+            @test aux1 == aux2  # folds must be the same
+        end
+    end
+end
+
+
+
 ## StratifiedKfold
 
 strat = [:a, :a, :b, :b, :c, :c, :b, :c, :a]
@@ -24,6 +44,19 @@ for i in 1:2
 end
 x = vcat(map(s -> setdiff(1:9, s), ss)...)
 @test sort(x) == collect(1:9)
+
+
+# Verify that we are indeed controlling the random partitioning
+# by specifying in the first argument a random number generator.
+# Try this out for a few arbitrarily chosen random seeds.
+# Desired outcome is that for the same seed, we should get the same folds.
+
+for seed in [1, 101, 10101]
+    aux1 = collect(StratifiedKfold(MersenneTwister(seed), strat, 3))
+    aux2 = collect(StratifiedKfold(MersenneTwister(seed), strat, 3))
+    @test aux1 == aux2  # folds must be the same
+end
+
 
 ## LOOCV
 
@@ -48,6 +81,28 @@ for i = 1:6
     @test 1 <= minimum(ss[i]) <= maximum(ss[i]) <= 10
     @test length(unique(ss[i])) == 5
 end
+
+
+# Verify that we are indeed controlling the random partitioning
+# by specifying in the first argument a random number generator.
+# The test involves calling RandomSub with arbitrary chosen 
+# n,k,sn arguments for for the same seed choice picked from an
+# arbitrarily defined set.
+# Desired outcome is that for the same seed, we should get the 
+# same folds.
+
+for seed in [1, 101, 10101]
+    for n in [20, 30, 31]
+        for sn in [2, 7, 11]
+            for k in [2, 3, 7]
+                aux1 = collect(RandomSub(MersenneTwister(seed), n, k, sn))
+                aux2 = collect(RandomSub(MersenneTwister(seed), n, k, sn))
+                @test aux1 == aux2  # folds must be the same
+            end
+        end
+    end
+end
+
 
 ## StratifiedRandomSub
 

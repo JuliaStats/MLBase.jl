@@ -11,11 +11,13 @@ struct Kfold <: CrossValGenerator
     k::Int
     coeff::Float64
 
-    function Kfold(n::Int, k::Int)
+    function Kfold(rng::AbstractRNG, n::Int, k::Int)
         2 <= k <= n || error("The value of k must be in [2, length(a)].")
-        new(randperm(n), k, n / k)
+        new(randperm(rng, n), k, n / k)
     end
 end
+
+Kfold(n::Int, k::Int) = Kfold(Random.GLOBAL_RNG, n, k)
 
 length(c::Kfold) = c.k
 
@@ -42,10 +44,10 @@ struct StratifiedKfold <: CrossValGenerator
     permseqs::Vector{Vector{Int}}  #Vectors of vectors of indexes for each stratum
     k::Int                         #Number of splits
     coeffs::Vector{Float64}        #About how many observations per strata are in a val set
-    function StratifiedKfold(strata, k)
+    function StratifiedKfold(rng::AbstractRNG, strata, k)
         2 <= k <= length(strata) || error("The value of k must be in [2, length(strata)].")
         strata_labels, permseqs = unique_inverse(strata)
-        map(shuffle!, permseqs)
+        map( s -> shuffle!(rng, s), permseqs)
         coeffs = Float64[]
         for (stratum, permseq) in zip(strata_labels, permseqs)
             k <= length(permseq) || error("k is greater than the length of stratum $stratum")
@@ -54,6 +56,8 @@ struct StratifiedKfold <: CrossValGenerator
         new(length(strata), permseqs, k, coeffs)
     end
 end
+
+StratifiedKfold(strata, k) = StratifiedKfold(Random.GLOBAL_RNG, strata, k)
 
 length(c::StratifiedKfold) = c.k
 
@@ -95,16 +99,19 @@ end
 # Repeated random sub-sampling
 
 struct RandomSub <: CrossValGenerator
+    rng::AbstractRNG # Random number generator
     n::Int    # total length
     sn::Int   # length of each subset
     k::Int    # number of subsets
 end
 
+RandomSub(n::Int, sn::Int, k::Int) = RandomSub(Random.GLOBAL_RNG, n::Int, sn::Int, k::Int)
+
 length(c::RandomSub) = c.k
 
 function iterate(c::RandomSub, s::Int=1)
     (s > c.k) && return nothing
-    return (sort!(sample(1:c.n, c.sn; replace=false)), s+1)
+    return (sort!(sample(c.rng, 1:c.n, c.sn; replace=false)), s+1)
 end
 
 # Stratified repeated random sub-sampling
