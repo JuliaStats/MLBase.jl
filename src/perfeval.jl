@@ -6,14 +6,18 @@ correctrate(gt::IntegerVector, r::IntegerVector) = counteq(gt, r) / length(gt)
 errorrate(gt::IntegerVector, r::IntegerVector) = countne(gt, r) / length(gt)
 
 ## confusion matrix
-
-function confusmat(k::Integer, gts::IntegerVector, preds::IntegerVector)
+function confusmat(gts::IntegerVector, preds::IntegerVector)
     n = length(gts)
     length(preds) == n || throw(DimensionMismatch("Inconsistent lengths."))
+
+    gtslbl = sort(unique(gts))
+    k = length(gtslbl)
+
+    lookup = Dict(reverse.(enumerate(gtslbl)|> collect))
     R = zeros(Int, k, k)
     for i = 1:n
-        @inbounds g = gts[i]
-        @inbounds p = preds[i]
+        @inbounds g = lookup[gts[i]]
+        @inbounds p = lookup[preds[i]]
         R[g, p] += 1
     end
     return R

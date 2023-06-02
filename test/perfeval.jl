@@ -7,15 +7,15 @@ import StatsBase: harmmean
 
 ## correctrate & errorrate
 
-a = [1, 1, 1, 2, 2, 2, 3, 3]
+a = [0, 1, 1, 2, 2, 2, 3, 3]
 b = [1, 1, 2, 2, 2, 3, 3, 3]
 
-@test correctrate(a, b) == 0.75
-@test errorrate(a, b) == 0.25
+@test correctrate(a, b) == 0.625
+@test errorrate(a, b) == 0.375
 
 ## confusmat
 
-@test confusmat(3, a, b) == [2 1 0; 0 2 1; 0 0 2]
+@test confusmat(a, b) == [0 1 0 0; 0 1 1 0; 0 0 2 1; 0 0 0 2]
 
 ## counthits & hitrates
 
