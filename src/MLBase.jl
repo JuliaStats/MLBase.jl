@@ -8,7 +8,7 @@ module MLBase
     import Base: length, show, keys, precision, length, getindex
     import Base: iterate
     import Base.Order: lt, Ordering, ForwardOrdering, ReverseOrdering, Forward, Reverse
-    import StatsBase: RealVector, IntegerVector, RealMatrix, IntegerMatrix, RealArray
+    import NumericalTypeAliases: RealVector, IntegerVector, RealMatrix, IntegerMatrix, RealArray
     import IterTools: product
 
     export
