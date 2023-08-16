@@ -4,7 +4,6 @@ version = "0.9.2"
 
 [deps]
 IterTools = "c8e1da08-722c-5040-9ed9-7db0dc04731e"
-NumericalTypeAliases = "be9b823e-291e-41a1-b8ce-806204e78f92"
 Random = "9a3f8284-a2c9-5f02-9a11-845980a1fd5c"
 Reexport = "189a3867-3050-52da-a836-e630ba90ab69"
 StatsBase = "2913bbd2-ae8a-5f71-8c99-4fb6c76f3a91"
@@ -12,7 +11,6 @@ StatsBase = "2913bbd2-ae8a-5f71-8c99-4fb6c76f3a91"
 [compat]
 IterTools = "1"
 Reexport = "1"
-NumericalTypeAliases = "0.2"
 StatsBase = "0.34"
 julia = "1"
 

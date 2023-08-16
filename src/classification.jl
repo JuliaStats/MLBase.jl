@@ -4,7 +4,7 @@
 
 # classify
 
-function classify(x::RealVector, ord::Ordering)
+function classify(x::AbstractVector{<:Real}, ord::Ordering)
     n = length(x)
     v = x[1]
     k::Int = 1
@@ -18,9 +18,9 @@ function classify(x::RealVector, ord::Ordering)
     return k
 end
 
-classify(x::RealVector) = classify(x, Forward)
+classify(x::AbstractVector{<:Real}) = classify(x, Forward)
 
-function classify!(r::IntegerVector, x::RealMatrix, ord::Ordering)
+function classify!(r::AbstractVector{<:Integer}, x::AbstractMatrix{<:Real}, ord::Ordering)
     m = size(x, 1)
     n = size(x, 2)
     length(r) == n || throw(DimensionMismatch("Mismatched length of r."))
@@ -30,15 +30,15 @@ function classify!(r::IntegerVector, x::RealMatrix, ord::Ordering)
     return r
 end
 
-classify!(r::IntegerVector, x::RealMatrix) = classify!(r, x, Forward)
+classify!(r::AbstractVector{<:Integer}, x::AbstractMatrix{<:Real}) = classify!(r, x, Forward)
 
 # - this one throws a deprecation
-classify(x::RealMatrix, ord::Ordering) = classify!(Array{Int}(undef, size(x,2)), x, ord)
-classify(x::RealMatrix) = classify(x, Forward)
+classify(x::AbstractMatrix{<:Real}, ord::Ordering) = classify!(Array{Int}(undef, size(x,2)), x, ord)
+classify(x::AbstractMatrix{<:Real}) = classify(x, Forward)
 
 # classify with score(s)
 
-function classify_withscore(x::RealVector, ord::Ordering)
+function classify_withscore(x::AbstractVector{<:Real}, ord::Ordering)
     n = length(x)
     v = x[1]
     k::Int = 1
@@ -52,9 +52,9 @@ function classify_withscore(x::RealVector, ord::Ordering)
     return (k, v)
 end
 
-classify_withscore(x::RealVector) = classify_withscore(x, Forward)
+classify_withscore(x::AbstractVector{<:Real}) = classify_withscore(x, Forward)
 
-function classify_withscores!(r::IntegerVector, s::RealVector, x::RealMatrix, ord::Ordering)
+function classify_withscores!(r::AbstractVector{<:Integer}, s::AbstractVector{<:Real}, x::AbstractMatrix{<:Real}, ord::Ordering)
     m = size(x, 1)
     n = size(x, 2)
     length(r) == n || throw(DimensionMismatch("Mismatched length of r."))
@@ -66,27 +66,27 @@ function classify_withscores!(r::IntegerVector, s::RealVector, x::RealMatrix, or
     return (r, s)
 end
 
-classify_withscores!(r::IntegerVector, s::RealVector, x::RealMatrix) =
+classify_withscores!(r::AbstractVector{<:Integer}, s::AbstractVector{<:Real}, x::AbstractMatrix{<:Real}) =
     classify_withscores!(r, s, x, Forward)
 
-function classify_withscores(x::RealMatrix{T}, ord::Ordering) where T<:Real
+function classify_withscores(x::AbstractMatrix{<:Real}{T}, ord::Ordering) where T<:Real
     n = size(x, 2)
     r = Array{Int}(undef, n)
     s = Array{T}(undef, n)
     return classify_withscores!(r, s, x, ord)
 end
 
-classify_withscores(x::RealMatrix{T}) where {T<:Real} = classify_withscores(x, Forward)
+classify_withscores(x::AbstractMatrix{<:Real}{T}) where {T<:Real} = classify_withscores(x, Forward)
 
 
 # classify with threshold
 
-classify(x::RealVector, t::Real, ord::Ordering) =
+classify(x::AbstractVector{<:Real}, t::Real, ord::Ordering) =
     ((k, v) = classify_withscore(x, ord); ifelse(lt(ord, v, t), 0, k))
 
-classify(x::RealVector, t::Real) = classify(x, t, Forward)
+classify(x::AbstractVector{<:Real}, t::Real) = classify(x, t, Forward)
 
-function classify!(r::IntegerVector, x::RealMatrix, t::Real, ord::Ordering)
+function classify!(r::AbstractVector{<:Integer}, x::AbstractMatrix{<:Real}, t::Real, ord::Ordering)
     m = size(x, 1)
     n = size(x, 2)
     length(r) == n || throw(DimensionMismatch("Mismatched length of r."))
@@ -96,10 +96,10 @@ function classify!(r::IntegerVector, x::RealMatrix, t::Real, ord::Ordering)
     return r
 end
 
-classify!(r::IntegerVector, x::RealMatrix, t::Real) = classify!(r, x, t, Forward)
+classify!(r::AbstractVector{<:Integer}, x::AbstractMatrix{<:Real}, t::Real) = classify!(r, x, t, Forward)
 
-classify(x::RealMatrix, t::Real, ord::Ordering) = classify!(Array{Int}(undef, size(x,2)), x, t, ord)
-classify(x::RealMatrix, t::Real) = classify(x, t, Forward)
+classify(x::AbstractMatrix{<:Real}, t::Real, ord::Ordering) = classify!(Array{Int}(undef, size(x,2)), x, t, ord)
+classify(x::AbstractMatrix{<:Real}, t::Real) = classify(x, t, Forward)
 
 
 ## label map
@@ -154,7 +154,7 @@ labeldecode(lmap::LabelMap{T}, ys::AbstractArray{Int}) where {T} =
 
 ## group labels
 
-function groupindices(k::Int, xs::IntegerVector; warning::Bool=true)
+function groupindices(k::Int, xs::AbstractVector{<:Integer}; warning::Bool=true)
     gs = Array{Vector{Int}}(undef, k)
     for i = 1:k
         gs[i] = Int[]
