@@ -2,12 +2,12 @@
 
 ## correctrate & errorrate
 
-correctrate(gt::IntegerVector, r::IntegerVector) = counteq(gt, r) / length(gt)
-errorrate(gt::IntegerVector, r::IntegerVector) = countne(gt, r) / length(gt)
+correctrate(gt::AbstractVector{<:Integer}, r::AbstractVector{<:Integer}) = counteq(gt, r) / length(gt)
+errorrate(gt::AbstractVector{<:Integer}, r::AbstractVector{<:Integer}) = countne(gt, r) / length(gt)
 
 ## confusion matrix
 
-function confusmat(k::Integer, gts::IntegerVector, preds::IntegerVector)
+function confusmat(k::Integer, gts::AbstractVector{<:Integer}, preds::AbstractVector{<:Integer})
     n = length(gts)
     length(preds) == n || throw(DimensionMismatch("Inconsistent lengths."))
     R = zeros(Int, k, k)
@@ -21,7 +21,7 @@ end
 
 ## counthits & hitrate
 
-function counthits(gt::IntegerVector, rklst::IntegerMatrix, k::Integer)
+function counthits(gt::AbstractVector{<:Integer}, rklst::AbstractMatrix{<:Integer}, k::Integer)
     n = length(gt)
     size(rklst, 2) == n || throw(DimensionMismatch("Input dimensions mismatch."))
     m = min(size(rklst, 1), Int(k))
@@ -40,7 +40,7 @@ function counthits(gt::IntegerVector, rklst::IntegerMatrix, k::Integer)
     return cnt::Int
 end
 
-function counthits(gt::IntegerVector, rklst::IntegerMatrix, ks::IntegerVector)
+function counthits(gt::AbstractVector{<:Integer}, rklst::AbstractMatrix{<:Integer}, ks::AbstractVector{<:Integer})
     n = length(gt)
     size(rklst, 2) == n || throw(DimensionMismatch("Input dimensions mismatch."))
     issorted(ks) || throw(DimensionMismatch("ks must be sorted."))
@@ -67,10 +67,10 @@ function counthits(gt::IntegerVector, rklst::IntegerMatrix, ks::IntegerVector)
 end
 
 
-hitrate(gt::IntegerVector, rklst::IntegerMatrix, k::Integer) =
+hitrate(gt::AbstractVector{<:Integer}, rklst::AbstractMatrix{<:Integer}, k::Integer) =
     (counthits(gt, rklst, k) / length(gt))::Float64
 
-function hitrates(gt::IntegerVector, rklst::IntegerMatrix, ks::IntegerVector)
+function hitrates(gt::AbstractVector{<:Integer}, rklst::AbstractMatrix{<:Integer}, ks::AbstractVector{<:Integer})
     n = length(gt)
     h = counthits(gt, rklst, ks)
     nk = length(ks)
@@ -124,7 +124,7 @@ f1score(x::ROCNums) = (tp2 = x.tp + x.tp; tp2 / (tp2 + x.fp + x.fn) )
 _ispos(x::Bool) = x
 _ispos(x::Real) = x > zero(x)
 
-function _roc(gt::IntegerVector, pr)
+function _roc(gt::AbstractVector{<:Integer}, pr)
     len = length(gt)
     length(pr) == len || throw(DimensionMismatch("Inconsistent lengths."))
 
@@ -159,14 +159,14 @@ function _roc(gt::IntegerVector, pr)
 end
 
 # compute roc numbers based on prediction
-roc(gt::IntegerVector, pr::IntegerVector) = _roc(gt, pr)
+roc(gt::AbstractVector{<:Integer}, pr::AbstractVector{<:Integer}) = _roc(gt, pr)
 
 ##
 #   BinaryThresPredVec immutates a vector:
 #
 #   v[i] := scores[i] < thres ? 0 : 1
 #
-struct BinaryThresPredVec{ScoreVec <: RealVector,
+struct BinaryThresPredVec{ScoreVec <: AbstractVector{<:Real},
                           T <: Real,
                           Ord <: Ordering}
     scores::ScoreVec
@@ -178,10 +178,10 @@ length(v::BinaryThresPredVec) = length(v.scores)
 getindex(v::BinaryThresPredVec, i::Integer) = !lt(v.ord, v.scores[i], v.thres)
 
 # compute roc numbers based on scores & threshold
-roc(gt::IntegerVector, scores::RealVector, t::Real, ord::Ordering) =
+roc(gt::AbstractVector{<:Integer}, scores::AbstractVector{<:Real}, t::Real, ord::Ordering) =
     _roc(gt, BinaryThresPredVec(scores, t, ord))
 
-roc(gt::IntegerVector, scores::RealVector, thres::Real) =
+roc(gt::AbstractVector{<:Integer}, scores::AbstractVector{<:Real}, thres::Real) =
     roc(gt, scores, thres, Forward)
 
 ##
@@ -189,8 +189,8 @@ roc(gt::IntegerVector, scores::RealVector, thres::Real) =
 #
 #   v[i] := scores[i] < thres ? 0 : preds[i]
 #
-struct ThresPredVec{PredVec <: IntegerVector,
-                    ScoreVec <: RealVector,
+struct ThresPredVec{PredVec <: AbstractVector{<:Integer},
+                    ScoreVec <: AbstractVector{<:Real},
                     T <: Real,
                     Ord <: Ordering}
 
@@ -201,7 +201,7 @@ struct ThresPredVec{PredVec <: IntegerVector,
 end
 
 function ThresPredVec(
-    preds::PVec, scores::SVec, thres::T, ord::Ord) where {PVec<:IntegerVector,SVec<:RealVector,T<:Real,Ord<:Ordering}
+    preds::PVec, scores::SVec, thres::T, ord::Ord) where {PVec<:AbstractVector{<:Integer},SVec<:AbstractVector{<:Real},T<:Real,Ord<:Ordering}
     n = length(preds)
     length(scores) == n || throw(DimensionMismatch("Inconsistent lengths."))
     ThresPredVec{PVec,SVec,T,Ord}(preds, scores, thres, ord)
@@ -211,10 +211,10 @@ length(v::ThresPredVec) = length(v.preds)
 getindex(v::ThresPredVec, i::Integer) = ifelse(lt(v.ord, v.scores[i], v.thres), 0, v.preds[i])
 
 # compute roc numbers based on predictions & scores & threshold
-roc(gt::IntegerVector, preds::Tuple{PV,SV}, t::Real, ord::Ordering) where {PV<:IntegerVector,SV<:RealVector} =
+roc(gt::AbstractVector{<:Integer}, preds::Tuple{PV,SV}, t::Real, ord::Ordering) where {PV<:AbstractVector{<:Integer},SV<:AbstractVector{<:Real}} =
     _roc(gt, ThresPredVec(preds..., t, ord))
 
-roc(gt::IntegerVector, preds::Tuple{PV,SV}, thres::Real) where {PV<:IntegerVector,SV<:RealVector} =
+roc(gt::AbstractVector{<:Integer}, preds::Tuple{PV,SV}, thres::Real) where {PV<:AbstractVector{<:Integer},SV<:AbstractVector{<:Real}} =
     roc(gt, preds, thres, Forward)
 
 
@@ -226,7 +226,7 @@ roc(gt::IntegerVector, preds::Tuple{PV,SV}, thres::Real) where {PV<:IntegerVecto
 #  threshold[i] <= x < threshold[i+1] --> i+1
 #  x >= threshold[n] --> n+1
 #
-function find_thresbin(x::Real, thresholds::RealVector, ord::Ordering)
+function find_thresbin(x::Real, thresholds::AbstractVector{<:Real}, ord::Ordering)
     n = length(thresholds)
     r = 1
     if !lt(ord, x, thresholds[1])
@@ -244,16 +244,16 @@ function find_thresbin(x::Real, thresholds::RealVector, ord::Ordering)
     return r::Int
 end
 
-find_thresbin(x::Real, thresholds::RealVector) = find_thresbin(x, thresholds, Forward)
+find_thresbin(x::Real, thresholds::AbstractVector{<:Real}) = find_thresbin(x, thresholds, Forward)
 
-lin_thresholds(scores::RealArray, n::Integer, ord::ForwardOrdering) =
+lin_thresholds(scores::AbstractArray{<:Real}, n::Integer, ord::ForwardOrdering) =
     ((s0, s1) = extrema(scores); intv = (s1 - s0) / (n-1); s0:intv:s1)
 
-lin_thresholds(scores::RealArray, n::Integer, ord::ReverseOrdering{ForwardOrdering}) =
+lin_thresholds(scores::AbstractArray{<:Real}, n::Integer, ord::ReverseOrdering{ForwardOrdering}) =
     ((s0, s1) = extrema(scores); intv = (s0 - s1) / (n-1); s1:intv:s0)
 
 # roc for binary predictions
-function roc(gt::IntegerVector, scores::RealVector, thresholds::RealVector, ord::Ordering)
+function roc(gt::AbstractVector{<:Integer}, scores::AbstractVector{<:Real}, thresholds::AbstractVector{<:Real}, ord::Ordering)
     issorted(thresholds, ord) || error("thresholds must be sorted w.r.t. the given ordering.")
 
     ns = length(scores)
@@ -291,19 +291,19 @@ function roc(gt::IntegerVector, scores::RealVector, thresholds::RealVector, ord:
     return r
 end
 
-roc(gt::IntegerVector, scores::RealVector, thresholds::RealVector) = roc(gt, scores, thresholds, Forward)
+roc(gt::AbstractVector{<:Integer}, scores::AbstractVector{<:Real}, thresholds::AbstractVector{<:Real}) = roc(gt, scores, thresholds, Forward)
 
-roc(gt::IntegerVector, scores::RealVector, n::Integer, ord::Ordering) =
+roc(gt::AbstractVector{<:Integer}, scores::AbstractVector{<:Real}, n::Integer, ord::Ordering) =
     roc(gt, scores, lin_thresholds(scores, n, ord), ord)
 
-roc(gt::IntegerVector, scores::RealVector, n::Integer) = roc(gt, scores, n, Forward)
+roc(gt::AbstractVector{<:Integer}, scores::AbstractVector{<:Real}, n::Integer) = roc(gt, scores, n, Forward)
 
-roc(gt::IntegerVector, scores::RealVector, ord::Ordering) = roc(gt, scores, 100, ord)
-roc(gt::IntegerVector, scores::RealVector) = roc(gt, scores, Forward)
+roc(gt::AbstractVector{<:Integer}, scores::AbstractVector{<:Real}, ord::Ordering) = roc(gt, scores, 100, ord)
+roc(gt::AbstractVector{<:Integer}, scores::AbstractVector{<:Real}) = roc(gt, scores, Forward)
 
 # roc for multi-way predictions
 function roc(
-    gt::IntegerVector, preds::Tuple{PV,SV}, thresholds::RealVector, ord::Ordering) where {PV<:IntegerVector,SV<:RealVector}
+    gt::AbstractVector{<:Integer}, preds::Tuple{PV,SV}, thresholds::AbstractVector{<:Real}, ord::Ordering) where {PV<:AbstractVector{<:Integer},SV<:AbstractVector{<:Real}}
 
     issorted(thresholds, ord) || error("thresholds must be sorted w.r.t. the given ordering.")
     pr::PV = preds[1]
@@ -354,17 +354,17 @@ function roc(
     return r
 end
 
-roc(gt::IntegerVector, preds::Tuple{PV,SV}, thresholds::RealVector) where {PV<:IntegerVector, SV<:RealVector} =
+roc(gt::AbstractVector{<:Integer}, preds::Tuple{PV,SV}, thresholds::AbstractVector{<:Real}) where {PV<:AbstractVector{<:Integer}, SV<:AbstractVector{<:Real}} =
     roc(gt, preds, thresholds, Forward)
 
-roc(gt::IntegerVector, preds::Tuple{PV,SV}, n::Integer, ord::Ordering) where {PV<:IntegerVector, SV<:RealVector} =
+roc(gt::AbstractVector{<:Integer}, preds::Tuple{PV,SV}, n::Integer, ord::Ordering) where {PV<:AbstractVector{<:Integer}, SV<:AbstractVector{<:Real}} =
     roc(gt, preds, lin_thresholds(preds[2],n,ord), ord)
 
-roc(gt::IntegerVector, preds::Tuple{PV,SV}, n::Integer) where {PV<:IntegerVector, SV<:RealVector} =
+roc(gt::AbstractVector{<:Integer}, preds::Tuple{PV,SV}, n::Integer) where {PV<:AbstractVector{<:Integer}, SV<:AbstractVector{<:Real}} =
     roc(gt, preds, n, Forward)
 
-roc(gt::IntegerVector, preds::Tuple{PV,SV}, ord::Ordering) where {PV<:IntegerVector, SV<:RealVector} =
+roc(gt::AbstractVector{<:Integer}, preds::Tuple{PV,SV}, ord::Ordering) where {PV<:AbstractVector{<:Integer}, SV<:AbstractVector{<:Real}} =
     roc(gt, preds, 100, ord)
 
-roc(gt::IntegerVector, preds::Tuple{PV,SV}) where {PV<:IntegerVector, SV<:RealVector} =
+roc(gt::AbstractVector{<:Integer}, preds::Tuple{PV,SV}) where {PV<:AbstractVector{<:Integer}, SV<:AbstractVector{<:Real}} =
     roc(gt, preds, Forward)

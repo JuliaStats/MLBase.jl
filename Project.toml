@@ -1,6 +1,6 @@
 name = "MLBase"
 uuid = "f0e99cf1-93fa-52ec-9ecc-5026115318e0"
-version = "0.9.1"
+version = "0.9.2"
 
 [deps]
 IterTools = "c8e1da08-722c-5040-9ed9-7db0dc04731e"
@@ -11,7 +11,7 @@ StatsBase = "2913bbd2-ae8a-5f71-8c99-4fb6c76f3a91"
 [compat]
 IterTools = "1"
 Reexport = "1"
-StatsBase = "0.33"
+StatsBase = "0.33, 0.34"
 julia = "1"
 
 [extras]
